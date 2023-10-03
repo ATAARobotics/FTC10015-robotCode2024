@@ -10,6 +10,7 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void init() {
+        // hardwareMap.
     }
 
     @Override
@@ -20,4 +21,6 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void loop() {
+
+    }
 }
