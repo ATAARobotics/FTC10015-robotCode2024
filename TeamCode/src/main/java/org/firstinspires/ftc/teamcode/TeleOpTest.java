@@ -39,6 +39,7 @@ public class TeleOpTest extends OpMode   {
         telemetry.addData("elapsedTime", "%.3f",time);
         if (gamepad1.a) {
             motor_fl.setPower(0.2);
+            //positive power is "backwards" relative to the robot
         } else {
             motor_fl.setPower(0);
         }
