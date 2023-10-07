@@ -128,7 +128,7 @@ public class TeleOpTest extends OpMode   {
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
         double humanAxial   = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
         double humanLateral =  gamepad1.right_stick_x;
-        double yaw     =  - gamepad1.left_stick_x;
+        double yaw     =  gamepad1.left_stick_x;
 
 
         double angle = -orientation.getYaw(AngleUnit.RADIANS);
