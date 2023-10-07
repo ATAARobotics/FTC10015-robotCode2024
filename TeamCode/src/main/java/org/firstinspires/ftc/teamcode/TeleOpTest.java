@@ -39,9 +39,10 @@ public class TeleOpTest extends OpMode   {
         motor_bl = (DcMotor) hardwareMap.get("BL_Drive");
         motor_br = (DcMotor) hardwareMap.get("BR_Drive");
         motor_fl.setDirection(DcMotor.Direction.REVERSE);
-        motor_bl.setDirection(DcMotor.Direction.REVERSE);
-        motor_fl.setDirection(DcMotor.Direction.FORWARD);
         motor_fr.setDirection(DcMotor.Direction.FORWARD);
+
+        motor_bl.setDirection(DcMotor.Direction.REVERSE);
+        motor_br.setDirection(DcMotor.Direction.FORWARD);
 
         // vision (from the example code)
         // Create the TensorFlow processor by using a builder.
@@ -141,13 +142,12 @@ public class TeleOpTest extends OpMode   {
         //   2) Then make sure they run in the correct direction by modifying the
         //      the setDirection() calls above.
         // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
+/*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+*/
 
         // Send calculated power to wheels
         motor_fl.setPower(leftFrontPower);
