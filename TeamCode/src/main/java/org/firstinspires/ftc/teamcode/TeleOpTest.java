@@ -126,9 +126,9 @@ public class TeleOpTest extends OpMode   {
         double max;
 
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double humanAxial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double humanLateral =  gamepad1.left_stick_x;
-        double yaw     =  gamepad1.right_stick_x;
+        double humanAxial   = -gamepad2.left_stick_y;  // Note: pushing stick forward gives negative value
+        double humanLateral =  gamepad2.left_stick_x;
+        double yaw     =  - gamepad1.right_stick_x;
 
 
         double angle = -orientation.getYaw(AngleUnit.RADIANS);
@@ -174,10 +174,11 @@ public class TeleOpTest extends OpMode   {
 */
 
         // Send calculated power to wheels
-        motor_fl.setPower(leftFrontPower);
-        motor_fr.setPower(rightFrontPower);
-        motor_bl.setPower(leftBackPower);
-        motor_br.setPower(rightBackPower);
+        double scale = 0.5;
+        motor_fl.setPower(leftFrontPower * scale);
+        motor_fr.setPower(rightFrontPower * scale);
+        motor_bl.setPower(leftBackPower * scale);
+        motor_br.setPower(rightBackPower * scale);
 
         // Show the elapsed game time and wheel power.
         //telemetry.addData("Status", "Run Time: " + time.toString());
