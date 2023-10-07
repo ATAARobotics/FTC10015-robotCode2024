@@ -2,14 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -24,6 +28,7 @@ public class TeleOpTest extends OpMode   {
     public DcMotor motor_fr = null;
     public DcMotor motor_bl = null;
     public DcMotor motor_br = null;
+    IMU imu;
 
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
@@ -33,16 +38,25 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void init() {
-        //hardwareMap.Set
+        imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
         motor_fl = (DcMotor) hardwareMap.get("FL_Drive");
         motor_fr = (DcMotor) hardwareMap.get("FR_Drive");
         motor_bl = (DcMotor) hardwareMap.get("BL_Drive");
         motor_br = (DcMotor) hardwareMap.get("BR_Drive");
-        motor_fl.setDirection(DcMotor.Direction.REVERSE);
-        motor_fr.setDirection(DcMotor.Direction.FORWARD);
+        motor_fl.setDirection(DcMotor.Direction.FORWARD);
+        motor_fr.setDirection(DcMotor.Direction.REVERSE);
 
-        motor_bl.setDirection(DcMotor.Direction.REVERSE);
-        motor_br.setDirection(DcMotor.Direction.FORWARD);
+        motor_bl.setDirection(DcMotor.Direction.FORWARD);
+        motor_br.setDirection(DcMotor.Direction.REVERSE);
 
         // vision (from the example code)
         // Create the TensorFlow processor by using a builder.
@@ -89,7 +103,7 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void start() {
-
+    imu.resetYaw();
 
     }
 
@@ -106,12 +120,20 @@ public class TeleOpTest extends OpMode   {
         }
         telemetry.update();
          */
+
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+
         double max;
 
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
         double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
         double lateral =  gamepad1.left_stick_x;
         double yaw     =  gamepad1.right_stick_x;
+
+        double desiredVelocity = Math.sqrt(axial*axial + lateral*lateral);
+
+        axial += Math.sin(orientation.getYaw(AngleUnit.RADIANS)) * desiredVelocity;
+        lateral -= Math.cos(orientation.getYaw(AngleUnit.RADIANS)) * desiredVelocity;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -132,6 +154,8 @@ public class TeleOpTest extends OpMode   {
             leftBackPower   /= max;
             rightBackPower  /= max;
         }
+        //imu stuff
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
 
         // This is test code:
         //
