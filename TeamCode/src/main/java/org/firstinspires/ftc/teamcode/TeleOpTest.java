@@ -123,8 +123,7 @@ public class TeleOpTest extends OpMode   {
                 -gamepad1.right_stick_y,
                 gamepad1.right_stick_x,
                 gamepad1.left_stick_x,
-                orientation.getYaw(AngleUnit.RADIANS),
-                true
+                orientation.getYaw(AngleUnit.DEGREES)
         );
 
         //imu stuff
