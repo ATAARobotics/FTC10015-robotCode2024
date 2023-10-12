@@ -19,6 +19,12 @@ import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
 
+// installing FTCLib
+// https://docs.ftclib.org/ftclib/installation
+repositories {
+    mavenCentral()
+}
+
 android {
 
     compileSdkVersion 29
@@ -54,6 +60,8 @@ android {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
+        // FTCLib:
+        multiDexEnabled true
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
