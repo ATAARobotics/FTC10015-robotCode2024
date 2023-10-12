@@ -27,10 +27,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,26 +62,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@TeleOp(name="Basic: Omni OpMode", group="tele-op")
 //@Disabled
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+public class BasicOmniOpMode extends OpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     private DcMotor FL_Motor = null;
-    //private DcMotor BL_Motor = null;
     private DcMotor FR_Motor = null;
-    //private DcMotor BR_Motor = null;
 
     @Override
-    public void runOpMode() {
+    public void init() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        FL_Motor  = hardwareMap.get(DcMotor.class, "FL_Drive");
-        //BL_Motor  = hardwareMap.get(DcMotor.class, "BL_Drive");
+        FL_Motor = hardwareMap.get(DcMotor.class, "FL_Drive");
+        DcMotor BL_Motor = hardwareMap.get(DcMotor.class, "BL_Drive");
         FR_Motor = hardwareMap.get(DcMotor.class, "FR_Drive");
-        //BR_Motor = hardwareMap.get(DcMotor.class, "BR_Drive");
+        DcMotor BR_Motor = hardwareMap.get(DcMotor.class, "BR_Drive");
+
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -95,19 +93,20 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         FL_Motor.setDirection(DcMotor.Direction.REVERSE);
-        //BL_Drive.setDirection(DcMotor.Direction.REVERSE);
+        BL_Motor.setDirection(DcMotor.Direction.REVERSE);
         FR_Motor.setDirection(DcMotor.Direction.FORWARD);
-        //BR_Drive.setDirection(DcMotor.Direction.FORWARD);
+        BR_Motor.setDirection(DcMotor.Direction.FORWARD);
+    }
 
+    @Override
+    public void loop() {
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        waitForStart();
-        runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        if (true) {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -125,14 +124,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            //max = Math.max(max, Math.abs(leftBackPower));
-            //max = Math.max(max, Math.abs(rightBackPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
                 leftFrontPower  /= max;
                 rightFrontPower /= max;
-                //leftBackPower   /= max;
-                //rightBackPower  /= max;
+                leftBackPower   /= max;
+                rightBackPower  /= max;
             }
 
             // This is test code:
@@ -155,8 +154,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Send calculated power to wheels
             FL_Motor.setPower(leftFrontPower);
             FR_Motor.setPower(rightFrontPower);
-            //leftBackDrive.setPower(leftBackPower);
-            //rightBackDrive.setPower(rightBackPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
