@@ -104,7 +104,7 @@ public class BasicOmniOpMode extends OpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-
+/*
         // run until the end of the match (driver presses STOP)
         if (true) {
             double max;
@@ -163,4 +163,5 @@ public class BasicOmniOpMode extends OpMode {
             //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
         }
+        */
     }}
