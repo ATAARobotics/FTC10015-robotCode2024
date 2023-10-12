@@ -18,16 +18,22 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+// put all FTCLib imports here
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+
 import java.util.List;
 
 
 @TeleOp(name="Test:teleop", group="Opmode")
 public class TeleOpTest extends OpMode   {
 
-    public DcMotor motor_fl = null;
-    public DcMotor motor_fr = null;
-    public DcMotor motor_bl = null;
-    public DcMotor motor_br = null;
+    public Motor motor_fl = null;
+    public Motor motor_fr = null;
+    public Motor motor_bl = null;
+    public Motor motor_br = null;
+
+    MecanumDrive drivebase = null;
     IMU imu;
 
     // copied from ConceptTensorFlowObjectDetection example
@@ -48,15 +54,15 @@ public class TeleOpTest extends OpMode   {
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        motor_fl = (DcMotor) hardwareMap.get("FL_Drive");
-        motor_fr = (DcMotor) hardwareMap.get("FR_Drive");
-        motor_bl = (DcMotor) hardwareMap.get("BL_Drive");
-        motor_br = (DcMotor) hardwareMap.get("BR_Drive");
-        motor_fl.setDirection(DcMotor.Direction.FORWARD);
-        motor_fr.setDirection(DcMotor.Direction.REVERSE);
+        motor_fl = new Motor(hardwareMap, "FL_Drive");
+        motor_fr = new Motor(hardwareMap, "FR_Drive");
+        motor_bl = new Motor(hardwareMap, "BL_Drive");
+        motor_br = new Motor(hardwareMap, "BR_Drive");
 
-        motor_bl.setDirection(DcMotor.Direction.FORWARD);
-        motor_br.setDirection(DcMotor.Direction.REVERSE);
+        // using ftc-lib for driving
+        drivebase = new MecanumDrive(motor_fl, motor_fr, motor_bl, motor_br);
+
+
 
         // vision (from the example code)
         // Create the TensorFlow processor by using a builder.
@@ -110,80 +116,19 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void loop() {
-        /*
-        telemetry.addData("elapsedTime", "%.3f",time);
-        if (gamepad1.a) {
-            motor_fl.setPower(0.2);
-            //positive power is "backwards" relative to the robot
-        } else {
-            motor_fl.setPower(0);
-        }
-        telemetry.update();
-         */
-
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
 
-        double max;
+        // tell ftclib its inputs
+        drivebase.driveFieldCentric(
+                -gamepad1.right_stick_y,
+                gamepad1.right_stick_x,
+                gamepad1.left_stick_x,
+                orientation.getYaw(AngleUnit.RADIANS),
+                true
+        );
 
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double humanAxial   = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
-        double humanLateral =  gamepad1.right_stick_x;
-        double yaw     =  gamepad1.left_stick_x;
-
-
-        double angle = -orientation.getYaw(AngleUnit.RADIANS);
-        double lateral = humanLateral * Math.cos(angle) - humanAxial * Math.sin(angle);
-        double axial = humanLateral * Math.sin(angle) + humanAxial * Math.cos(angle);
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower  /= max;
-            rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
-        }
         //imu stuff
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-
-        // This is test code:
-        //
-        // Uncomment the following code to test your motor directions.
-        // Each button should make the corresponding motor run FORWARD.
-        //   1) First get all the motors to take to correct positions on the robot
-        //      by adjusting your Robot Configuration if necessary.
-        //   2) Then make sure they run in the correct direction by modifying the
-        //      the setDirection() calls above.
-        // Once the correct motors move in the correct direction re-comment this code.
-/*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-*/
-
-        // Send calculated power to wheels
-        double scale = 0.5;
-        motor_fl.setPower(leftFrontPower * scale);
-        motor_fr.setPower(rightFrontPower * scale);
-        motor_bl.setPower(leftBackPower * scale);
-        motor_br.setPower(rightBackPower * scale);
-
-        // Show the elapsed game time and wheel power.
-        //telemetry.addData("Status", "Run Time: " + time.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
 
         telemetryTfod();
         telemetry.update();
