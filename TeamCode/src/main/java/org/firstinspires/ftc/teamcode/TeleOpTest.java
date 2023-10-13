@@ -39,6 +39,8 @@ public class TeleOpTest extends OpMode   {
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
     VisionPortal visionPortal;
+    double target_heading = 0;
+    double correction = 0;
 
 
 
@@ -117,18 +119,18 @@ public class TeleOpTest extends OpMode   {
     @Override
     public void loop() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-
+        double heading = orientation.getYaw(AngleUnit.DEGREES);
+        correction = target_heading - heading;
         // tell ftclib its inputs
         drivebase.driveFieldCentric(
                 -gamepad1.right_stick_y,
                 gamepad1.right_stick_x,
-                gamepad1.left_stick_x,
-                orientation.getYaw(AngleUnit.DEGREES)
+                correction / 180.0,
+                heading
         );
-
         //imu stuff
-        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-
+        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", heading);
+        telemetry.addData("correction","%2f Deg.(correction) ", correction);
         telemetryTfod();
         telemetry.update();
     }
