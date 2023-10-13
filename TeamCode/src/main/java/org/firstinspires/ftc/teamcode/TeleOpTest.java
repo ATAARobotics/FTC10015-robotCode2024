@@ -121,10 +121,11 @@ public class TeleOpTest extends OpMode   {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);
         correction = target_heading - heading;
+        correction = 0;
         // tell ftclib its inputs
         drivebase.driveFieldCentric(
-                -gamepad1.right_stick_y,
                 gamepad1.right_stick_x,
+                -gamepad1.right_stick_y,
                 correction / 180.0,
                 heading
         );
