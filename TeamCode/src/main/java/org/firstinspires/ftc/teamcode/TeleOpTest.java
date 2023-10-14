@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,7 +26,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import java.util.List;
 
 
-@TeleOp(name="Test:teleop", group="Opmode")
+@TeleOp(name="DriveMaster9000", group="Opmode")
 public class TeleOpTest extends OpMode   {
 
     public Motor motor_fl = null;
@@ -35,6 +36,7 @@ public class TeleOpTest extends OpMode   {
 
     MecanumDrive drivebase = null;
     IMU imu;
+    PIDController headingControl = null;
 
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
@@ -61,8 +63,10 @@ public class TeleOpTest extends OpMode   {
         motor_bl = new Motor(hardwareMap, "BL_Drive");
         motor_br = new Motor(hardwareMap, "BR_Drive");
 
+        headingControl = new PIDController(0.2, 0.0, 0.0);
         // using ftc-lib for driving
         drivebase = new MecanumDrive(motor_fl, motor_fr, motor_bl, motor_br);
+        drivebase.setMaxSpeed(0.5);
 
 
 
@@ -111,8 +115,8 @@ public class TeleOpTest extends OpMode   {
 
     @Override
     public void start() {
-    imu.resetYaw();
-
+        imu.resetYaw();
+        headingControl.setSetPoint(0.0);
     }
 
 
@@ -120,18 +124,18 @@ public class TeleOpTest extends OpMode   {
     public void loop() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);
-        correction = target_heading - heading;
-        correction = 0;
+        //correction = target_heading - heading;
+        correction = headingControl.calculate(heading);
         // tell ftclib its inputs
         drivebase.driveFieldCentric(
                 gamepad1.right_stick_x,
                 -gamepad1.right_stick_y,
-                correction / 180.0,
+                -correction , //gamepad1.left_stick_x,
                 heading
         );
         //imu stuff
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", heading);
-        telemetry.addData("correction","%2f Deg.(correction) ", correction);
+        telemetry.addData("correction","%2f Deg.(correction) %.2f", correction, (correction/180.0));
         telemetryTfod();
         telemetry.update();
     }
