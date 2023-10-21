@@ -193,7 +193,12 @@ public class TeleOpTest extends OpMode   {
 */
         // actual robot is 407mm square
         double INCHES_TO_MM = 0.03937008;
+        // move origin to bottom left
+        //pack.fieldOverlay().setTranslation(6*12, -6*12);
+        // do all other drawing in millimeters
         pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
+        // center the drawing in the robot
+        //pack.fieldOverlay().setTranslation(-203, 203);
         pack.fieldOverlay()
  //               .setFill("blue")
   //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
