@@ -52,9 +52,6 @@ public class TeleOpTest extends OpMode   {
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
     VisionPortal visionPortal;
-    double target_heading = 0;
-    double correction = 0;
-
 
 
     @Override
@@ -152,8 +149,7 @@ public class TeleOpTest extends OpMode   {
         driver.readButtons();
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double heading = orientation.getYaw(AngleUnit.DEGREES);
-        //correction = target_heading - heading;
-        correction = headingControl.calculate(heading);
+        double correction = headingControl.calculate(heading);
 
         if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
             headingControl.setSetPoint(0.0);
@@ -168,8 +164,10 @@ public class TeleOpTest extends OpMode   {
         // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
         if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
             drivebase.setMaxSpeed(0.85);
+            headingControl.setPID(0.03, 0.00, 0.001);
         } else {
             drivebase.setMaxSpeed(0.55);
+            headingControl.setPID(0.05, 0.00, 0.002);
         }
         // tell ftclib its inputs
         drivebase.driveFieldCentric(
@@ -183,18 +181,19 @@ public class TeleOpTest extends OpMode   {
 
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
-/*
+
         pack.put("heading", heading);
-        pack.put("target_heading", target_heading);
+        pack.put("target_heading", headingControl.getSetPoint());
         pack.put("parallel", parallel_encoder.getDistance());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
+        // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?
         pack = new TelemetryPacket();
-*/
+
         // actual robot is 407mm square
         double INCHES_TO_MM = 0.03937008;
         // move origin to bottom left
-        //pack.fieldOverlay().setTranslation(6*12, -6*12);
+        pack.fieldOverlay().setTranslation(-6*12, 6*12);
         // do all other drawing in millimeters
         pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
         // center the drawing in the robot
@@ -203,7 +202,7 @@ public class TeleOpTest extends OpMode   {
  //               .setFill("blue")
   //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
                 .setFill("red")
-                .fillRect(parallel_encoder.getDistance(), 0.0, 407, 407);
+                .fillRect(parallel_encoder.getDistance(), -407, 407, 407);
 
         //telemetryTfod();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
