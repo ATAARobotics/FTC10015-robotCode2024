@@ -65,7 +65,7 @@ public class TeleOpTest extends OpMode   {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 
         driver = new GamepadEx(gamepad1);
@@ -183,14 +183,22 @@ public class TeleOpTest extends OpMode   {
 
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
-
+/*
         pack.put("heading", heading);
         pack.put("target_heading", target_heading);
         pack.put("parallel", parallel_encoder.getDistance());
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
+        pack = new TelemetryPacket();
+*/
+        // actual robot is 407mm square
+        double INCHES_TO_MM = 0.03937008;
+        pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
         pack.fieldOverlay()
-                .setFill("blue")
-                .fillRect(-20, -20, 40, 40);
+ //               .setFill("blue")
+  //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
+                .setFill("red")
+                .fillRect(parallel_encoder.getDistance(), 0.0, 407, 407);
 
         //telemetryTfod();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
