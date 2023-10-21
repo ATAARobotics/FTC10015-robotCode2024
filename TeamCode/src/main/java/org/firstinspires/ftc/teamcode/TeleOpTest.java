@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -36,7 +39,11 @@ public class TeleOpTest extends OpMode   {
     public Motor motor_bl = null;
     public Motor motor_br = null;
 
+    // have to pretend our encoders are motors
+    public Motor parallel_encoder = null;
+
     public GamepadEx driver = null;
+    public GamepadEx operator = null;
 
     MecanumDrive drivebase = null;
     IMU imu;
@@ -58,7 +65,11 @@ public class TeleOpTest extends OpMode   {
 
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+
         driver = new GamepadEx(gamepad1);
+        operator = new GamepadEx(gamepad2);
 
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
@@ -68,6 +79,11 @@ public class TeleOpTest extends OpMode   {
         motor_fr = new Motor(hardwareMap, "FR_Drive");
         motor_bl = new Motor(hardwareMap, "BL_Drive");
         motor_br = new Motor(hardwareMap, "BR_Drive");
+
+        // 48mm wheel, 2000 ticks-per-rev
+        parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
+        parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
+        parallel_encoder.resetEncoder();
 
         // in "turbe" mode, 0.2 + 0.1 + 0.0 was oscilating a lot (but was good in non-turbo mode)
         headingControl = new PIDController(0.08, 0.05, 0.0);
@@ -164,12 +180,26 @@ public class TeleOpTest extends OpMode   {
                 heading
         );
         //imu stuff
-        telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", heading);
-        telemetry.addData("target","%2f target heading", target_heading);
+
+        // ftc-dashboard telemetry
+        TelemetryPacket pack = new TelemetryPacket();
+
+        pack.put("heading", heading);
+        pack.put("target_heading", target_heading);
+        pack.put("parallel", parallel_encoder.getDistance());
+
+        pack.fieldOverlay()
+                .setFill("blue")
+                .fillRect(-20, -20, 40, 40);
+
         //telemetryTfod();
-        telemetry.update();
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
+        //telemetry.update();
     }
 
+    private double mm_to_inches(double mm) {
+        return mm * 0.03937008;
+    }
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();

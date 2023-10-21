@@ -61,7 +61,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
         // FTCLib:
-        multiDexEnabled true
+        //multiDexEnabled true
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
