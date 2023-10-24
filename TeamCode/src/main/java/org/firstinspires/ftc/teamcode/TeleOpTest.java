@@ -33,7 +33,7 @@ import java.util.List;
 
 @TeleOp(name="DriveMaster9000", group="Opmode")
 public class TeleOpTest extends OpMode   {
-
+    public Odometry odo = null;
     public Motor motor_fl = null;
     public Motor motor_fr = null;
     public Motor motor_bl = null;
@@ -89,6 +89,7 @@ public class TeleOpTest extends OpMode   {
         drivebase.setMaxSpeed(0.6);
 
         //init_vision();
+        odo = new Odometry(hardwareMap);
     }
 
     public void init_vision() {
@@ -178,10 +179,10 @@ public class TeleOpTest extends OpMode   {
                 heading
         );
         //imu stuff
-
+        odo.update(heading,time);
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
-
+        pack.put("pos_y", odo.y_current);
         pack.put("heading", heading);
         pack.put("target_heading", headingControl.getSetPoint());
         pack.put("parallel", parallel_encoder.getDistance());
