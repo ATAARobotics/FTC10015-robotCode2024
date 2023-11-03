@@ -27,8 +27,33 @@ public class AutonomousOp extends OpMode {
     VisionPortal visionPortal;
 
     AutonomousOp() {
-
     }
+
+    /*
+    notes:
+    - want to do a series of actions
+    - encoded as a list, maybe?
+    - first: wait until Tfod detects the team element / pixel (figure out "position")
+    - drive to board
+    - put pixel on board (yellow)
+    - drive to "correct position", spit out pixel (purple)
+    - drive to stack, suck in two pixels
+    - drive to board, put pixels on
+    - repeat above if enough time remains (i.e "if >5 seconds left, go get more"?)
+
+
+    each action will want an "update" method:
+      - giving it a chance to give commands to Drive or Arm
+      - update its own state
+    each action needs a way to signal "I am done"
+    overall control loop looks at:
+      - are we "nearly out of time"? (yes: drive to board)
+      - do we have a current action? (no: pop one from list)
+      - is the current action done? (yes: pop a new one from list)
+
+    all the "drive to" actions should use a single lane -- so they should be a "two part"
+    action that does the horizontal motion first, then the north/south motion (then any remaining east/west?)
+     */
 
     @Override
     public void init() {
