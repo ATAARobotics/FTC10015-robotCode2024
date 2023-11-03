@@ -3,20 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -31,8 +26,8 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import java.util.List;
 
 
-@TeleOp(name="DriveMaster9000", group="Opmode")
-public class TeleOpTest extends OpMode   {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="DriveMaster9000", group="Opmode")
+public class TeleOp extends OpMode   {
     public Odometry odo = null;
     public Motor motor_fl = null;
     public Motor motor_fr = null;
@@ -44,6 +39,8 @@ public class TeleOpTest extends OpMode   {
 
     public GamepadEx driver = null;
     public GamepadEx operator = null;
+
+    BNO055IMU arm_imu = null;
 
     MecanumDrive drivebase = null;
     IMU imu;
@@ -71,6 +68,9 @@ public class TeleOpTest extends OpMode   {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
+        //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         motor_fl = new Motor(hardwareMap, "FL_Drive");
         motor_fr = new Motor(hardwareMap, "FR_Drive");
@@ -179,10 +179,11 @@ public class TeleOpTest extends OpMode   {
                 heading
         );
         //imu stuff
-        odo.update(heading,time);
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
-        pack.put("pos_y", odo.y_current);
+        pack.put("arm_yaw", arm_imu.getAngularOrientation());
+        pack.put("pos_y", odo.position_y());
+        pack.put("pos_x", odo.position_x());
         pack.put("heading", heading);
         pack.put("target_heading", headingControl.getSetPoint());
         pack.put("parallel", parallel_encoder.getDistance());
@@ -203,7 +204,7 @@ public class TeleOpTest extends OpMode   {
  //               .setFill("blue")
   //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
                 .setFill("red")
-                .fillRect(parallel_encoder.getDistance(), -407, 407, 407);
+                .fillRect(odo.position_y() - (407/2), odo.position_x() - (407/2), 407, 407);
 
         //telemetryTfod();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
