@@ -28,23 +28,13 @@ import java.util.List;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="DriveMaster9000", group="Opmode")
 public class TeleOp extends OpMode   {
-    public Odometry odo = null;
-    public Motor motor_fl = null;
-    public Motor motor_fr = null;
-    public Motor motor_bl = null;
-    public Motor motor_br = null;
-
-    // have to pretend our encoders are motors
-    public Motor parallel_encoder = null;
+    public Drive drive = null;
 
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
     BNO055IMU arm_imu = null;
 
-    MecanumDrive drivebase = null;
-    IMU imu;
-    PIDController headingControl = null;
 
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
@@ -53,43 +43,16 @@ public class TeleOp extends OpMode   {
 
     @Override
     public void init() {
-        imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
         //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        drive = new Drive(hardwareMap);
 
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
 
-        // Now initialize the IMU with this mounting orientation
-        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-
         //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
         //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        motor_fl = new Motor(hardwareMap, "FL_Drive");
-        motor_fr = new Motor(hardwareMap, "FR_Drive");
-        motor_bl = new Motor(hardwareMap, "BL_Drive");
-        motor_br = new Motor(hardwareMap, "BR_Drive");
-
-        // 48mm wheel, 2000 ticks-per-rev
-        parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
-        parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
-        parallel_encoder.resetEncoder();
-
-        // in "turbe" mode, 0.2 + 0.1 + 0.0 was oscilating a lot (but was good in non-turbo mode)
-        headingControl = new PIDController(0.08, 0.05, 0.0);
-        // using ftc-lib for driving
-        drivebase = new MecanumDrive(motor_fl, motor_fr, motor_bl, motor_br);
-        drivebase.setMaxSpeed(0.6);
-
         //init_vision();
-        odo = new Odometry(hardwareMap);
     }
 
     public void init_vision() {
@@ -140,53 +103,24 @@ public class TeleOp extends OpMode   {
 
     @Override
     public void start() {
-        imu.resetYaw();
-        headingControl.setSetPoint(0.0);
+        drive.start();
     }
-
 
     @Override
     public void loop() {
         driver.readButtons();
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double heading = orientation.getYaw(AngleUnit.DEGREES);
-        double correction = headingControl.calculate(heading);
 
-        if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-            headingControl.setSetPoint(0.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            headingControl.setSetPoint(90.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            headingControl.setSetPoint(-90.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-            headingControl.setSetPoint(0.0);
-        }
+        drive.humanInputs(driver);
+        drive.loop(time);
 
-        // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
-        if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            drivebase.setMaxSpeed(0.85);
-            headingControl.setPID(0.03, 0.00, 0.001);
-        } else {
-            drivebase.setMaxSpeed(0.55);
-            headingControl.setPID(0.05, 0.00, 0.002);
-        }
-        // tell ftclib its inputs
-        drivebase.driveFieldCentric(
-                driver.getRightX(),
-                -driver.getRightY(),
-               /// driver.getLeftX(),
-                -correction , //gamepad1.left_stick_x,
-                heading
-        );
         //imu stuff
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
         pack.put("arm_yaw", arm_imu.getAngularOrientation());
-        pack.put("pos_y", odo.position_y());
-        pack.put("pos_x", odo.position_x());
-        pack.put("heading", heading);
-        pack.put("target_heading", headingControl.getSetPoint());
-        pack.put("parallel", parallel_encoder.getDistance());
+        pack.put("pos_y", drive.odo.position_y());
+        pack.put("pos_x", drive.odo.position_x());
+        pack.put("heading", drive.getHeading());
+        pack.put("target_heading", drive.headingControl.getSetPoint());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?
@@ -204,7 +138,7 @@ public class TeleOp extends OpMode   {
  //               .setFill("blue")
   //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
                 .setFill("red")
-                .fillRect(odo.position_y() - (407/2), odo.position_x() - (407/2), 407, 407);
+                .fillRect(drive.odo.position_y() - (407/2), drive.odo.position_x() - (407/2), 407, 407);
 
         //telemetryTfod();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
