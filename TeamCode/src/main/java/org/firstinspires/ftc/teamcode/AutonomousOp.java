@@ -14,7 +14,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 @Autonomous(name="Autonomous9000", group="Autonomous")
-public class AcAutonomousOp extends OpMode {
+public class AutonomousOp extends OpMode {
 
     private Drive drive = null;
     private FtcDashboard dashboard;
