@@ -26,8 +26,8 @@ public class Arm {
         arm.resetEncoder();
         arm_control = new PIDController(1,0,0);
         slide = new MotorEx(hm,"slide");
-        wrist = new SimpleServo (hm,"wrist");
-        claw = new SimpleServo(hm,"claw");
+        wrist = new SimpleServo(hm,"wrist", 0, 360);
+        claw = new SimpleServo(hm,"claw", 0, 360);
     }
     public void intake(){
         state = "intake";

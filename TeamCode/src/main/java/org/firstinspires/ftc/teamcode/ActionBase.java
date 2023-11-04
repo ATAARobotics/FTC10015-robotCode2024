@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class ActionBase {
+public abstract class ActionBase {
 
     abstract boolean update(double time, Drive drive);
 }
