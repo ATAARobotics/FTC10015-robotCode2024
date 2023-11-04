@@ -49,6 +49,7 @@ public class TeleOp extends OpMode   {
 
     @Override
     public void start() {
+        drive.imu.resetYaw();
         drive.start();
     }
 

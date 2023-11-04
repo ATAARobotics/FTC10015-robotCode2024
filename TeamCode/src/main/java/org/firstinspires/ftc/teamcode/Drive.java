@@ -89,7 +89,6 @@ public class Drive {
         // called once per game
         // VERY IMPORTANT: do NOT call this from TeleOp in normal cases!
         // (because autonomous will have done it already during its phase)
-        imu.resetYaw();
         headingControl.setSetPoint(0.0);
     }
 

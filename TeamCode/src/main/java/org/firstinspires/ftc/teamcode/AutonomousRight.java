@@ -26,11 +26,14 @@ public class AutonomousRight extends OpMode {
     @Override
     public void start(){
         drive.start();
+        drive.imu.resetYaw();
     }
 
     @Override
     public void loop() {
-        if (time < 3.0) {
+        if (time < 1.5) {
+            drive.robotInputs(0.0, 0.5);
+        } else if (time < 5.0) {
             drive.robotInputs(0.5, 0.0);
         } else {
             drive.robotInputs(0, 0);
