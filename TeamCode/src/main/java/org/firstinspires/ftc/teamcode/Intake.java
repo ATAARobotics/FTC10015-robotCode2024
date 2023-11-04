@@ -2,14 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
 
+    ServoEx intake_main = null;
     MotorEx suck = null;
     public Intake(HardwareMap hm){
         suck = new MotorEx(hm, "suck");
+        intake_main = new SimpleServo(hm, "intake", 0, 360);
     }
 
     void update(GamepadEx pad) {

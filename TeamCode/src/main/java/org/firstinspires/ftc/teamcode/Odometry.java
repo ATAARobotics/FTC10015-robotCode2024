@@ -18,7 +18,7 @@ public class Odometry {
         is_paused = false;
         par = new MotorEx(hardware,"par");
         par.resetEncoder();
-        perp = new MotorEx(hardware, "perp");
+        perp = new MotorEx(hardware, "suck"); // reusing intake encoder
         perp.resetEncoder();
     }
     public double position_y(){
