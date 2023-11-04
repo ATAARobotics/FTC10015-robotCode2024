@@ -27,7 +27,7 @@ public class Arm {
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
         arm.resetEncoder();
-        arm_control = new PIDController(1,0,0);
+        arm_control = new PIDController(.01,0,0);
         // slide = new MotorEx(hm,"slide");
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
@@ -35,22 +35,38 @@ public class Arm {
     }
     public void intake(){
         state = "intake";
+        arm_control.setSetPoint(0);
     }
     public void resting(){
         state = "resting";
+        arm_control.setSetPoint(-65);
     }
     public void scoring(){
         state = "scoring";
+        arm_control.setSetPoint(-360);
     }
 
     public void update(GamepadEx game){
-        if (game.isDown(GamepadKeys.Button.LEFT_BUMPER)){
-            arm.set(0.5);
-        } else if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
-            arm.set(-0.5);
-        } else {
-            arm.set(0.0);
+        if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+            if (state == "intake") {
+                resting();
+            } else if (state == "scoring") {
+                // nothing, can't go past scoring
+            } else if (state == "resting") {
+                scoring();
+            }
+        } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+            if (state == "intake") {
+                // nothing, intake is lowest
+            } else if (state == "scoring") {
+                resting();
+            } else if (state == "resting"){
+                intake();
+            }
         }
+
+        double move = arm_control.calculate(arm_main.getCurrentPosition());
+        arm.set(move);
         intake.update(game);
     }
 }

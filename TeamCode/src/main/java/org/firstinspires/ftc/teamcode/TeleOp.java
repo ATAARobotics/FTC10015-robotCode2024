@@ -55,6 +55,7 @@ public class TeleOp extends OpMode   {
     @Override
     public void loop() {
         driver.readButtons();
+        operator.readButtons();
 
         drive.humanInputs(driver);
         drive.loop(time);
@@ -69,6 +70,7 @@ public class TeleOp extends OpMode   {
         pack.put("heading", drive.getHeading());
         pack.put("target_heading", drive.headingControl.getSetPoint());
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
+        pack.put("intake_angle", arm.intake.intake_main.getAngle());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?

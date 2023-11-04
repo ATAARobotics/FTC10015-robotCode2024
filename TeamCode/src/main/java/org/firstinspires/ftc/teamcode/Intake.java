@@ -25,5 +25,10 @@ public class Intake {
             suck.set(0.0);
         }
 
+        if (pad.wasJustPressed(GamepadKeys.Button.A)) {
+            intake_main.rotateByAngle(1);
+        } else if (pad.wasJustPressed(GamepadKeys.Button.B)) {
+            intake_main.rotateByAngle(-1);
+        }
     }
 }
