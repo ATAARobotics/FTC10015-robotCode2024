@@ -27,7 +27,7 @@ public class Drive {
     PIDController headingControl = null;
 
     // have to pretend our encoders are motors
-    public Motor parallel_encoder = null;
+   // public Motor parallel_encoder = null;
 
     // inputs into the drivebase, from human or auto
     private double forward = 0.0;
@@ -50,9 +50,9 @@ public class Drive {
         motor_br = new Motor(hardwareMap, "BR_Drive");
 
         // 48mm wheel, 2000 ticks-per-rev
-        parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
-        parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
-        parallel_encoder.resetEncoder();
+        //parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
+        //parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
+        //parallel_encoder.resetEncoder();
 
         // in "turbe" mode, 0.2 + 0.1 + 0.0 was oscilating a lot (but was good in non-turbo mode)
         headingControl = new PIDController(0.08, 0.05, 0.0);

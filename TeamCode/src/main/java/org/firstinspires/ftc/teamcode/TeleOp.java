@@ -29,7 +29,7 @@ import java.util.List;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="DriveMaster9000", group="Opmode")
 public class TeleOp extends OpMode   {
     public Drive drive = null;
-
+    public Arm arm = null;
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
@@ -41,6 +41,7 @@ public class TeleOp extends OpMode   {
         drive = new Drive(hardwareMap);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
+        arm = new Arm(hardwareMap);
 
         //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
         //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
@@ -57,6 +58,7 @@ public class TeleOp extends OpMode   {
 
         drive.humanInputs(driver);
         drive.loop(time);
+        arm.update(operator);
 
         //imu stuff
         // ftc-dashboard telemetry
