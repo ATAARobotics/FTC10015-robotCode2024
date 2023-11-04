@@ -28,7 +28,7 @@ public class Arm {
         arm = new MotorGroup(arm_main,arm_follower);
         arm.resetEncoder();
         arm_control = new PIDController(1,0,0);
-        slide = new MotorEx(hm,"slide");
+        // slide = new MotorEx(hm,"slide");
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
         intake = new Intake(hm);
@@ -46,9 +46,10 @@ public class Arm {
     public void update(GamepadEx game){
         if (game.isDown(GamepadKeys.Button.LEFT_BUMPER)){
             arm.set(0.5);
-        }
-        if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
+        } else if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
             arm.set(-0.5);
+        } else {
+            arm.set(0.0);
         }
         intake.update(game);
     }

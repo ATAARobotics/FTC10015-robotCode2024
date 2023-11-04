@@ -21,6 +21,8 @@ public class Intake {
             suck.set(0.5);
         } else if (pad.isDown(GamepadKeys.Button.B)) {
             suck.set(-0.5);
+        } else {
+            suck.set(0.0);
         }
 
     }
