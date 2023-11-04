@@ -44,7 +44,7 @@ public class Arm {
         claw.setPosition(1.0);
         arm_control.setSetPoint(0);
         wristp = 0.8;
-        clawp = 0.6;
+        clawp = 0.7;
     }
     public void resting(){
         state = "resting";
@@ -54,7 +54,7 @@ public class Arm {
     public void scoring(){
         state = "scoring";
         arm_control.setSetPoint(-360);
-        wristp = 0.3;
+        wristp = 0.8;
     }
 
     public void update(GamepadEx game){
@@ -88,16 +88,28 @@ public class Arm {
             }
         }
 
+        if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+            wristp -= 0.1;
+            if (wristp < 0.0) {
+                wristp = 1.0;
+            }
+        } else if (game.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+            wristp += 0.1;
+            if (wristp > 1.0) {
+                wristp = 0.0;
+            }
+        }
+
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
             if (state == "intake") {
-                clawp = 0.35; // closed
+                clawp = 0.5; // closed
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
             if (state == "intake") {
-                clawp = 0.6; // open
+                clawp = 0.7; // open
             } else if (state == "scoring") {
-                clawp = 0.6; // open
+                clawp = 0.7; // open
             }
         }
 
