@@ -69,7 +69,7 @@ public class TeleOp extends OpMode   {
         pack.put("pos_x", drive.odo.position_x());
         pack.put("heading", drive.getHeading());
         pack.put("target_heading", drive.headingControl.getSetPoint());
-        pack.put("arm_pos", arm.arm_main.getCurrentPosition());
+        pack.put("arm_pos", arm.arm_main.get());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 

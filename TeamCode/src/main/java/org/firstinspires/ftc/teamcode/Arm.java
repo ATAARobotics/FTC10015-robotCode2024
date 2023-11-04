@@ -39,7 +39,7 @@ public class Arm {
     }
     public void resting(){
         state = "resting";
-        arm_control.setSetPoint(-65);
+        arm_control.setSetPoint(-88);
     }
     public void scoring(){
         state = "scoring";
