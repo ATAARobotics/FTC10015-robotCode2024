@@ -15,8 +15,11 @@ public class Arm {
     MotorGroup arm = null;
     PIDController arm_control = null;
     MotorEx slide = null;
+
     ServoEx wrist = null;
     ServoEx claw = null;
+
+    Intake intake = null;
     public String state;
     public Arm(HardwareMap hm){
         state = "intake";
@@ -28,6 +31,7 @@ public class Arm {
         slide = new MotorEx(hm,"slide");
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
+        intake = new Intake(hm);
     }
     public void intake(){
         state = "intake";
@@ -46,6 +50,6 @@ public class Arm {
         if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
             arm.set(-0.5);
         }
-
+        intake.update(game);
     }
 }
