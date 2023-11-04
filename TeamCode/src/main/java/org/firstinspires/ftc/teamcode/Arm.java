@@ -23,6 +23,7 @@ public class Arm {
     public String state;
 
     double wristp = 0.0;
+    double clawp = 0.0;
 
     public Arm(HardwareMap hm){
         state = "intake";
@@ -88,9 +89,23 @@ public class Arm {
                 wristp = 0.0;
             }
         }
-        wrist.setPosition(wristp);
 
-            double move = arm_control.calculate(arm_main.getCurrentPosition());
+        // A is close, B is open
+        if (game.wasJustPressed(GamepadKeys.Button.A)) {
+            if (state == "intake") {
+                clawp = 0.3;
+            }
+        } else if (game.wasJustPressed(GamepadKeys.Button.B)){
+            if (state == "intake") {
+                clawp = 0.5;
+            } else if (state == "scoring") {
+                clawp = 0.3;
+            }
+        }
+
+        wrist.setPosition(wristp);
+        claw.setPosition(clawp);
+        double move = arm_control.calculate(arm_main.getCurrentPosition());
         arm.set(move);
         intake.update(game);
     }
