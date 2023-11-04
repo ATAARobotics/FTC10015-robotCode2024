@@ -49,6 +49,14 @@ public class Drive {
         motor_bl = new Motor(hardwareMap, "BL_Drive");
         motor_br = new Motor(hardwareMap, "BR_Drive");
 
+        /*
+        motor_fl.setInverted(true);
+        motor_fr.setInverted(true);
+        motor_bl.setInverted(true);
+        motor_br.setInverted(true);
+
+         */
+
         if (false) {
             motor_fl.setRunMode(Motor.RunMode.VelocityControl);
             motor_fr.setRunMode(Motor.RunMode.VelocityControl);
@@ -87,6 +95,10 @@ public class Drive {
 
     public double getHeading() { return heading; }
 
+    public void robotInputs(double d_strafe, double d_forward){
+        strafe = d_strafe;
+        forward = d_forward;
+    }
     public void humanInputs(GamepadEx driver){
         // this method called ONCE per loop from teleop controller
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -107,10 +119,10 @@ public class Drive {
         // turbo mode or not
         // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
         if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            drivebase.setMaxSpeed(0.85);
+            drivebase.setMaxSpeed(0.95);
             headingControl.setPID(0.03, 0.00, 0.001);
         } else {
-            drivebase.setMaxSpeed(0.55);
+            drivebase.setMaxSpeed(0.65);
             headingControl.setPID(0.05, 0.00, 0.002);
         }
 
@@ -123,6 +135,9 @@ public class Drive {
 
         // tell ftclib its inputs
         drivebase.driveFieldCentric(strafe, forward, turn, heading);
+
+        // if we want tank-drive for some reason:
+        //drivebase.driveRobotCentric(strafe, forward, turn);
     }
 
 }

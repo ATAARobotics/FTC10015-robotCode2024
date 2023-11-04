@@ -33,5 +33,14 @@ public class Intake {
         } else {
             intake_main.setPosition(0.5);
         }
+
+        // X + Y for forward/back suckage
+        if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)){
+            suck.set(1.0);
+        } else if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)){
+            suck.set(-1.0);
+        } else {
+            suck.set(0.0);
+        }
     }
 }

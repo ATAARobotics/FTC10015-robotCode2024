@@ -75,7 +75,7 @@ public class Arm {
                 intake();
             }
         }
-
+/*
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             clawp -= 0.1;
             if (clawp < 0.0) {
@@ -99,7 +99,7 @@ public class Arm {
                 wristp = 0.0;
             }
         }
-
+*/
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
             if (state == "intake") {
@@ -107,9 +107,9 @@ public class Arm {
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
             if (state == "intake") {
-                clawp = 0.7; // open
+                clawp = 0.9; // open
             } else if (state == "scoring") {
-                clawp = 0.7; // open
+                clawp = 0.9; // open
             }
         }
 
