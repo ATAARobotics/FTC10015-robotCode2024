@@ -69,8 +69,9 @@ public class TeleOp extends OpMode   {
         pack.put("pos_x", drive.odo.position_x());
         pack.put("heading", drive.getHeading());
         pack.put("target_heading", drive.headingControl.getSetPoint());
-        pack.put("arm_pos", arm.arm_main.get());
+        pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
+        pack.put("wrist", arm.wristp);
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?
