@@ -14,6 +14,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.List;
 
 @Autonomous(name="Autonomous9000", group="Autonomous")
+//@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="AutoTele9000", group="Opmode")
 public class AutonomousOp extends OpMode {
 
     private Drive drive = null;
@@ -23,11 +24,9 @@ public class AutonomousOp extends OpMode {
     private ActionBase current_action = null;
 
     // copied from ConceptTensorFlowObjectDetection example
-    private TfodProcessor tfod;
-    VisionPortal visionPortal;
+    //private TfodProcessor tfod;
+    //VisionPortal visionPortal;
 
-    AutonomousOp() {
-    }
 
     /*
     notes:
@@ -59,8 +58,7 @@ public class AutonomousOp extends OpMode {
     public void init() {
         drive = new Drive(hardwareMap);
 
-        if (false) {
-            // vision (from the example code)
+/*            // vision (from the example code)
             // Create the TensorFlow processor by using a builder.
             tfod = new TfodProcessor.Builder()
                     // Use setModelAssetName() if the TF Model is built in as an asset.
@@ -101,17 +99,18 @@ public class AutonomousOp extends OpMode {
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
-        }
+*/
     }
 
     @Override
     public void start(){
         drive.start();
-        current_action = new AutoMoveTo(120, 120, time+6);
+        current_action = new AutoMoveTo(120, 120, time+20);
     }
 
     @Override
     public void loop() {
+        /*
         if (false) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
@@ -129,11 +128,13 @@ public class AutonomousOp extends OpMode {
 
             telemetry.update();
         }
+        */
         if (current_action != null) {
-            boolean rtn = current_action.update(time, drive);
+            boolean rtn = current_action.update(time, drive, telemetry);
             if (rtn) {
                 current_action = null;
             }
         }
+        drive.loop(time);
     }
 }

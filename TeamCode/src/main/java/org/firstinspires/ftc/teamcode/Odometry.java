@@ -22,10 +22,10 @@ public class Odometry {
         perp.resetEncoder();
     }
     public double position_y(){
-        return y_last + par.getCurrentPosition();
+        return (y_last + par.getCurrentPosition()) * ticks_to_mm;
     }
     public double position_x(){
-        return x_last + perp.getCurrentPosition();
+        return (x_last + perp.getCurrentPosition()) * ticks_to_mm;
     }
 
     public void pause(double heading){
