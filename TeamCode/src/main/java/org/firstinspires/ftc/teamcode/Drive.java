@@ -49,6 +49,20 @@ public class Drive {
         motor_bl = new Motor(hardwareMap, "BL_Drive");
         motor_br = new Motor(hardwareMap, "BR_Drive");
 
+        if (false) {
+            motor_fl.setRunMode(Motor.RunMode.VelocityControl);
+            motor_fr.setRunMode(Motor.RunMode.VelocityControl);
+            motor_bl.setRunMode(Motor.RunMode.VelocityControl);
+            motor_br.setRunMode(Motor.RunMode.VelocityControl);
+            double kp = 0.3;
+            double ki = 0.01;
+            double kd = 0.01;
+            motor_fl.setVeloCoefficients(kp, ki, kd);
+            motor_fr.setVeloCoefficients(kp, ki, kd);
+            motor_bl.setVeloCoefficients(kp, ki, kd);
+            motor_br.setVeloCoefficients(kp, ki, kd);
+        }
+
         // 48mm wheel, 2000 ticks-per-rev
         //parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
         //parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
