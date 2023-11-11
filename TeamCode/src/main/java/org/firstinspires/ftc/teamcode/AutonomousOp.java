@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.util.LinkedList;
 import java.util.List;
 
 //@Autonomous(name="Autonomous9000", group="Autonomous")
@@ -22,6 +23,7 @@ public class AutonomousOp extends OpMode {
 
     // where we think the team element is
     private int position = -1;
+    private LinkedList<ActionBase> actions = null;
     private ActionBase current_action = null;
 
     GamepadEx control = null;
@@ -62,7 +64,11 @@ public class AutonomousOp extends OpMode {
         drive = new Drive(hardwareMap);
         control = new GamepadEx(gamepad1);
 
-        current_action = new ActionMove(-40, 0);
+        actions = new LinkedList<ActionBase>();
+        actions.add(new ActionMove(-400, 0));
+        actions.add(new ActionMove(-400, 400));
+        actions.add(new ActionMove(0, 400));
+        actions.add(new ActionMove(0, 0));
 
 /*            // vision (from the example code)
             // Create the TensorFlow processor by using a builder.
@@ -111,7 +117,6 @@ public class AutonomousOp extends OpMode {
     @Override
     public void start(){
         drive.start();
-        current_action = new ActionMove(-100, 0);
     }
 
     @Override
@@ -139,6 +144,11 @@ public class AutonomousOp extends OpMode {
             boolean rtn = current_action.update(time, drive, telemetry);
             if (rtn) {
                 current_action = null;
+            }
+        }
+        if (current_action == null) {
+            if (actions.size() > 0) {
+                current_action = actions.removeFirst();
             }
         }
         drive.loop(time);

@@ -13,8 +13,10 @@ public class ActionMove extends ActionBase {
     PIDController control_y = null;
 
     ActionMove(double x, double y) {
-        control_x = new PIDController(0.05, 0,0.1);
-        control_y = new PIDController(0.05, 0, 0.1);
+        control_x = new PIDController(0.05, 0,0.0);
+        control_y = new PIDController(0.05, 0, 0.0);
+        control_x.setTolerance(1);
+        control_y.setTolerance(1);
         set_target(x, y);
     }
 
@@ -32,8 +34,9 @@ public class ActionMove extends ActionBase {
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("at_target", at_target(drive));
-        //drive.robotInputs(-strafe, forward);
-        return false;
+        drive.robotInputs(strafe, forward);
+        //return false;
+        return at_target(drive);
     }
 
     public boolean at_target(Drive drive) {
