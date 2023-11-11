@@ -57,7 +57,7 @@ public class Arm {
         wristp = 0.8;
     }
 
-    public void update(GamepadEx game){
+    public void update(double time, GamepadEx game){
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
             if (state == "intake") {
                 resting();
@@ -117,6 +117,6 @@ public class Arm {
         claw.setPosition(clawp);
         double move = arm_control.calculate(arm_main.getCurrentPosition());
         arm.set(move);
-        intake.update(game);
+        intake.update(time, game);
     }
 }

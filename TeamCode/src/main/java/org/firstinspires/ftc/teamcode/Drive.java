@@ -129,10 +129,10 @@ public class Drive {
         // turbo mode or not
         // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
         if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            drivebase.setMaxSpeed(0.95);
+            drivebase.setMaxSpeed(0.80);
             headingControl.setPID(0.03, 0.00, 0.001);
         } else {
-            drivebase.setMaxSpeed(0.65);
+            drivebase.setMaxSpeed(0.50);
             headingControl.setPID(0.05, 0.00, 0.002);
         }
 
@@ -148,8 +148,11 @@ public class Drive {
         if (headingControl.getSetPoint() == 180.0) {
             // "south" is special because it's around the 180/-180 toggle-point
             double h = heading;
+            // okay so if imu heading is actually -175 then we want to pretend
+            // the heading is 185 (for example) to get right "correction" out of the
+            // PID controller
             if (h < 0.0) {
-                h += (h + 180);
+                h = 180 + (heading + 180);
             }
             double correction = headingControl.calculate(h);
             turn = -correction;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -20,6 +21,8 @@ import java.util.List;
 public class AutonomousOp extends OpMode {
 
     private Drive drive = null;
+    private Intake intake = null;
+    private Arm arm = null;
 
     // where we think the team element is
     private int position = -1;
@@ -29,8 +32,8 @@ public class AutonomousOp extends OpMode {
     GamepadEx control = null;
 
     // copied from ConceptTensorFlowObjectDetection example
-    //private TfodProcessor tfod;
-    //VisionPortal visionPortal;
+    private TfodProcessor tfod;
+    VisionPortal visionPortal;
 
 
     /*
@@ -62,17 +65,22 @@ public class AutonomousOp extends OpMode {
     @Override
     public void init() {
         drive = new Drive(hardwareMap);
+        intake = new Intake(hardwareMap);
+        arm = new Arm(hardwareMap);
         control = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        actions.add(new ActionMove(-400, 0));
-        actions.add(new ActionMove(-400, 400));
-        actions.add(new ActionMove(0, 400));
-        actions.add(new ActionMove(0, 0));
+        // from start position: 17 inches forward, 6.5 inches right
+        //actions.add(new ActionMove(165, 431));
+        //actions.add(new ActionMove(400, 400));
 
-/*            // vision (from the example code)
-            // Create the TensorFlow processor by using a builder.
-            tfod = new TfodProcessor.Builder()
+        // move to center lane, then to go board
+        actions.add(new ActionMove(0, 666));
+        actions.add(new ActionMove(-1200, 666));
+
+        // vision (from the example code)
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
                     // Use setModelAssetName() if the TF Model is built in as an asset.
                     // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                     //.setModelAssetName(TFOD_MODEL_ASSET)
@@ -85,12 +93,12 @@ public class AutonomousOp extends OpMode {
                     .build();
 
             // Create the vision portal by using a builder.
-            VisionPortal.Builder builder = new VisionPortal.Builder();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
 
             // Set the camera (webcam vs. built-in RC phone camera).
-            builder.setCamera(hardwareMap.get(WebcamName.class, "webcam"));
-            builder.setCameraResolution(new Size(640, 480));
-            //builder.enableCameraMonitoring(true);
+        builder.setCamera(hardwareMap.get(WebcamName.class, "cam_1"));
+        builder.setCameraResolution(new Size(640, 480));
+        //builder.enableCameraMonitoring(true);
 
             // Set the stream format; MJPEG uses less bandwidth than default YUY2.
             //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
@@ -101,28 +109,27 @@ public class AutonomousOp extends OpMode {
             //builder.setAutoStopLiveView(false);
 
             // Set and enable the processor.
-            builder.addProcessor(tfod);
+        builder.addProcessor(tfod);
 
             // Build the Vision Portal, using the above settings.
-            visionPortal = builder.build();
+        visionPortal = builder.build();
 
             // Set confidence threshold for TFOD recognitions, at any time.
             //tfod.setMinResultConfidence(0.75f);
 
             // Disable or re-enable the TFOD processor at any time.
             //visionPortal.setProcessorEnabled(tfod, true);
-*/
     }
 
     @Override
     public void start(){
         drive.start();
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
     @Override
     public void loop() {
-        /*
-        if (false) {
+        if (true) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
 
@@ -139,9 +146,11 @@ public class AutonomousOp extends OpMode {
 
             telemetry.update();
         }
-        */
+
+        TelemetryPacket pack = new TelemetryPacket();
+
         if (current_action != null) {
-            boolean rtn = current_action.update(time, drive, telemetry);
+            boolean rtn = current_action.update(time, drive, intake, arm, telemetry, pack);
             if (rtn) {
                 current_action = null;
             }
@@ -151,6 +160,32 @@ public class AutonomousOp extends OpMode {
                 current_action = actions.removeFirst();
             }
         }
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
+
+        pack = new TelemetryPacket();
+
+        // actual robot is 407mm square
+        double INCHES_TO_MM = 0.03937008;
+
+        // origin to start position (XXX overridable method for this?)
+        pack.fieldOverlay().setTranslation(-6*12, 4*12);
+
+        // do all other drawing in millimeters
+        pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
+        pack.fieldOverlay().setRotation(-Math.toRadians(90));
+        // center the drawing in the robot
+        //pack.fieldOverlay().setTranslation(-203, 203);
+        pack.fieldOverlay()
+                .setFill("green")
+                .fillCircle(0.0, 0.0, 2.0)
+                .setFill("red")
+                .fillRect(drive.odo.position_y() - (407/2), drive.odo.position_x() - (407/2), 407, 407);
+
+        if (current_action != null) {
+            current_action.draw_field(pack);
+        }
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
+
         drive.loop(time);
         telemetry.update();
     }

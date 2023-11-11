@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,10 +14,10 @@ public class ActionMove extends ActionBase {
     PIDController control_y = null;
 
     ActionMove(double x, double y) {
-        control_x = new PIDController(0.05, 0,0.0);
-        control_y = new PIDController(0.05, 0, 0.0);
-        control_x.setTolerance(1);
-        control_y.setTolerance(1);
+        control_x = new PIDController(0.015, 0.0002,0);
+        control_y = new PIDController(0.015, 0.0002, 0);
+        control_x.setTolerance(4);
+        control_y.setTolerance(4);
         set_target(x, y);
     }
 
@@ -26,7 +27,7 @@ public class ActionMove extends ActionBase {
         control_x.setSetPoint(target_x);
         control_y.setSetPoint(target_y);
     }
-    public boolean update(double time, Drive drive, Telemetry telemetry) {
+    public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         double strafe = control_x.calculate(drive.odo.position_x());
         double forward = control_y.calculate(drive.odo.position_y());
         telemetry.addData("strafe", strafe);
@@ -34,9 +35,25 @@ public class ActionMove extends ActionBase {
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("at_target", at_target(drive));
+
+        pack.put("strafe", strafe);
+        pack.put("forward", forward);
+        pack.put("x", drive.odo.position_x());
+        pack.put("y", drive.odo.position_y());
+        pack.put("at_target", at_target(drive));
+
+        if (at_target(drive)) {
+            drive.robotInputs(0, 0);
+            return true;
+        }
         drive.robotInputs(strafe, forward);
-        //return false;
-        return at_target(drive);
+        return false;
+    }
+
+    public void draw_field(TelemetryPacket pack) {
+        pack.fieldOverlay()
+                .setFill("blue")
+                .fillCircle(target_x, target_y, 2.0);
     }
 
     public boolean at_target(Drive drive) {
