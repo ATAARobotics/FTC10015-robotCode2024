@@ -97,14 +97,24 @@ public class Drive {
     public void robotInputs(double d_strafe, double d_forward){
         strafe = d_strafe;
         forward = d_forward;
+        headingLock();
     }
     public void humanInputs(GamepadEx driver){
         // this method called ONCE per loop from teleop controller
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        heading = orientation.getYaw(AngleUnit.DEGREES);
-        double correction = headingControl.calculate(heading);
 
-        // heading-lock from DPAD
+        // heading-lock from right joystick
+        if (driver.getLeftX() < -0.5) {
+            headingControl.setSetPoint(90.0); // west
+        } else if (driver.getLeftX() > 0.5) {
+            headingControl.setSetPoint(-90.0); // east
+        } else if (driver.getLeftY() < -0.5) {
+            headingControl.setSetPoint(180.0); // south
+        } else if (driver.getLeftY() > 0.5) {
+            headingControl.setSetPoint(0); // north
+        }
+
+        // heading lock from DPAD
+        /*
         if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
             headingControl.setSetPoint(0.0);
         } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
@@ -114,6 +124,7 @@ public class Drive {
         } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
             headingControl.setSetPoint(0.0);
         }
+         */
 
         // turbo mode or not
         // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
@@ -127,7 +138,25 @@ public class Drive {
 
         forward = -driver.getRightY();
         strafe = driver.getRightX();
-        turn = -correction;
+        headingLock();
+    }
+
+    private void headingLock() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        heading = orientation.getYaw(AngleUnit.DEGREES);
+
+        if (headingControl.getSetPoint() == 180.0) {
+            // "south" is special because it's around the 180/-180 toggle-point
+            double h = heading;
+            if (h < 0.0) {
+                h += (h + 180);
+            }
+            double correction = headingControl.calculate(h);
+            turn = -correction;
+        } else {
+            double correction = headingControl.calculate(heading);
+            turn = -correction;
+        }
     }
     public void loop(double time) {
         /// also called once per loop, can do autonomous updates etc here

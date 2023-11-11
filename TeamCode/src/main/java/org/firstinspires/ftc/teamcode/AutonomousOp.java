@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -13,8 +14,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@Autonomous(name="Autonomous9000", group="Autonomous")
-//@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="AutoTele9000", group="Opmode")
+//@Autonomous(name="Autonomous9000", group="Autonomous")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="AutoTele9000", group="Opmode")
 public class AutonomousOp extends OpMode {
 
     private Drive drive = null;
@@ -22,6 +23,8 @@ public class AutonomousOp extends OpMode {
     // where we think the team element is
     private int position = -1;
     private ActionBase current_action = null;
+
+    GamepadEx control = null;
 
     // copied from ConceptTensorFlowObjectDetection example
     //private TfodProcessor tfod;
@@ -57,6 +60,9 @@ public class AutonomousOp extends OpMode {
     @Override
     public void init() {
         drive = new Drive(hardwareMap);
+        control = new GamepadEx(gamepad1);
+
+        current_action = new ActionMove(-40, 0);
 
 /*            // vision (from the example code)
             // Create the TensorFlow processor by using a builder.
@@ -105,7 +111,7 @@ public class AutonomousOp extends OpMode {
     @Override
     public void start(){
         drive.start();
-        current_action = new AutoMoveTo(120, 120, time+20);
+        current_action = new ActionMove(-100, 0);
     }
 
     @Override
@@ -136,5 +142,6 @@ public class AutonomousOp extends OpMode {
             }
         }
         drive.loop(time);
+        telemetry.update();
     }
 }
