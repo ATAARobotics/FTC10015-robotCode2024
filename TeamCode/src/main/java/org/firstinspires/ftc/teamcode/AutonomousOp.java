@@ -70,13 +70,20 @@ public class AutonomousOp extends OpMode {
         control = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        // from start position: 17 inches forward, 6.5 inches right
-        //actions.add(new ActionMove(165, 431));
-        //actions.add(new ActionMove(400, 400));
+        if (true) {
+            // from start position: 17 inches forward, 6.5 inches right (position 1)
+            actions.add(new ActionMove(165, 431));
+            actions.add(new ActionMove(400, 400));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionIntake(true));
+            actions.add(new ActionMove(400, 666));
+        }
 
         // move to center lane, then to go board
-        actions.add(new ActionMove(0, 666));
-        actions.add(new ActionMove(-1200, 666));
+        if (false) {
+            actions.add(new ActionMove(0, 666));
+            actions.add(new ActionMove(-1200, 666));
+        }
 
         // vision (from the example code)
         // Create the TensorFlow processor by using a builder.

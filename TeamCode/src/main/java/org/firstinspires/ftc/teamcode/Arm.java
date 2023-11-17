@@ -23,7 +23,7 @@ public class Arm {
     public String state;
 
     double wristp = 0.0;
-    double clawp = 0.0;
+cla    double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
 
     public Arm(HardwareMap hm){
         state = "intake";
@@ -44,7 +44,7 @@ public class Arm {
         claw.setPosition(1.0);
         arm_control.setSetPoint(0);
         wristp = 0.8;
-        clawp = 0.7;
+        clawp = 0.65;
     }
     public void resting(){
         state = "resting";
@@ -54,7 +54,7 @@ public class Arm {
     public void scoring(){
         state = "scoring";
         arm_control.setSetPoint(-360);
-        wristp = 0.8;
+        wristp = 0.6;
     }
 
     public void update(double time, GamepadEx game){
@@ -76,6 +76,7 @@ public class Arm {
             }
         }
 
+        /** debug / placement for wrist etc
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             clawp -= 0.1;
             if (clawp < 0.0) {
@@ -99,23 +100,27 @@ public class Arm {
                 wristp = 0.0;
             }
         }
+**/
 
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
             if (state == "intake") {
-                clawp = 0.5; // closed
+                clawp = 0.37; // closed
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
             if (state == "intake") {
-                clawp = 0.9; // open
+                clawp = 0.6; // open
             } else if (state == "scoring") {
-                clawp = 0.9; // open
+                clawp = 0.6; // open
             }
         }
 
         wrist.setPosition(wristp);
         claw.setPosition(clawp);
         double move = arm_control.calculate(arm_main.getCurrentPosition());
+        // clamp max speed
+        if (move > 0.7) { move = 0.7; }
+        if (move < -0.5) { move = -0.5; }
         arm.set(move);
         intake.update(time, game);
     }

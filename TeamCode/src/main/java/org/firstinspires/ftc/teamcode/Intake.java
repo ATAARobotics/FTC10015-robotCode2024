@@ -34,8 +34,8 @@ public class Intake {
             desired_position = false;
             if (desired_position != position_up) {
                 started_moving = time;
-                intake_main.setPosition(0);
-                intake_rev.setPosition(1.0);
+                intake_main.setPosition(1.0);
+                intake_rev.setPosition(0);
             }
         }
     }
@@ -45,30 +45,36 @@ public class Intake {
             desired_position = true;
             if (desired_position != position_up) {
                 started_moving = time;
-                intake_main.setPosition(1.0);
-                intake_rev.setPosition(0.0);
+                intake_main.setPosition(0.0);
+                intake_rev.setPosition(1.0);
             }
         }
     }
 
     void update(double time, GamepadEx pad) {
-        if (pad.isDown(GamepadKeys.Button.A)) {
-            suck.set(0.5);
-        } else if (pad.isDown(GamepadKeys.Button.B)) {
-            suck.set(-0.5);
-        } else {
-            suck.set(0.0);
-        }
 
         // left/right triggers put intake up or down
-        if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            go_up(time);
-            //intake_main.setPosition(0);
-            //intake_rev.setPosition(1);
-        } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            go_down(time);
-            //intake_main.setPosition(1);
-            //intake_rev.setPosition(0);
+        if (false) {
+            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                go_up(time);
+                //intake_main.setPosition(0);
+                //intake_rev.setPosition(1);
+            } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                go_down(time);
+                //intake_main.setPosition(1);
+                //intake_rev.setPosition(0);
+            }
+        } else {
+            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                intake_main.setPosition(0);
+                intake_rev.setPosition(1);
+            } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                intake_main.setPosition(1);
+                intake_rev.setPosition(0);
+            } else {
+                intake_main.setPosition(0.5);
+                intake_rev.setPosition(0.5);
+            }
         }
 
         // forward/back suckage on intake
