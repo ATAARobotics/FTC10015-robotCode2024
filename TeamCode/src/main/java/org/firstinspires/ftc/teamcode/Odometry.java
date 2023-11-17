@@ -25,10 +25,40 @@ public class Odometry {
         perp.resetEncoder();
     }
     public double position_y(){
-        return (y_last - perp.getCurrentPosition()) * ticks_to_mm;
+        double y = 0.0;
+        switch (heading) {
+            case F:
+                y = (y_last - perp.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case B:
+                y = (y_last + perp.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case R:
+                y = (y_last + par.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case L:
+                y = (y_last - par.getCurrentPosition()) * ticks_to_mm;
+                break;
+        }
+        return y;
     }
     public double position_x(){
-        return (x_last - par.getCurrentPosition()) * ticks_to_mm;
+        double x = 0.0;
+        switch (heading) {
+            case F:
+                x = (x_last - par.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case B:
+                x = (x_last + par.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case R:
+                x = (x_last - perp.getCurrentPosition()) * ticks_to_mm;
+                break;
+            case L:
+                x = (x_last + perp.getCurrentPosition()) * ticks_to_mm;
+                break;
+        }
+        return x;
     }
 
     public void pause(){
@@ -50,7 +80,7 @@ public class Odometry {
         } else if (head == 90) {
             heading = Heading.L;
         }
-        //need to account for "heading" and possible swap/invert things (future)
+
         par.resetEncoder();
         perp.resetEncoder();
     }

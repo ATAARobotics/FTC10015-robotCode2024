@@ -34,12 +34,16 @@ public class ActionMove extends ActionBase {
         telemetry.addData("forward", forward);
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
+        telemetry.addData("target_x", target_x);
+        telemetry.addData("target_y", target_y);
         telemetry.addData("at_target", at_target(drive));
 
         pack.put("strafe", strafe);
         pack.put("forward", forward);
         pack.put("x", drive.odo.position_x());
         pack.put("y", drive.odo.position_y());
+        pack.put("target_x", target_x);
+        pack.put("target_y", target_y);
         pack.put("at_target", at_target(drive));
 
         if (at_target(drive)) {

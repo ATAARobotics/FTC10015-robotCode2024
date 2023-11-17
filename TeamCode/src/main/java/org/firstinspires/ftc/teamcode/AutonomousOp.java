@@ -136,6 +136,7 @@ public class AutonomousOp extends OpMode {
     public void start(){
         time = 0.0;
         drive.start();
+        drive.imu.resetYaw();
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
@@ -188,9 +189,9 @@ public class AutonomousOp extends OpMode {
             pad.readButtons();
             pack.put("DPAD_UP", pad.wasJustPressed(GamepadKeys.Button.DPAD_UP));
             if (pad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                current_action = new ActionMove(drive.odo.position_x() + 333, drive.odo.position_y());
-            } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 current_action = new ActionMove(drive.odo.position_x() - 333, drive.odo.position_y());
+            } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                current_action = new ActionMove(drive.odo.position_x() + 333, drive.odo.position_y());
             } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 current_action = new ActionMove(drive.odo.position_x(), drive.odo.position_y() - 333);
             } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
