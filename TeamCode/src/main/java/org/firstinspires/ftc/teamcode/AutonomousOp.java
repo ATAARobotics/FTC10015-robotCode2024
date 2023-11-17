@@ -5,6 +5,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -23,6 +24,8 @@ public class AutonomousOp extends OpMode {
     private Drive drive = null;
     private Intake intake = null;
     private Arm arm = null;
+
+    private GamepadEx pad = null;
 
     // where we think the team element is
     private int position = -1;
@@ -68,9 +71,10 @@ public class AutonomousOp extends OpMode {
         intake = new Intake(hardwareMap);
         arm = new Arm(hardwareMap);
         control = new GamepadEx(gamepad1);
+        pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        if (true) {
+        if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             actions.add(new ActionMove(165, 431));
             actions.add(new ActionMove(400, 400));
@@ -130,13 +134,14 @@ public class AutonomousOp extends OpMode {
 
     @Override
     public void start(){
+        time = 0.0;
         drive.start();
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
     @Override
     public void loop() {
-        if (true) {
+        if (false) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
 
@@ -167,8 +172,50 @@ public class AutonomousOp extends OpMode {
                 current_action = actions.removeFirst();
             }
         }
-        FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
+        // directions (in start position):
+        // +x = robot-right
+        // -x = robot-left
+        // +y = robot forward
+        // -y = robot backwards
+
+        // rotations:
+        // +90 == turn left (??)
+        // -90 == turn right
+
+        if (current_action == null){
+            // we aren't doing anything, and have nothing else to do -- accept input from controllers
+            pad.readButtons();
+            pack.put("DPAD_UP", pad.wasJustPressed(GamepadKeys.Button.DPAD_UP));
+            if (pad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                current_action = new ActionMove(drive.odo.position_x() + 333, drive.odo.position_y());
+            } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                current_action = new ActionMove(drive.odo.position_x() - 333, drive.odo.position_y());
+            } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                current_action = new ActionMove(drive.odo.position_x(), drive.odo.position_y() - 333);
+            } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                current_action = new ActionMove(drive.odo.position_x(), drive.odo.position_y() + 333);
+            } else if (pad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                double heading = drive.headingControl.getSetPoint();
+                heading -= 90;
+                if (heading < -90.0) {
+                    heading = 180;
+
+                }
+                current_action = new ActionTurn(heading);
+            } else if (pad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                double heading = drive.headingControl.getSetPoint();
+                heading += 90;
+                if (heading > 90) {
+                    heading -= 180.0;
+
+                }
+                current_action = new ActionTurn(heading);
+            }
+        }
+
+        // seems to not work if "data" and "drawing" are in the same packet?
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
         pack = new TelemetryPacket();
 
         // actual robot is 407mm square
@@ -193,6 +240,7 @@ public class AutonomousOp extends OpMode {
         }
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
+        //drive.robotInputs(0, 0); // force a headingLock() call
         drive.loop(time);
         telemetry.update();
     }

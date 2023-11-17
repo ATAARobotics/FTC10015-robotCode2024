@@ -60,8 +60,8 @@ public class TeleOp extends OpMode   {
 
         drive.humanInputs(driver);
         drive.loop(time);
-        arm.update(time, operator);
-
+        arm.humanInputs(operator);
+        arm.loop(time);
         //imu stuff
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();

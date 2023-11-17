@@ -6,9 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Odometry {
     MotorEx par = null;
     MotorEx perp = null;
+
+    enum Heading {F, L, R, B;} // how to swap odos; F=forward, etc relative to start
     protected double x_last; //in mm
     protected double y_last; //in mm
     protected boolean is_paused;
+    protected Heading heading = Heading.F;
     public final double ticks_to_mm = Math.PI * 48 /2000;
     public Odometry(HardwareMap hardware){
         //when we "pause", record our last position ..
@@ -28,14 +31,25 @@ public class Odometry {
         return (x_last - par.getCurrentPosition()) * ticks_to_mm;
     }
 
-    public void pause(double heading){
+    public void pause(){
         y_last = position_y();
         x_last = position_x();
         is_paused = true;
     }
 
-    public void resume(double heading){
+    public void resume(double head){
         is_paused = false;
+        par.resetEncoder();
+        perp.resetEncoder();
+        if (head == 0.0) {
+            heading = Heading.F;
+        } else if (head == -90) {
+            heading = Heading.R;
+        } else if (head == -180 || head == 180) {
+            heading = Heading.B;
+        } else if (head == 90) {
+            heading = Heading.L;
+        }
         //need to account for "heading" and possible swap/invert things (future)
         par.resetEncoder();
         perp.resetEncoder();

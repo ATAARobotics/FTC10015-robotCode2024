@@ -57,7 +57,7 @@ public class Arm {
         wristp = 0.6;
     }
 
-    public void update(double time, GamepadEx game){
+    public void humanInputs(GamepadEx game){
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
             if (state == "intake") {
                 resting();
@@ -77,30 +77,30 @@ public class Arm {
         }
 
         /** debug / placement for wrist etc
-        if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            clawp -= 0.1;
-            if (clawp < 0.0) {
-                clawp = 1.0;
-            }
-        } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            clawp += 0.1;
-            if (clawp > 1.0) {
-                clawp = 0.0;
-            }
-        }
+         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+         clawp -= 0.1;
+         if (clawp < 0.0) {
+         clawp = 1.0;
+         }
+         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+         clawp += 0.1;
+         if (clawp > 1.0) {
+         clawp = 0.0;
+         }
+         }
 
-        if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            wristp -= 0.1;
-            if (wristp < 0.0) {
-                wristp = 1.0;
-            }
-        } else if (game.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-            wristp += 0.1;
-            if (wristp > 1.0) {
-                wristp = 0.0;
-            }
-        }
-**/
+         if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+         wristp -= 0.1;
+         if (wristp < 0.0) {
+         wristp = 1.0;
+         }
+         } else if (game.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+         wristp += 0.1;
+         if (wristp > 1.0) {
+         wristp = 0.0;
+         }
+         }
+         **/
 
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
@@ -117,11 +117,14 @@ public class Arm {
 
         wrist.setPosition(wristp);
         claw.setPosition(clawp);
+    }
+
+    public void loop(double time){
         double move = arm_control.calculate(arm_main.getCurrentPosition());
         // clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
         arm.set(move);
-        intake.update(time, game);
+        intake.loop(time);
     }
 }
