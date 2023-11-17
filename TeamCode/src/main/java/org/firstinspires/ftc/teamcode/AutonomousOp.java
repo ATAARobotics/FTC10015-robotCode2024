@@ -195,7 +195,7 @@ public class AutonomousOp extends OpMode {
                 current_action = new ActionMove(drive.odo.position_x(), drive.odo.position_y() - 333);
             } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 current_action = new ActionMove(drive.odo.position_x(), drive.odo.position_y() + 333);
-            } else if (pad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+            } else if (pad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                 double heading = drive.headingControl.getSetPoint();
                 heading -= 90;
                 if (heading < -90.0) {
@@ -203,11 +203,11 @@ public class AutonomousOp extends OpMode {
 
                 }
                 current_action = new ActionTurn(heading);
-            } else if (pad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+            } else if (pad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                 double heading = drive.headingControl.getSetPoint();
                 heading += 90;
-                if (heading > 90) {
-                    heading -= 180.0;
+                if (heading > 180) {
+                    heading = -90;
 
                 }
                 current_action = new ActionTurn(heading);
