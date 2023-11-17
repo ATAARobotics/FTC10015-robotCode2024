@@ -23,7 +23,7 @@ public class Arm {
     public String state;
 
     double wristp = 0.0;
-cla    double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
+    double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
 
     public Arm(HardwareMap hm){
         state = "intake";
