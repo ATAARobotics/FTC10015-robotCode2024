@@ -50,6 +50,7 @@ public class Arm {
         state = "resting";
         arm_control.setSetPoint(-88);
         wristp = 0.4;
+        clawp = 0.37;
     }
     public void scoring(){
         state = "scoring";

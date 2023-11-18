@@ -33,6 +33,9 @@ public class AutonomousOp extends OpMode {
     private LinkedList<ActionBase> actions;
     private ActionBase current_action;
 
+    static final String[] LABELS = {"red", "blue"};
+
+
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
     VisionPortal visionPortal;
@@ -93,8 +96,8 @@ public class AutonomousOp extends OpMode {
                     // Use setModelAssetName() if the TF Model is built in as an asset.
                     // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
                     //.setModelAssetName(TFOD_MODEL_ASSET)
-                    //.setModelFileName(TFOD_MODEL_FILE)
-                    //.setModelLabels(LABELS)
+                    .setModelFileName("model_20231118_125258.tflite")
+                    .setModelLabels(LABELS)
                     //.setIsModelTensorFlow2(true)
                     //.setIsModelQuantized(true)
                     //.setModelInputSize(300)
@@ -141,7 +144,7 @@ public class AutonomousOp extends OpMode {
 
     @Override
     public void loop() {
-        if (false) {
+        if (true) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
 
