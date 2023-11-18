@@ -41,7 +41,6 @@ public class Intake {
             rise_mode = RaisingMode.DO_NOTHING;
         }
 
-
         // forward/back suckage on intake
         if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
             suck_mode = SuckMode.SUCK;

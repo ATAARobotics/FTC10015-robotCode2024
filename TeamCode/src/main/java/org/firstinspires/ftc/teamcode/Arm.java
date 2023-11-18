@@ -58,6 +58,7 @@ public class Arm {
     }
 
     public void humanInputs(GamepadEx game){
+        intake.humanInputs(game);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
             if (state == "intake") {
                 resting();
@@ -76,19 +77,19 @@ public class Arm {
             }
         }
 
-        /** debug / placement for wrist etc
-         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-         clawp -= 0.1;
-         if (clawp < 0.0) {
-         clawp = 1.0;
-         }
-         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-         clawp += 0.1;
-         if (clawp > 1.0) {
-         clawp = 0.0;
-         }
-         }
-
+        // debug / placement for wrist etc
+        if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            clawp -= 0.1;
+            if (clawp < 0.0) {
+                clawp = 1.0;
+            }
+        } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            clawp += 0.1;
+            if (clawp > 1.0) {
+                clawp = 0.0;
+            }
+        }
+/**
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
          wristp -= 0.1;
          if (wristp < 0.0) {
@@ -104,7 +105,7 @@ public class Arm {
 
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
-            if (state == "intake") {
+            if (true || state == "intake") {
                 clawp = 0.37; // closed
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
