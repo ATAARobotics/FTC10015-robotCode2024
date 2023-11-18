@@ -60,11 +60,11 @@ public class Arm {
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
-            if (state == "intake") {
+            if (state.equals("intake")) {
                 resting();
-            } else if (state == "scoring") {
+            } else if (state.equals("scoring")) {
                 // nothing, can't go past scoring
-            } else if (state == "resting") {
+            } else if (state.equals("resting")) {
                 scoring();
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
@@ -89,7 +89,7 @@ public class Arm {
                 clawp = 0.0;
             }
         }
-/**
+/*
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
          wristp -= 0.1;
          if (wristp < 0.0) {
