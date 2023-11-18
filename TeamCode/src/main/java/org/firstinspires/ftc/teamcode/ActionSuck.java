@@ -4,25 +4,26 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class ActionIntake extends ActionBase {
+public class ActionSuck extends ActionBase {
 
-    boolean go_up;
+    boolean suck = true;
     double started = -1;
 
-    ActionIntake(boolean up) {
-        go_up = up;
+    ActionSuck(boolean suck) {
+        this.suck = suck;
     }
 
     public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         if (started < 0.0) {
             started = time;
-            if (go_up) {
-                intake.goUp(time);
+            if (suck) {
+                intake.suck_mode = Intake.SuckMode.SUCK;
             } else {
-                intake.goDown(time);
+                intake.suck_mode = Intake.SuckMode.BLOW;
             }
+            return false;
         }
-       return intake.rise_mode == Intake.RaisingMode.DO_NOTHING;
+        return (time - started) > 0.3;
     }
 
     public void draw_field(TelemetryPacket pack) {

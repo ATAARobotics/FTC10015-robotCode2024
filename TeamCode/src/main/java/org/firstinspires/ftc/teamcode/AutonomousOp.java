@@ -21,18 +21,19 @@ import java.util.List;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="AutoTele9000", group="Opmode")
 public class AutonomousOp extends OpMode {
 
-    private Drive drive = null;
-    private Intake intake = null;
-    private Arm arm = null;
+    private Drive drive;
+    private Intake intake;
+    boolean intake_is_up = true;
+    private Arm arm;
 
-    private GamepadEx pad = null;
+    private GamepadEx pad ;
 
     // where we think the team element is
     private int position = -1;
-    private LinkedList<ActionBase> actions = null;
-    private ActionBase current_action = null;
+    private LinkedList<ActionBase> actions;
+    private ActionBase current_action;
 
-    GamepadEx control = null;
+    GamepadEx control;
 
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
@@ -137,6 +138,7 @@ public class AutonomousOp extends OpMode {
         time = 0.0;
         drive.start();
         drive.imu.resetYaw();
+        intake_is_up = true;
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
@@ -212,6 +214,12 @@ public class AutonomousOp extends OpMode {
 
                 }
                 current_action = new ActionTurn(heading);
+            } else if (pad.wasJustPressed(GamepadKeys.Button.A)) {
+                if (intake_is_up) {
+                    current_action = new ActionIntake(false);
+                } else {
+                    current_action = new ActionIntake(true);
+                }
             }
         }
 
