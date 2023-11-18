@@ -33,8 +33,6 @@ public class AutonomousOp extends OpMode {
     private LinkedList<ActionBase> actions;
     private ActionBase current_action;
 
-    GamepadEx control;
-
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
     VisionPortal visionPortal;
@@ -71,7 +69,6 @@ public class AutonomousOp extends OpMode {
         drive = new Drive(hardwareMap);
         intake = new Intake(hardwareMap);
         arm = new Arm(hardwareMap);
-        control = new GamepadEx(gamepad1);
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
@@ -220,6 +217,8 @@ public class AutonomousOp extends OpMode {
                 } else {
                     current_action = new ActionIntake(true);
                 }
+            } else if (pad.wasJustPressed(GamepadKeys.Button.B)) {
+                current_action = new ActionSuck(false);
             }
         }
 
