@@ -8,21 +8,20 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Intake {
 
-    ServoEx intake_main = null;
-    ServoEx intake_rev = null;
-    MotorEx suck = null;
+    ServoEx intake_main;
+    ServoEx intake_rev;
+    MotorEx suck;
 
-    public enum RaisingMode {DO_NOTHING, GO_UP, GO_DOWN, GO_TO_TOP, GO_TO_BOTTOM;}
-    public enum SuckMode {SUCK, BLOW, NOTHING;}
+    public enum RaisingMode {DO_NOTHING, GO_UP, GO_DOWN, GO_TO_TOP, GO_TO_BOTTOM}
+    public enum SuckMode {SUCK, BLOW, NOTHING}
 
     public RaisingMode rise_mode = RaisingMode.DO_NOTHING;
     public SuckMode suck_mode = SuckMode.NOTHING;
-    public Timing.Timer timer = null;
+    public Timing.Timer timer;
 
     public Intake(HardwareMap hm) {
         suck = new MotorEx(hm, "suck");

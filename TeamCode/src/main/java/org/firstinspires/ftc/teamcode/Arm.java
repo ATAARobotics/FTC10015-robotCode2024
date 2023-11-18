@@ -10,16 +10,16 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
-    MotorEx arm_main = null;
-    MotorEx arm_follower = null;
-    MotorGroup arm = null;
-    PIDController arm_control = null;
-    MotorEx slide = null;
+    MotorEx arm_main;
+    MotorEx arm_follower;
+    MotorGroup arm;
+    PIDController arm_control;
+    MotorEx slide;
 
-    ServoEx wrist = null;
-    ServoEx claw = null;
+    ServoEx wrist;
+    ServoEx claw;
 
-    Intake intake = null;
+    Intake intake;
     public String state;
 
     double wristp = 0.0;
