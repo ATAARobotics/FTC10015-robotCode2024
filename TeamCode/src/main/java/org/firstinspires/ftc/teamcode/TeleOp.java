@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Size;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -74,7 +68,6 @@ public class TeleOp extends OpMode   {
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         pack.put("claw", arm.clawp);
         pack.put("wrist", arm.wristp);
-        pack.put("down_time", arm.intake.timer.elapsedTime());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?

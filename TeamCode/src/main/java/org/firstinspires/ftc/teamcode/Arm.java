@@ -10,16 +10,16 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
-    MotorEx arm_main = null;
-    MotorEx arm_follower = null;
-    MotorGroup arm = null;
-    PIDController arm_control = null;
-    MotorEx slide = null;
+    MotorEx arm_main;
+    MotorEx arm_follower;
+    MotorGroup arm;
+    PIDController arm_control;
+    MotorEx slide;
 
-    ServoEx wrist = null;
-    ServoEx claw = null;
+    ServoEx wrist;
+    ServoEx claw;
 
-    Intake intake = null;
+    Intake intake;
     public String state;
 
     double wristp = 0.0;
@@ -43,13 +43,14 @@ public class Arm {
         state = "intake";
         claw.setPosition(1.0);
         arm_control.setSetPoint(0);
-        wristp = 0.8;
+        wristp = 0.75;
         clawp = 0.65;
     }
     public void resting(){
         state = "resting";
         arm_control.setSetPoint(-88);
         wristp = 0.4;
+        clawp = 0.37;
     }
     public void scoring(){
         state = "scoring";
@@ -58,12 +59,13 @@ public class Arm {
     }
 
     public void humanInputs(GamepadEx game){
+        intake.humanInputs(game);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
-            if (state == "intake") {
+            if (state.equals("intake")) {
                 resting();
-            } else if (state == "scoring") {
+            } else if (state.equals("scoring")) {
                 // nothing, can't go past scoring
-            } else if (state == "resting") {
+            } else if (state.equals("resting")) {
                 scoring();
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
@@ -76,19 +78,19 @@ public class Arm {
             }
         }
 
-        /** debug / placement for wrist etc
-         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-         clawp -= 0.1;
-         if (clawp < 0.0) {
-         clawp = 1.0;
-         }
-         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-         clawp += 0.1;
-         if (clawp > 1.0) {
-         clawp = 0.0;
-         }
-         }
-
+        // debug / placement for wrist etc
+        if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            clawp -= 0.1;
+            if (clawp < 0.0) {
+                clawp = 1.0;
+            }
+        } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            clawp += 0.1;
+            if (clawp > 1.0) {
+                clawp = 0.0;
+            }
+        }
+/*
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
          wristp -= 0.1;
          if (wristp < 0.0) {
@@ -104,7 +106,7 @@ public class Arm {
 
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
-            if (state == "intake") {
+            if (true || state == "intake") {
                 clawp = 0.37; // closed
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
