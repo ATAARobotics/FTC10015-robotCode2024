@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ActionIntake extends ActionBase {
 
     boolean go_up;
-    double started = -1;
+    double started = -1.0;
 
     ActionIntake(boolean up) {
         go_up = up;

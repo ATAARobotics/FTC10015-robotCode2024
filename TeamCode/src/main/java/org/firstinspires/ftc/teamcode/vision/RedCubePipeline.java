@@ -56,7 +56,7 @@ public class RedCubePipeline extends OpenCvPipeline {
 
             // draw red bounding rectangles on mat
             // the mat has been converted to HSV so we need to use HSV as well
-            Imgproc.rectangle(thresh, boundRect[i], new Scalar(0.5, 76.9, 89.8));
+            Imgproc.rectangle(thresh, boundRect[i], new Scalar(255, 76.9, 89.8));
         }
 
         // draw some debug
