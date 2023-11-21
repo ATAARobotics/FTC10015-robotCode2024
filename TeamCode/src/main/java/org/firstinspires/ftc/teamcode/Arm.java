@@ -32,6 +32,7 @@ public class Arm {
         arm = new MotorGroup(arm_main,arm_follower);
         arm.resetEncoder();
         arm_control = new PIDController(.01,0,0);
+        arm_control.setTolerance(5.0);
         // slide = new MotorEx(hm,"slide");
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);

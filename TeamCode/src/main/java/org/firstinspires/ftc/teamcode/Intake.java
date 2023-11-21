@@ -74,14 +74,14 @@ public class Intake {
         switch (rise_mode) {
             case GO_UP:
             case GO_TO_TOP:
-                intake_main.setPosition(1);
-                intake_rev.setPosition(0);
+                intake_main.setPosition(0);
+                intake_rev.setPosition(1);
                 break;
 
             case GO_DOWN:
             case GO_TO_BOTTOM:
-                intake_main.setPosition(0);
-                intake_rev.setPosition(1);
+                intake_main.setPosition(1);
+                intake_rev.setPosition(0);
                 break;
 
             case DO_NOTHING:
