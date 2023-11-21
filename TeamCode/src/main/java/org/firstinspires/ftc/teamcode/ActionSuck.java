@@ -23,6 +23,7 @@ public class ActionSuck extends ActionBase {
             }
             return false;
         }
+        pack.put("suck-elapsed", (time - started));
         return (time - started) > 0.3;
     }
 

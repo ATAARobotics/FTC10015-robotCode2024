@@ -22,6 +22,9 @@ public class ActionIntake extends ActionBase {
                 intake.goDown(time);
             }
         }
+        pack.put("action-intake", started);
+        pack.put("action-time", time);
+        pack.put("action-mode", intake.rise_mode);
        return intake.rise_mode == Intake.RaisingMode.DO_NOTHING;
     }
 

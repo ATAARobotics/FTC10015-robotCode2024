@@ -58,6 +58,14 @@ public class Arm {
         wristp = 0.6;
     }
 
+    public void open_claw() {
+        clawp = 0.6;
+    }
+
+    public void close_claw() {
+        clawp = 0.37;
+    }
+
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){

@@ -75,16 +75,19 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        if (false) {
+        if (true) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
-            actions.add(new ActionMove(165, 431));
-           // actions.add(new ActionIntake(false));
-            //actions.add(new ActionSuck(false));
-            //actions.add(new ActionArm("resting"));
-            //actions.add(new ActionIntake(true));
-            actions.add(new ActionMove(165, 431 + 241));
-            actions.add(new ActionMove(165 - 2260, 431 + 241));
+            ///actions.add(new ActionMove(165, 431));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionIntake(true));
+            actions.add(new ActionArm("scoring"));
+            actions.add(new ActionArm("open"));
+            actions.add(new ActionArm("resting"));
+            ///actions.add(new ActionMove(165, 431 + 241));
+            ///actions.add(new ActionMove(165 - 2260, 431 + 241));
             //actions.add(new ActionArm("scoring"));
         }
 
@@ -258,6 +261,8 @@ public class AutonomousOp extends OpMode {
 
         //drive.robotInputs(0, 0); // force a headingLock() call
         drive.loop(time);
+        arm.loop(time);
+        intake.loop(time);
         telemetry.update();
     }
 }

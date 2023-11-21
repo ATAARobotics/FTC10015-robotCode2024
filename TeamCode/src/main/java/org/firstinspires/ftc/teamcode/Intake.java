@@ -66,8 +66,8 @@ public class Intake {
     void loop(double time) {
         if (rise_mode == RaisingMode.GO_TO_TOP || rise_mode == RaisingMode.GO_TO_BOTTOM) {
             double change = time - started_moving;
- //           if (change >= 1.706) {
-                if (change >= 1.5) {
+            //           if (change >= 1.706) {
+            if (change >= 1.5) {
                 rise_mode = RaisingMode.DO_NOTHING;
             }
         }
