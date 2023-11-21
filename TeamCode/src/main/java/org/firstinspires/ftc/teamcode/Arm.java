@@ -43,7 +43,7 @@ public class Arm {
         state = "intake";
         claw.setPosition(1.0);
         arm_control.setSetPoint(0);
-        wristp = 0.8;
+        wristp = 0.75;
         clawp = 0.65;
     }
     public void resting(){
