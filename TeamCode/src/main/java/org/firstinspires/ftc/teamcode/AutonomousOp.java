@@ -77,17 +77,22 @@ public class AutonomousOp extends OpMode {
         actions = new LinkedList<ActionBase>();
         double TILE = 610; // 24inches = 610mm
 
-        if (false) {
+        // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
+        // (if no result in 2 seconds, guess)
+
+        if (true) {
             // test of turning odometry etc (go out, turn 90, come back)
+            actions.add(new ActionArm("close"));
             actions.add(new ActionMove(0, 300)); // forward 30cm
             actions.add(new ActionTurn(90));
             actions.add(new ActionMove(0, 0));
             actions.add(new ActionTurn(0));
-            actions.add(new ActionNothing());
+            //actions.add(new ActionNothing());
         }
 
         if (true) {
             // test all the "non-movement" actions: spit out pixel, score pixel
+            //actions.add(new ActionDetect(hardwareMap));
             actions.add(new ActionArm("close"));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));

@@ -5,6 +5,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -13,17 +14,90 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RedCubePipeline extends OpenCvPipeline {
+    public String result = "unknown";
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2HSV);
+        Mat processed = new Mat();
+        Imgproc.cvtColor(input, processed, Imgproc.COLOR_BGR2HSV);
+
         Core.inRange(
-                input,
+                processed,
                 // red airplane paper
                 new Scalar(120, 120, 120),
                 new Scalar(160, 180, 160),
-                input
+                processed
         );
 
+        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+
+        /*
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        // Draw Contours
+        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
+        */
+
+        int width = 50;
+        int height = 55;
+
+        int x0 = 100;
+        int y0 = 236;
+        int x1 = 330;
+        int y1 = 214;
+        int x2 = 560;
+        int y2 = 247;
+
+        // count how many pixels are "on" in each region of interest
+
+        double left = 0;
+        for (int x=x0; x < x0 + width; x++) {
+            for (int y=y0; y < y0 + height; y++) {
+                double[] px = processed.get(y, x);
+                if (px != null && (int)px[0] > 0) {
+                    left++;
+                }
+            }
+        }
+
+        double mid = 0;
+        for (int x=x1; x < x1 + width; x++) {
+            for (int y=y1; y < y1 + height; y++) {
+                double[] px = processed.get(y, x);
+                if (px != null){
+                    mid += px[0];
+                }
+            }
+        }
+
+        double right = 0;
+        for (int x=x2; x < x2 + width; x++) {
+            for (int y=y2; y < y2 + height; y++) {
+                double[] px = processed.get(y, x);
+                if (px != null && px[0] > 0.5) {
+                    right++;
+                }
+            }
+        }
+
+
+        Scalar red = new Scalar(255, 0, 0);
+        Scalar green = new Scalar(0, 255, 0);
+        double biggest = Math.max(left, Math.max(mid, right));
+        if (result == "unknown" && biggest > 100) {
+            if (left == biggest) { result = "left";  }
+            else if (mid == biggest) { result = "middle"; }
+            else if (right == biggest) { result = "right"; }
+        }
+
+        Imgproc.putText(input, "L:" + left, new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
+        Imgproc.putText(input, "M:" + mid, new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
+        Imgproc.putText(input, "R:" + right, new Point(x2, y2), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
+
+        Imgproc.rectangle(input, new Point(x0, y0), new Point(x0 + width, y0 + width), biggest == left ? green : red, 2);
+        Imgproc.rectangle(input, new Point(x1, y1), new Point(x1 + width, y1 + width), biggest == mid ? green : red, 2);
+        Imgproc.rectangle(input, new Point(x2, y2), new Point(x2 + width, y2 + width), biggest == right ? green : red, 2);
         return input;
     }
 }
