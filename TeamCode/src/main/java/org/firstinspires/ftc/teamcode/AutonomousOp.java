@@ -78,7 +78,7 @@ public class AutonomousOp extends OpMode {
         double TILE = 610; // 24inches = 610mm
 
         if (false) {
-            // test of turning odometry etc
+            // test of turning odometry etc (go out, turn 90, come back)
             actions.add(new ActionMove(0, 300)); // forward 30cm
             actions.add(new ActionTurn(90));
             actions.add(new ActionMove(0, 0));
@@ -87,6 +87,7 @@ public class AutonomousOp extends OpMode {
         }
 
         if (true) {
+            // test all the "non-movement" actions: spit out pixel, score pixel
             actions.add(new ActionArm("close"));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
@@ -108,6 +109,8 @@ public class AutonomousOp extends OpMode {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
             // 610mm per tile (24 inches)
+            actions.add(new ActionArm("close"));
+
             actions.add(new ActionMove(165, 380));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
@@ -116,6 +119,7 @@ public class AutonomousOp extends OpMode {
             // we've spit out purple, and are ready to move
             actions.add(new ActionMove(-(165/2), (165/2))); // recenter on "home" tile
             actions.add(new ActionTurn(90)); // face "arm" at stage
+            // other test used 666mm (this works out to 693mm)
             actions.add(new ActionMove(-(165/2), (2*TILE) + (165/2))); // center lane
             actions.add(new ActionMove(-((3*TILE) + (165/2)), (2*TILE) + (165/2))); // centered on second-last row
             actions.add(new ActionMove(-((3*TILE) + (165/2)), (1*TILE))); // FIXME approx stage location
@@ -123,31 +127,6 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionArm("open"));
             actions.add(new ActionArm("resting"));
             actions.add(new ActionMove(-((3*TILE) + 200), (1*TILE)));  // FIXME park position?
-        }
-
-        if (false) {
-            // from start position: 17 inches forward, 6.5 inches right (position 1)
-            // positive y is robot-forward, positive x is robot-right
-            actions.add(new ActionMove(165, 380));
-            actions.add(new ActionIntake(false));
-            actions.add(new ActionSuck(false));
-            actions.add(new ActionArm("resting"));
-            actions.add(new ActionTurn(-90));
-            actions.add(new ActionMove(265, 380));
-            actions.add(new ActionMove(265, 411 + 460));
-            actions.add(new ActionMove(165 - 2260 + 444, 411 + 460));
-            actions.add(new ActionMove(165 - 2260 + 444, 411 + 66));
-            actions.add(new ActionArm("resting"));
-            actions.add(new ActionArm("low-scoring"));
-            actions.add(new ActionArm("open"));
-            actions.add(new ActionArm("intake"));
-            actions.add(new ActionIntake(false));
-        }
-
-        // move to center lane, then to go board
-        if (false) {
-            actions.add(new ActionMove(0, 666));
-            actions.add(new ActionMove(-1200, 666));
         }
 
         // vision (from the example code)
