@@ -23,8 +23,8 @@ public class ActionMove extends ActionBase {
         // using GM0.org article, we tune from there:
         // increase Kp until there are oscillations
         // (old tunings: 0.015, 0.0002, 0)
-        control_x = new PIDController(0.01, 0.008,0.0025);
-        control_y = new PIDController(0.01, 0.008, 0.0025);
+        control_x = new PIDController(0.01, 0.2,0.0025);
+        control_y = new PIDController(0.01, 0.2, 0.0025);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
         set_target(x, y);
@@ -44,21 +44,17 @@ public class ActionMove extends ActionBase {
         }
         telemetry.addData("strafe", strafe);
         telemetry.addData("forward", forward);
-        telemetry.addData("x", drive.odo.position_x());
-        telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("target_x", target_x);
         telemetry.addData("target_y", target_y);
         telemetry.addData("at_target", at_target(drive));
 
         pack.put("strafe", strafe);
         pack.put("forward", forward);
-        pack.put("x", drive.odo.position_x());
-        pack.put("y", drive.odo.position_y());
         pack.put("target_x", target_x);
         pack.put("target_y", target_y);
         pack.put("at_target", at_target(drive));
 
-        if (at_target(drive) || timed_out(time)) {
+        if (at_target(drive)){// || timed_out(time)) {
             drive.robotInputs(0, 0);
             return true;
         }

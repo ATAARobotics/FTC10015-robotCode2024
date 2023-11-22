@@ -18,15 +18,18 @@ public class ActionTurn extends ActionBase {
 
     public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         telemetry.addData("target_heaading", target_heading);
+        pack.put("heading-target", target_heading);
+        pack.put("heading-actual", drive.getHeading());
         drive.robotInputs(0, 0);
         if (!set_target) {
             drive.odo.pause();
             set_target = true;
+            started = time;
             drive.headingControl.setSetPoint(target_heading);
             drive.headingControl.setTolerance(1);
             return false;
         }
-        if (drive.headingControl.atSetPoint()) {
+        if (drive.headingControl.atSetPoint() || (time - started) > 4.0) {
             drive.odo.resume(drive.headingControl.getSetPoint());
             return true;
         }

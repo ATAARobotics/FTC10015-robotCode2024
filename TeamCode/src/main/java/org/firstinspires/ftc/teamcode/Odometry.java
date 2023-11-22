@@ -28,16 +28,16 @@ public class Odometry {
         double y = 0.0;
         switch (heading) {
             case F:
-                y = (y_last - perp.getCurrentPosition()) * ticks_to_mm;
+                y = y_last - (perp.getCurrentPosition() * ticks_to_mm);
                 break;
             case B:
-                y = (y_last + perp.getCurrentPosition()) * ticks_to_mm;
+                y = y_last + (perp.getCurrentPosition() * ticks_to_mm);
                 break;
             case R:
-                y = (y_last + par.getCurrentPosition()) * ticks_to_mm;
+                y = y_last + (par.getCurrentPosition() * ticks_to_mm);
                 break;
             case L:
-                y = (y_last - par.getCurrentPosition()) * ticks_to_mm;
+                y = y_last - (par.getCurrentPosition() * ticks_to_mm);
                 break;
         }
         return y;
@@ -46,42 +46,43 @@ public class Odometry {
         double x = 0.0;
         switch (heading) {
             case F:
-                x = (x_last - par.getCurrentPosition()) * ticks_to_mm;
+                x = x_last - (par.getCurrentPosition() * ticks_to_mm);
                 break;
             case B:
-                x = (x_last + par.getCurrentPosition()) * ticks_to_mm;
+                x = x_last + (par.getCurrentPosition() * ticks_to_mm);
                 break;
             case R:
-                x = (x_last - perp.getCurrentPosition()) * ticks_to_mm;
+                x = x_last - (perp.getCurrentPosition() * ticks_to_mm);
                 break;
             case L:
-                x = (x_last + perp.getCurrentPosition()) * ticks_to_mm;
+                x = x_last + (perp.getCurrentPosition() * ticks_to_mm);
                 break;
         }
         return x;
     }
 
     public void pause(){
-        y_last = position_y();
-        x_last = position_x();
-        is_paused = true;
+        if (!is_paused) {
+            y_last = position_y();
+            x_last = position_x();
+            is_paused = true;
+        }
     }
 
     public void resume(double head){
-        is_paused = false;
-        par.resetEncoder();
-        perp.resetEncoder();
-        if (head == 0.0) {
-            heading = Heading.F;
-        } else if (head == -90) {
-            heading = Heading.R;
-        } else if (head == -180 || head == 180) {
-            heading = Heading.B;
-        } else if (head == 90) {
-            heading = Heading.L;
+        if (is_paused) {
+            is_paused = false;
+            par.resetEncoder();
+            perp.resetEncoder();
+            if (head == 0.0) {
+                heading = Heading.F;
+            } else if (head == -90) {
+                heading = Heading.R;
+            } else if (head == -180 || head == 180) {
+                heading = Heading.B;
+            } else if (head == 90) {
+                heading = Heading.L;
+            }
         }
-
-        par.resetEncoder();
-        perp.resetEncoder();
     }
 }

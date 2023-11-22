@@ -77,13 +77,17 @@ public class AutonomousOp extends OpMode {
         actions = new LinkedList<ActionBase>();
 
         if (true) {
-            actions.add(new ActionMove(0, 300));
+            actions.add(new ActionMove(0, 300)); // forward 30cm
+            actions.add(new ActionTurn(90));
+            actions.add(new ActionMove(0, 0));
+            actions.add(new ActionTurn(0));
             actions.add(new ActionNothing());
         }
 
         if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
+            // 610mm per tile (24 inches)
             actions.add(new ActionMove(165, 401));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
@@ -208,6 +212,15 @@ public class AutonomousOp extends OpMode {
             }
         }
 
+        telemetry.addData("x", drive.odo.position_x());
+        telemetry.addData("y", drive.odo.position_y());
+        pack.put("x", drive.odo.position_x());
+        pack.put("y", drive.odo.position_y());
+        pack.put("last_x", drive.odo.x_last);
+        pack.put("last_y", drive.odo.y_last);
+        pack.put("par-encoder", drive.odo.par.encoder.getPosition());
+        pack.put("perp-encoder", drive.odo.perp.encoder.getPosition());
+
         // directions (in start position):
         // +x = robot-right
         // -x = robot-left
@@ -266,7 +279,7 @@ public class AutonomousOp extends OpMode {
         double INCHES_TO_MM = 0.03937008;
 
         // origin to start position (XXX overridable method for this?)
-        pack.fieldOverlay().setTranslation(-6 * 12, 4 * 12);
+        pack.fieldOverlay().setTranslation(-1 * 24, 3 * 24);
 
         // do all other drawing in millimeters
         pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
@@ -277,7 +290,7 @@ public class AutonomousOp extends OpMode {
                 .setFill("green")
                 .fillCircle(0.0, 0.0, 2.0)
                 .setFill("red")
-                .fillRect(drive.odo.position_y() - (407 / 2), drive.odo.position_x() - (407 / 2), 407, 407);
+                .fillRect(drive.odo.position_y(), drive.odo.position_x(), 407, 407);
 
         if (current_action != null) {
             current_action.draw_field(pack);
