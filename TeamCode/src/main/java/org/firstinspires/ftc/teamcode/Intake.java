@@ -67,7 +67,7 @@ public class Intake {
         if (rise_mode == RaisingMode.GO_TO_TOP || rise_mode == RaisingMode.GO_TO_BOTTOM) {
             double change = time - started_moving;
             //           if (change >= 1.706) {
-            if (change >= 1.5) {
+            if (change >= 1.6) {
                 rise_mode = RaisingMode.DO_NOTHING;
             }
         }
@@ -96,7 +96,7 @@ public class Intake {
                 suck.set(1.0);
                 break;
             case BLOW:
-                suck.set(-1.0);
+                suck.set(-0.5);
                 break;
             case NOTHING:
                 suck.set(0.0);

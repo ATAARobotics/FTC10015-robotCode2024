@@ -10,6 +10,7 @@ public class ActionTurn extends ActionBase {
     // use heading-lock to turn to one of the four directions
     double target_heading;
     boolean set_target = false;
+    double started = -1;
 
     ActionTurn(double heading) {
         target_heading = heading;

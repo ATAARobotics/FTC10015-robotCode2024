@@ -24,7 +24,11 @@ public class ActionSuck extends ActionBase {
             return false;
         }
         pack.put("suck-elapsed", (time - started));
-        return (time - started) > 0.3;
+        if ((time - started) > 0.5) {
+            intake.suck_mode = Intake.SuckMode.NOTHING;
+            return true;
+        }
+        return false;
     }
 
     public void draw_field(TelemetryPacket pack) {

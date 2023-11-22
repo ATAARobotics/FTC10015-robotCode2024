@@ -31,8 +31,8 @@ public class Arm {
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
         arm.resetEncoder();
-        arm_control = new PIDController(.01,0,0);
-        arm_control.setTolerance(5.0);
+        arm_control = new PIDController(.01,0.01,0);
+        arm_control.setTolerance(15);
         // slide = new MotorEx(hm,"slide");
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
@@ -59,6 +59,11 @@ public class Arm {
         wristp = 0.6;
     }
 
+    public void low_scoring(){
+        state = "low-scoring";
+        arm_control.setSetPoint(-440);
+        wristp = 0.5;
+    }
     public void open_claw() {
         clawp = 0.6;
     }
@@ -69,17 +74,19 @@ public class Arm {
 
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game);
-        if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+        if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
             if (state.equals("intake")) {
                 resting();
             } else if (state.equals("scoring")) {
-                // nothing, can't go past scoring
+                low_scoring();
             } else if (state.equals("resting")) {
                 scoring();
-            }
+            } // can't go up past "low-scoring"
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
             if (state == "intake") {
                 // nothing, intake is lowest
+            } else if (state == "low-scoring"){
+                scoring();
             } else if (state == "scoring") {
                 resting();
             } else if (state == "resting"){
@@ -89,27 +96,27 @@ public class Arm {
 
         // debug / placement for wrist etc
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            clawp -= 0.1;
-            if (clawp < 0.0) {
-                clawp = 1.0;
+            wristp -= 0.1;
+            if (wristp < 0.0) {
+                wristp = 1.0;
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            clawp += 0.1;
-            if (clawp > 1.0) {
-                clawp = 0.0;
+            wristp += 0.1;
+            if (wristp > 1.0) {
+                wristp = 0.0;
             }
         }
 /*
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-         wristp -= 0.1;
-         if (wristp < 0.0) {
-         wristp = 1.0;
-         }
+            clawp -= 0.1;
+            if (clawp < 0.0) {
+                clawp = 1.0;
+            }
          } else if (game.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-         wristp += 0.1;
-         if (wristp > 1.0) {
-         wristp = 0.0;
-         }
+             clawp += 0.1;
+            if (clawp > 1.0) {
+                clawp = 0.0;
+            }
          }
          **/
 
@@ -121,7 +128,7 @@ public class Arm {
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
             if (state == "intake") {
                 clawp = 0.6; // open
-            } else if (state == "scoring") {
+            } else if (state == "scoring" || state == "low-scoring") {
                 clawp = 0.6; // open
             }
         }

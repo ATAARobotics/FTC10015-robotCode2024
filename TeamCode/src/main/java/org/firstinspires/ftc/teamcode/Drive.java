@@ -72,6 +72,7 @@ public class Drive {
     public void robotInputs(double d_strafe, double d_forward){
         strafe = d_strafe;
         forward = d_forward;
+        headingControl.setPID(0.03, 0.00, 0.001);
         headingLock();
     }
     public void humanInputs(GamepadEx driver){

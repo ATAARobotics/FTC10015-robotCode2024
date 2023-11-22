@@ -75,20 +75,38 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        if (true) {
+        if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
-            ///actions.add(new ActionMove(165, 431));
+            actions.add(new ActionMove(165, 401));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
             actions.add(new ActionArm("resting"));
             actions.add(new ActionIntake(true));
+            actions.add(new ActionTurn(90));
+            actions.add(new ActionMove(165, 431 + 241));
+            actions.add(new ActionMove(165 - 2260, 431 + 241));
             actions.add(new ActionArm("scoring"));
             actions.add(new ActionArm("open"));
             actions.add(new ActionArm("resting"));
-            ///actions.add(new ActionMove(165, 431 + 241));
-            ///actions.add(new ActionMove(165 - 2260, 431 + 241));
-            //actions.add(new ActionArm("scoring"));
+        }
+        if (true) {
+            // from start position: 17 inches forward, 6.5 inches right (position 1)
+            // positive y is robot-forward, positive x is robot-right
+            actions.add(new ActionMove(165, 380));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionTurn(-90));
+            actions.add(new ActionMove(265, 380));
+            actions.add(new ActionMove(265, 411 + 460));
+            actions.add(new ActionMove(165 - 2260 + 444, 411 + 460));
+            actions.add(new ActionMove(165 - 2260 + 444, 411 + 66));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionArm("open"));
+            actions.add(new ActionArm("intake"));
+            actions.add(new ActionIntake(false));
         }
 
         // move to center lane, then to go board
@@ -228,6 +246,7 @@ public class AutonomousOp extends OpMode {
                 } else {
                     current_action = new ActionIntake(true);
                 }
+                intake_is_up = !intake_is_up;
             } else if (pad.wasJustPressed(GamepadKeys.Button.B)) {
                 current_action = new ActionSuck(false);
             }
