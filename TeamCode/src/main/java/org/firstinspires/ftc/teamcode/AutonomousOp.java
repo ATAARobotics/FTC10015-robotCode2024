@@ -75,8 +75,10 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
+        double TILE = 610; // 24inches = 610mm
 
-        if (true) {
+        if (false) {
+            // test of turning odometry etc
             actions.add(new ActionMove(0, 300)); // forward 30cm
             actions.add(new ActionTurn(90));
             actions.add(new ActionMove(0, 0));
@@ -84,22 +86,38 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionNothing());
         }
 
-        if (false) {
-            // from start position: 17 inches forward, 6.5 inches right (position 1)
-            // positive y is robot-forward, positive x is robot-right
-            // 610mm per tile (24 inches)
-            actions.add(new ActionMove(165, 401));
+        if (true) {
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionIntake(true));
-            actions.add(new ActionTurn(90));
-            actions.add(new ActionMove(165, 431 + 241));
-            actions.add(new ActionMove(165 - 2260, 431 + 241));
-            actions.add(new ActionArm("scoring"));
+            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionArm("low-scoring"));
             actions.add(new ActionArm("open"));
             actions.add(new ActionArm("resting"));
         }
+
+        if (false) {
+            // blue alliance, far start
+            // from start position: 17 inches forward, 6.5 inches right (position 1)
+            // positive y is robot-forward, positive x is robot-right
+            // 610mm per tile (24 inches)
+            actions.add(new ActionMove(165, 380));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionIntake(true, true));
+            // we've spit out purple, and are ready to move
+            actions.add(new ActionMove(-(165/2), (165/2))); // recenter on "home" tile
+            actions.add(new ActionTurn(90)); // face "arm" at stage
+            actions.add(new ActionMove(-(165/2), (2*TILE) + (165/2))); // center lane
+            actions.add(new ActionMove(-((3*TILE) + (165/2)), (2*TILE) + (165/2))); // centered on second-last row
+            actions.add(new ActionMove(-((3*TILE) + (165/2)), (1*TILE))); // FIXME approx stage location
+            actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionArm("open"));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionMove(-((3*TILE) + 200), (1*TILE)));  // FIXME park position?
+        }
+
         if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right

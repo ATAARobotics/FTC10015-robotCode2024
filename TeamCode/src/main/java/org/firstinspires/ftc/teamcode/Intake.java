@@ -24,7 +24,7 @@ public class Intake {
     public RaisingMode rise_mode = RaisingMode.DO_NOTHING;
     public SuckMode suck_mode = SuckMode.NOTHING;
 
-    private double started_moving = -1.0; // for GO_UP / GO_DOWN
+    private double timeout = -1.0; // for up/down
 
     public Intake(HardwareMap hm) {
         suck = new MotorEx(hm, "suck");
@@ -53,21 +53,24 @@ public class Intake {
         }
     }
 
-    public void goUp(double time) {
+    public void goUp(double time, boolean only_half) {
         rise_mode = RaisingMode.GO_TO_TOP;
-        started_moving = time;
+        if (only_half) {
+            timeout = time + 0.9;
+        } else {
+            timeout = time + 1.8;
+        }
     }
 
     public void goDown(double time) {
         rise_mode = RaisingMode.GO_TO_BOTTOM;
-        started_moving = time;
+        timeout = time + 1.8;
     }
 
     void loop(double time) {
         if (rise_mode == RaisingMode.GO_TO_TOP || rise_mode == RaisingMode.GO_TO_BOTTOM) {
-            double change = time - started_moving;
-            //           if (change >= 1.706) {
-            if (change >= 1.6) {
+            if (time > timeout) {
+                timeout = -1;
                 rise_mode = RaisingMode.DO_NOTHING;
             }
         }
@@ -96,7 +99,7 @@ public class Intake {
                 suck.set(1.0);
                 break;
             case BLOW:
-                suck.set(-0.5);
+                suck.set(-0.3);
                 break;
             case NOTHING:
                 suck.set(0.0);
