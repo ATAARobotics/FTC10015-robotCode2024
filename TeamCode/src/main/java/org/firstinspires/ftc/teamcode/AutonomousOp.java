@@ -75,6 +75,12 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
+
+        if (true) {
+            actions.add(new ActionMove(0, 300));
+            actions.add(new ActionNothing());
+        }
+
         if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
@@ -90,7 +96,7 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionArm("open"));
             actions.add(new ActionArm("resting"));
         }
-        if (true) {
+        if (false) {
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
             actions.add(new ActionMove(165, 380));
@@ -278,7 +284,6 @@ public class AutonomousOp extends OpMode {
         }
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
-        //drive.robotInputs(0, 0); // force a headingLock() call
         drive.loop(time);
         arm.loop(time);
         intake.loop(time);
