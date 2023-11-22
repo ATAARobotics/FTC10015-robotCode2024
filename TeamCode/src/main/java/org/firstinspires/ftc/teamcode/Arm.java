@@ -132,9 +132,6 @@ public class Arm {
                 clawp = 0.6; // open
             }
         }
-
-        wrist.setPosition(wristp);
-        claw.setPosition(clawp);
     }
 
     public void loop(double time){
@@ -142,6 +139,8 @@ public class Arm {
         // clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
+        wrist.setPosition(wristp);
+        claw.setPosition(clawp);
         arm.set(move);
         intake.loop(time);
     }

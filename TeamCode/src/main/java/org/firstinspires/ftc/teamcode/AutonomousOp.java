@@ -87,13 +87,20 @@ public class AutonomousOp extends OpMode {
         }
 
         if (true) {
+            actions.add(new ActionArm("close"));
             actions.add(new ActionIntake(false));
             actions.add(new ActionSuck(false));
             actions.add(new ActionArm("resting"));
             actions.add(new ActionIntake(true, true));
             actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionPause(1.0));
             actions.add(new ActionArm("open"));
             actions.add(new ActionArm("resting"));
+            actions.add(new ActionPause(1.0));
+            actions.add(new ActionArm("intake"));
+            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionNothing());
+
         }
 
         if (false) {

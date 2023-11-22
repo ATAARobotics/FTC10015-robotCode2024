@@ -25,12 +25,15 @@ public class ActionArm extends ActionBase {
                 arm.open_claw();
             } else if (desired == "low-scoring") {
                 arm.low_scoring();
+            } else if (desired == "close") {
+                arm.close_claw();
             }
         }
         pack.put("action-arm-at", arm.arm_control.atSetPoint());
         pack.put("action-arm-set", arm.arm_main.getCurrentPosition());
         pack.put("action-arm-target", arm.arm_control.getSetPoint());
-        return arm.arm_control.atSetPoint() || (time - started > 2.0);
+        //return arm.arm_control.atSetPoint() || (time - started > 2.0);
+        return (time - started) > 2.0;
     }
 
     public void draw_field(TelemetryPacket pack) {

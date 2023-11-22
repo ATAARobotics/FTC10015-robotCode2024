@@ -56,15 +56,15 @@ public class Intake {
     public void goUp(double time, boolean only_half) {
         rise_mode = RaisingMode.GO_TO_TOP;
         if (only_half) {
-            timeout = time + 0.9;
+            timeout = time + 0.8;
         } else {
-            timeout = time + 1.8;
+            timeout = time + 1.4;
         }
     }
 
     public void goDown(double time) {
         rise_mode = RaisingMode.GO_TO_BOTTOM;
-        timeout = time + 1.8;
+        timeout = time + 1.4;
     }
 
     void loop(double time) {
