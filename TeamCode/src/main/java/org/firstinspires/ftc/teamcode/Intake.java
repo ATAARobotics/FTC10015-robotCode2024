@@ -56,7 +56,7 @@ public class Intake {
     public void goUp(double time, boolean only_half) {
         rise_mode = RaisingMode.GO_TO_TOP;
         if (only_half) {
-            timeout = time + 0.8;
+            timeout = time + 0.77;
         } else {
             timeout = time + 1.4;
         }
@@ -99,7 +99,7 @@ public class Intake {
                 suck.set(1.0);
                 break;
             case BLOW:
-                suck.set(-0.3);
+                suck.set(-0.42);
                 break;
             case NOTHING:
                 suck.set(0.0);
