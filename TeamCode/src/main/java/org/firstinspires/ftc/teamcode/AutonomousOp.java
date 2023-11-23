@@ -11,8 +11,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.vision.RedCubePipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
+
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +46,10 @@ public class AutonomousOp extends OpMode {
     // copied from ConceptTensorFlowObjectDetection example
     private TfodProcessor tfod;
     VisionPortal visionPortal;
+    //OpenCvPipeline pipeline;
+    RedCubePipeline pipeline;
+    OpenCvWebcam webcam;
+    int target = -1;
 
 
     /*
@@ -80,7 +91,7 @@ public class AutonomousOp extends OpMode {
         // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
         // (if no result in 2 seconds, guess)
 
-        if (true) {
+        if (false) {
             // test of turning odometry etc (go out, turn 90, come back)
             actions.add(new ActionArm("close"));
             actions.add(new ActionMove(0, 300)); // forward 30cm
@@ -90,7 +101,7 @@ public class AutonomousOp extends OpMode {
             //actions.add(new ActionNothing());
         }
 
-        if (true) {
+        if (false) {
             // test all the "non-movement" actions: spit out pixel, score pixel
             //actions.add(new ActionDetect(hardwareMap));
             actions.add(new ActionArm("close"));
@@ -109,29 +120,42 @@ public class AutonomousOp extends OpMode {
 
         }
 
-        if (false) {
+        if (true) {
             // blue alliance, far start
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
             // 610mm per tile (24 inches)
             actions.add(new ActionArm("close"));
 
-            actions.add(new ActionMove(165, 380));
-            actions.add(new ActionIntake(false));
-            actions.add(new ActionSuck(false));
+            // insert "spit out the pixel into correct position" actions
+
+            // "home position" is centered in home tile
+            actions.add(new ActionMove(-(165 / 2), (165 / 2)));
+
+            // skirt team element zone
+            actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+            actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
+            actions.add(new ActionTurn(-90));//turn to face the arm towards the backdrop
+            actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
+            //blue far backdrop one
+            //actions.add(new ActionMove(-((3*TILE) + (165/2) + 190), (550)));
+            // blue far backdrop 2
+            // actions.add(new ActionMove(-((3*TILE) + (165/2) + 190), (700)));
+            //blue far backrop 3
+            actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 190), (925)));
+            // "score the pixel" actions (and return arm to start)
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionIntake(true, true));
-            // we've spit out purple, and are ready to move
-            actions.add(new ActionMove(-(165/2), (165/2))); // recenter on "home" tile
-            actions.add(new ActionTurn(90)); // face "arm" at stage
-            // other test used 666mm (this works out to 693mm)
-            actions.add(new ActionMove(-(165/2), (2*TILE) + (165/2))); // center lane
-            actions.add(new ActionMove(-((3*TILE) + (165/2)), (2*TILE) + (165/2))); // centered on second-last row
-            actions.add(new ActionMove(-((3*TILE) + (165/2)), (1*TILE))); // FIXME approx stage location
             actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionPause(2));
             actions.add(new ActionArm("open"));
+            actions.add(new ActionPause(1));
+            actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 150), (925)));
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionMove(-((3*TILE) + 200), (1*TILE)));  // FIXME park position?
+            actions.add(new ActionPause(1));
+            actions.add(new ActionArm("intake"));
+
+
+            // actions.add(new ActionMove(-((3*TILE) + 200), (1*TILE)));  // FIXME park position?
         }
 
         // vision (from the example code)
@@ -149,33 +173,19 @@ public class AutonomousOp extends OpMode {
                 //.setModelAspectRatio(16.0 / 9.0)
                 .build();
 
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
+        pipeline = new RedCubePipeline();
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
+        webcam.setPipeline(pipeline);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+            }
 
-        // Set the camera (webcam vs. built-in RC phone camera).
-        builder.setCamera(hardwareMap.get(WebcamName.class, "cam_1"));
-        builder.setCameraResolution(new Size(640, 480));
-        //builder.enableCameraMonitoring(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Set confidence threshold for TFOD recognitions, at any time.
-        //tfod.setMinResultConfidence(0.75f);
-
-        // Disable or re-enable the TFOD processor at any time.
-        //visionPortal.setProcessorEnabled(tfod, true);
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
     }
 
     @Override
@@ -189,6 +199,17 @@ public class AutonomousOp extends OpMode {
 
     @Override
     public void loop() {
+
+        if (pipeline.result != "unknown") {
+            target = 3;
+            if (pipeline.result == "left") {
+                target = 1;
+            } else if (pipeline.result == "middle") {
+                target = 2;
+            } else if (pipeline.result == "right") {
+                target = 3;
+            }
+        }
         if (true) {
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
@@ -229,6 +250,7 @@ public class AutonomousOp extends OpMode {
         pack.put("last_y", drive.odo.y_last);
         pack.put("par-encoder", drive.odo.par.encoder.getPosition());
         pack.put("perp-encoder", drive.odo.perp.encoder.getPosition());
+        pack.put("target", target);
 
         // directions (in start position):
         // +x = robot-right
