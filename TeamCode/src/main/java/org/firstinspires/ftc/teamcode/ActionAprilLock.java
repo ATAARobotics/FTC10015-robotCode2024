@@ -24,8 +24,8 @@ public class ActionAprilLock extends ActionBase {
         camera = cm;
         pipeline = new AprilTagPipeline(tag_id);
         pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
-        control_x = new PIDController(0.01, 0.05, 0);
-        control_y = new PIDController(0.005, 0.025, 0.0);  // twice as fast/powerful forward...
+        control_x = new PIDController(0.005, 0.005, 0.0005);
+        control_y = new PIDController(0.005, 0.005, 0.0005);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
         control_x.setSetPoint(0);
@@ -43,6 +43,20 @@ public class ActionAprilLock extends ActionBase {
             last_result = time;
             double fwd = control_y.calculate(pipeline.distance());
             double strafe = control_x.calculate(pipeline.strafe());
+            if (false) {
+                // "simple static-friction feed-forward"
+                // (if we're trying to move "at all", make it at least 0.1 input)
+                if (fwd < 0.01) {
+                    fwd = -0.10 + fwd;
+                } else if (fwd > 0.01) {
+                    fwd = 0.10 + fwd;
+                }
+            }
+            // cap max speed at 0.5 -- we're in "delicate" zone
+            if (fwd > 0.5) { fwd = 0.5; }
+            if (fwd < -0.5) { fwd = -0.5; }
+            if (strafe > 0.5) { strafe = 0.5; }
+            if (strafe < -0.5) { strafe = -0.5; }
             pack.put("pipe-strafe", pipeline.strafe());
             pack.put("pipe-distance", pipeline.distance());
             pack.put("stick-fwd", fwd);
@@ -53,6 +67,8 @@ public class ActionAprilLock extends ActionBase {
             );
         } else {
             drive.robotInputs(0, 0);
+            control_x.setSetPoint(0);
+            control_y.setSetPoint(500);
         }
         return control_x.atSetPoint() && control_y.atSetPoint();
     }

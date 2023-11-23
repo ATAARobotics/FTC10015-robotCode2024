@@ -48,6 +48,7 @@ public class AutonomousOp extends OpMode {
     OpenCvWebcam front_cam;
     OpenCvWebcam rear_cam;
     int target = -1;
+    double last_loop;
 
 
     /*
@@ -114,10 +115,11 @@ public class AutonomousOp extends OpMode {
 
     @Override
     public void start() {
-        time = 0.0;
+        resetRuntime();
         drive.start();
         drive.imu.resetYaw();
         intake_is_up = true;
+        last_loop = time;
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
@@ -209,6 +211,8 @@ public class AutonomousOp extends OpMode {
 
     @Override
     public void loop() {
+        double delta = time - last_loop;
+        last_loop = time;
 
         if (pipeline.result != "unknown") {
             target = 3;
@@ -241,8 +245,10 @@ public class AutonomousOp extends OpMode {
 
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
+        telemetry.addData("delta", delta);
         pack.put("x", drive.odo.position_x());
         pack.put("y", drive.odo.position_y());
+        pack.put("delta", delta);
         //pack.put("last_x", drive.odo.x_last);
         //pack.put("last_y", drive.odo.y_last);
         //pack.put("par-encoder", drive.odo.par.encoder.getPosition());
