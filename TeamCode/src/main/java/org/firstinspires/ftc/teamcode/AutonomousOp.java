@@ -86,6 +86,47 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
+        // vision (from the example code)
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
+                // Use setModelAssetName() if the TF Model is built in as an asset.
+                // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                //.setModelAssetName(TFOD_MODEL_ASSET)
+                //////.setModelFileName("model_20231118_125258.tflite")
+                .setModelFileName("model_20231118_143732.tflite")
+                .setModelLabels(LABELS)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
+                .build();
+
+        pipeline = new RedCubePipeline();
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
+        webcam.setPipeline(pipeline);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+    }
+
+    @Override
+    public void start() {
+        time = 0.0;
+        drive.start();
+        drive.imu.resetYaw();
+        intake_is_up = true;
+        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+    }
+
+    protected void createActions() {
+
         double TILE = 610; // 24inches = 610mm
 
         // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
@@ -137,12 +178,17 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
             actions.add(new ActionTurn(-90));//turn to face the arm towards the backdrop
             actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
-            //blue far backdrop one
-            //actions.add(new ActionMove(-((3*TILE) + (165/2) + 190), (550)));
-            // blue far backdrop 2
-            // actions.add(new ActionMove(-((3*TILE) + (165/2) + 190), (700)));
-            //blue far backrop 3
-            actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 190), (925)));
+
+            if (target == 1) {
+                //blue far backdrop one
+                actions.add(new ActionMove(-((3*TILE) + (165/2) + 193), (550)));
+            } else if (target == 2) {
+                // blue far backdrop 2
+                actions.add(new ActionMove(-((3*TILE) + (165/2) + 193), (690)));
+            } else if (target == 3) {
+                //blue far backrop 3
+                actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
+            }
             // "score the pixel" actions (and return arm to start)
             actions.add(new ActionArm("resting"));
             actions.add(new ActionArm("low-scoring"));
@@ -154,47 +200,11 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionPause(1));
             actions.add(new ActionArm("intake"));
 
-
+            actions.add(new ActionNothing());
             // actions.add(new ActionMove(-((3*TILE) + 200), (1*TILE)));  // FIXME park position?
         }
 
-        // vision (from the example code)
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
-                // Use setModelAssetName() if the TF Model is built in as an asset.
-                // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
-                //////.setModelFileName("model_20231118_125258.tflite")
-                .setModelFileName("model_20231118_143732.tflite")
-                .setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
-                .build();
 
-        pipeline = new RedCubePipeline();
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
-        webcam.setPipeline(pipeline);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-    }
-
-    @Override
-    public void start() {
-        time = 0.0;
-        drive.start();
-        drive.imu.resetYaw();
-        intake_is_up = true;
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
     @Override
@@ -208,6 +218,9 @@ public class AutonomousOp extends OpMode {
                 target = 2;
             } else if (pipeline.result == "right") {
                 target = 3;
+            }
+            if (actions.size() == 0) {
+                createActions();
             }
         }
         if (true) {
