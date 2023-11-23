@@ -23,8 +23,8 @@ public class ActionMove extends ActionBase {
         // using GM0.org article, we tune from there:
         // increase Kp until there are oscillations
         // (old tunings: 0.015, 0.0002, 0)
-        control_x = new PIDController(0.009, 0.15,0.0025);
-        control_y = new PIDController(0.009, 0.15, 0.0025);
+        control_x = new PIDController(0.02, 0.15,0.0025);
+        control_y = new PIDController(0.02, 0.15, 0.0025);
       //  control_x = new PIDController(0.005, 0.08,0.0025);
       //  control_y = new PIDController(0.005, 0.08, 0.0025);
         control_x.setTolerance(5);
