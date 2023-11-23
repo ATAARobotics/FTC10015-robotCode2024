@@ -17,6 +17,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
+// copied from OpenCV examples
 public class AprilTagPipeline extends OpenCvPipeline
 {
     private long nativeApriltagPtr;
@@ -43,12 +44,22 @@ public class AprilTagPipeline extends OpenCvPipeline
     double tagsizeX;
     double tagsizeY;
 
+    int target_tag = -1;
+    double distance_mm;
+    double strafe_mm;
+    boolean detected = false;
+
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagPipeline()//double tagsize, double fx, double fy, double cx, double cy)
+    public double distance() { return distance_mm;}
+    public double strafe() { return strafe_mm; }
+    public boolean has_result() { return detected; }
+
+    public AprilTagPipeline(int target_tag_id)
     {
+        target_tag = target_tag_id;
         double tagsize = 0.0508; // meters (!!)
         // Lens intrinsics
         // UNITS ARE PIXELS
@@ -115,17 +126,21 @@ public class AprilTagPipeline extends OpenCvPipeline
             detectionsUpdate = detections;
         }
 
+        detected = false;
         Scalar red = new Scalar(255, 0, 0);
 
         // For fun, use OpenCV to draw 6DOF markers on the image.
         for(AprilTagDetection detection : detections)
         {
-            Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
+            //Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
             //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
-            if (detection.id == 1) {
-                Imgproc.putText(input, "z=" + (int) (detection.pose.z * 100) + "x=" + (int) (detection.pose.x * 100) + "    ", new Point(10, 10), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
+            //drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            //draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
+            if (detection.id == target_tag) {
+                distance_mm = detection.pose.z * 1000;
+                strafe_mm = detection.pose.x * 1000;
+                detected = true;
+                //Imgproc.putText(input, "z=" + (int) (detection.pose.z * 100) + "x=" + (int) (detection.pose.x * 100) + "    ", new Point(10, 10), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
             }
         }
 

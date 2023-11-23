@@ -13,35 +13,35 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RedCubePipeline extends OpenCvPipeline {
+public class TeamElementPipeline extends OpenCvPipeline {
     public String result = "unknown";
     Scalar min;
     Scalar max;
-    public RedCubePipeline() {
+    public TeamElementPipeline() {
         min = new Scalar(22, 31, 69);
         max = new Scalar(69, 255, 255);
     }
-    public RedCubePipeline(boolean red) {
+    public TeamElementPipeline(boolean red) {
         if (red) {
             min = new Scalar(120, 120, 120);
             max = new Scalar(160, 180, 160);
         } else {
             // blue
-            min = new Scalar(74, 31, 69);
-            max = new Scalar(107, 101, 190);
+            min = new Scalar(22, 31, 69);
+            max = new Scalar(69, 255, 255);
         }
     }
     @Override
     public Mat processFrame(Mat input) {
-        Mat processed = new Mat();
-        Imgproc.cvtColor(input, processed, Imgproc.COLOR_BGR2HSV);
+        // don't create new Mat's in this method? apparently ... Mat processed = new Mat();
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_BGR2HSV);
 
         // filter for one colour
-        Core.inRange(processed, min, max, processed);
+        Core.inRange(input, min, max, input);
 
-        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
-        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
-        Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(input, input, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(input, input, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
+        Imgproc.dilate(input, input, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
 
         int width = 50;
         int height = 55;
@@ -58,7 +58,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         double left = 0;
         for (int x=x0; x < x0 + width; x++) {
             for (int y=y0; y < y0 + height; y++) {
-                double[] px = processed.get(y, x);
+                double[] px = input.get(y, x);
                 if (px != null && (int)px[0] > 0) {
                     left++;
                 }
@@ -68,7 +68,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         double mid = 0;
         for (int x=x1; x < x1 + width; x++) {
             for (int y=y1; y < y1 + height; y++) {
-                double[] px = processed.get(y, x);
+                double[] px = input.get(y, x);
                 if (px != null){
                     mid += px[0];
                 }
@@ -78,7 +78,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         double right = 0;
         for (int x=x2; x < x2 + width; x++) {
             for (int y=y2; y < y2 + height; y++) {
-                double[] px = processed.get(y, x);
+                double[] px = input.get(y, x);
                 if (px != null && px[0] > 0.5) {
                     right++;
                 }
@@ -95,6 +95,7 @@ public class RedCubePipeline extends OpenCvPipeline {
             else if (right == biggest) { result = "right"; }
         }
 
+        /*
         Imgproc.putText(input, "L:" + left, new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(input, "M:" + mid, new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(input, "R:" + right, new Point(x2, y2), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
@@ -102,7 +103,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         Imgproc.rectangle(input, new Point(x0, y0), new Point(x0 + width, y0 + width), biggest == left ? green : red, 2);
         Imgproc.rectangle(input, new Point(x1, y1), new Point(x1 + width, y1 + width), biggest == mid ? green : red, 2);
         Imgproc.rectangle(input, new Point(x2, y2), new Point(x2 + width, y2 + width), biggest == right ? green : red, 2);
-        //return processed;
+        */
         return input;
     }
 }

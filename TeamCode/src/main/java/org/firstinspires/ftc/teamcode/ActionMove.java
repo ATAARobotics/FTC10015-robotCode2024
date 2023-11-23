@@ -10,9 +10,9 @@ public class ActionMove extends ActionBase {
     double target_x;
     double target_y;
     double started = -1;
-    PIDController control_x = null;
+    PIDController control_x;
+    PIDController control_y;
 
-    PIDController control_y = null;
 
     ActionMove(double x, double y) {
         // thinking:

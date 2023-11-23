@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.vision.RedCubePipeline;
+import org.firstinspires.ftc.teamcode.vision.TeamElementPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -43,12 +43,10 @@ public class AutonomousOp extends OpMode {
     static final String[] LABELS = {"red", "blue"};
 
 
-    // copied from ConceptTensorFlowObjectDetection example
-    private TfodProcessor tfod;
-    VisionPortal visionPortal;
     //OpenCvPipeline pipeline;
-    RedCubePipeline pipeline;
-    OpenCvWebcam webcam;
+    TeamElementPipeline pipeline;
+    OpenCvWebcam front_cam;
+    OpenCvWebcam rear_cam;
     int target = -1;
 
 
@@ -86,28 +84,26 @@ public class AutonomousOp extends OpMode {
         pad = new GamepadEx(gamepad1);
 
         actions = new LinkedList<ActionBase>();
-        // vision (from the example code)
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
-                // Use setModelAssetName() if the TF Model is built in as an asset.
-                // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
-                //////.setModelFileName("model_20231118_125258.tflite")
-                .setModelFileName("model_20231118_143732.tflite")
-                .setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
-                .build();
 
-        pipeline = new RedCubePipeline();
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
-        webcam.setPipeline(pipeline);
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        pipeline = new TeamElementPipeline();
+        front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
+        front_cam.setPipeline(pipeline);
+        front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+                front_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+
+        rear_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_2"));
+        rear_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
             }
 
             @Override
@@ -131,6 +127,10 @@ public class AutonomousOp extends OpMode {
 
         // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
         // (if no result in 2 seconds, guess)
+
+        if (true) {
+            actions.add(new ActionAprilLock(rear_cam, 1));
+        }
 
         if (false) {
             // test of turning odometry etc (go out, turn 90, come back)
@@ -161,7 +161,7 @@ public class AutonomousOp extends OpMode {
 
         }
 
-        if (true) {
+        if (false) {
             // blue alliance, far start
             // from start position: 17 inches forward, 6.5 inches right (position 1)
             // positive y is robot-forward, positive x is robot-right
@@ -222,23 +222,7 @@ public class AutonomousOp extends OpMode {
             if (actions.size() == 0) {
                 createActions();
             }
-        }
-        if (true) {
-            List<Recognition> currentRecognitions = tfod.getRecognitions();
-            telemetry.addData("# Objects Detected", currentRecognitions.size());
-            telemetry.addData("time", time);
-            // Step through the list of recognitions and display info for each one.
-            for (Recognition recognition : currentRecognitions) {
-                double x = (recognition.getLeft() + recognition.getRight()) / 2;
-                double y = (recognition.getTop() + recognition.getBottom()) / 2;
-
-                telemetry.addData("", " ");
-                telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                telemetry.addData("- Position", "%.0f / %.0f", x, y);
-                telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-            }   // end for() loop
-
-            telemetry.update();
+            front_cam.stopStreaming();
         }
 
         TelemetryPacket pack = new TelemetryPacket();
@@ -259,10 +243,10 @@ public class AutonomousOp extends OpMode {
         telemetry.addData("y", drive.odo.position_y());
         pack.put("x", drive.odo.position_x());
         pack.put("y", drive.odo.position_y());
-        pack.put("last_x", drive.odo.x_last);
-        pack.put("last_y", drive.odo.y_last);
-        pack.put("par-encoder", drive.odo.par.encoder.getPosition());
-        pack.put("perp-encoder", drive.odo.perp.encoder.getPosition());
+        //pack.put("last_x", drive.odo.x_last);
+        //pack.put("last_y", drive.odo.y_last);
+        //pack.put("par-encoder", drive.odo.par.encoder.getPosition());
+        //pack.put("perp-encoder", drive.odo.perp.encoder.getPosition());
         pack.put("target", target);
 
         // directions (in start position):
@@ -278,7 +262,6 @@ public class AutonomousOp extends OpMode {
         if (current_action == null) {
             // we aren't doing anything, and have nothing else to do -- accept input from controllers
             pad.readButtons();
-            pack.put("DPAD_UP", pad.wasJustPressed(GamepadKeys.Button.DPAD_UP));
             if (pad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 current_action = new ActionMove(drive.odo.position_x() - 333, drive.odo.position_y());
             } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
