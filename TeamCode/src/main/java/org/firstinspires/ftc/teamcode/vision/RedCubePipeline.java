@@ -15,29 +15,33 @@ import java.util.List;
 
 public class RedCubePipeline extends OpenCvPipeline {
     public String result = "unknown";
+    Scalar min;
+    Scalar max;
+    public RedCubePipeline() {
+        min = new Scalar(22, 31, 69);
+        max = new Scalar(69, 255, 255);
+    }
+    public RedCubePipeline(boolean red) {
+        if (red) {
+            min = new Scalar(120, 120, 120);
+            max = new Scalar(160, 180, 160);
+        } else {
+            // blue
+            min = new Scalar(74, 31, 69);
+            max = new Scalar(107, 101, 190);
+        }
+    }
     @Override
     public Mat processFrame(Mat input) {
         Mat processed = new Mat();
         Imgproc.cvtColor(input, processed, Imgproc.COLOR_BGR2HSV);
 
-        Core.inRange(
-                processed,
-                // red airplane paper
-                new Scalar(120, 120, 120),
-                new Scalar(160, 180, 160),
-                processed
-        );
+        // filter for one colour
+        Core.inRange(processed, min, max, processed);
 
         Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
         Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
         Imgproc.dilate(processed, processed, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3)));
-
-        /*
-        List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        // Draw Contours
-        Imgproc.drawContours(input, contours, -1, new Scalar(255, 0, 0));
-        */
 
         int width = 50;
         int height = 55;
@@ -85,7 +89,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         Scalar red = new Scalar(255, 0, 0);
         Scalar green = new Scalar(0, 255, 0);
         double biggest = Math.max(left, Math.max(mid, right));
-        if (result == "unknown" && biggest > 100) {
+        if (result == "unknown"){ // && biggest > 100) {
             if (left == biggest) { result = "left";  }
             else if (mid == biggest) { result = "middle"; }
             else if (right == biggest) { result = "right"; }
@@ -98,6 +102,7 @@ public class RedCubePipeline extends OpenCvPipeline {
         Imgproc.rectangle(input, new Point(x0, y0), new Point(x0 + width, y0 + width), biggest == left ? green : red, 2);
         Imgproc.rectangle(input, new Point(x1, y1), new Point(x1 + width, y1 + width), biggest == mid ? green : red, 2);
         Imgproc.rectangle(input, new Point(x2, y2), new Point(x2 + width, y2 + width), biggest == right ? green : red, 2);
+        //return processed;
         return input;
     }
 }
