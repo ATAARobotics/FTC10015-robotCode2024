@@ -24,7 +24,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.LinkedList;
 import java.util.List;
 
-//@Autonomous(name="Autonomous", group="Autonomous")
 public abstract class AutonomousOp extends OpMode {
 
     private Drive drive;
@@ -83,7 +82,7 @@ public abstract class AutonomousOp extends OpMode {
 
         actions = new LinkedList<ActionBase>();
 
-        pipeline = new TeamElementPipeline();
+        pipeline = new TeamElementPipeline(getAlliance() == Alliance.RED);
         front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
         front_cam.setPipeline(pipeline);
         front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -160,7 +159,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(0, 165 / 2 + TILE));
                 actions.add(new ActionTurn(90));
                 actions.add(new ActionMove(-TILE, 165 / 2 + TILE));
-                actions.add(new ActionMove(60, TILE));
+                actions.add(new ActionMove(5, TILE + 35));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));

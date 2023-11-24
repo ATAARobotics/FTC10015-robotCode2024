@@ -29,7 +29,7 @@ public class ActionTurn extends ActionBase {
             drive.headingControl.setTolerance(1);
             return false;
         }
-        if (drive.headingControl.atSetPoint() || (time - started) > 4.0) {
+        if (drive.headingControl.atSetPoint() || (time - started) > 2.0) {
             drive.odo.resume(drive.headingControl.getSetPoint());
             return true;
         }
