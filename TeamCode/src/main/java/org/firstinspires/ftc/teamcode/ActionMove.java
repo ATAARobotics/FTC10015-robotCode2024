@@ -10,6 +10,7 @@ public class ActionMove extends ActionBase {
     double target_x;
     double target_y;
     double started = -1;
+    boolean slow = false;
     PIDController control_x;
     PIDController control_y;
 
@@ -47,6 +48,7 @@ public class ActionMove extends ActionBase {
 
         if (true) {
             double speedcap = 0.75;
+            if (!slow) { speedcap = 0.95; }
             if (forward > speedcap) { forward = speedcap; }
             if (forward < -speedcap) { forward = -speedcap; }
             if (strafe > speedcap) { strafe = speedcap; }

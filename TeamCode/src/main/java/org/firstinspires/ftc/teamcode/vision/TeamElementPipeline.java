@@ -91,8 +91,8 @@ public class TeamElementPipeline extends OpenCvPipeline {
         double biggest = Math.max(left, Math.max(mid, right));
         if (result == "unknown"){ // && biggest > 100) {
             if (left == biggest) { result = "left";  }
-            else if (mid == biggest) { result = "middle"; }
-            else if (right == biggest) { result = "right"; }
+            if (mid == biggest) { result = "middle"; }
+            if (right == biggest) { result = "right"; }
         }
 
         /*

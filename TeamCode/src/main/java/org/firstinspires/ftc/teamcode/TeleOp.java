@@ -37,6 +37,8 @@ public class TeleOp extends OpMode   {
         operator = new GamepadEx(gamepad2);
         arm = new Arm(hardwareMap);
 
+
+
         //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
         //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
     }
@@ -45,6 +47,7 @@ public class TeleOp extends OpMode   {
     public void start() {
         drive.imu.resetYaw();
         drive.start();
+        arm.arm.resetEncoder();
     }
 
     @Override

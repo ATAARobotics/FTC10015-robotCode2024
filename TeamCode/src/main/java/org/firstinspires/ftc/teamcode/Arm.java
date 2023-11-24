@@ -30,7 +30,6 @@ public class Arm {
         arm_main = new MotorEx(hm,"arm_main");
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
-        arm.resetEncoder();
         arm_control = new PIDController(.01,0.01,0);
         arm_control.setTolerance(15);
         // slide = new MotorEx(hm,"slide");
