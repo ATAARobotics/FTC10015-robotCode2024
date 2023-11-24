@@ -18,8 +18,8 @@ public class TeamElementPipeline extends OpenCvPipeline {
     Scalar min;
     Scalar max;
     public TeamElementPipeline() {
-        min = new Scalar(22, 31, 69);
-        max = new Scalar(69, 255, 255);
+        min = new Scalar(120, 120, 120);
+        max = new Scalar(160, 180, 160);
     }
     public TeamElementPipeline(boolean red) {
         if (red) {

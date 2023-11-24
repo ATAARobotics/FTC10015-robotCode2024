@@ -200,7 +200,7 @@ public abstract class AutonomousOp extends OpMode {
             }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
             if (target == 1) {
-                actions.add(new ActionMove(-230, 360));
+                actions.add(new ActionMove(-395, 360));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
