@@ -63,8 +63,11 @@ public class Intake {
     }
 
     public void goDown(double time) {
+        goDown(time, 1.4);
+    }
+    public void goDown(double time, double delta) {
         rise_mode = RaisingMode.GO_TO_BOTTOM;
-        timeout = time + 1.4;
+        timeout = time + delta;
     }
 
     void loop(double time) {

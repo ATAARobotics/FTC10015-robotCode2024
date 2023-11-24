@@ -117,7 +117,7 @@ public abstract class AutonomousOp extends OpMode {
         drive.imu.resetYaw();
         intake_is_up = true;
         last_loop = time;
-        special_action = new ActionIntake(false);
+        special_action = new ActionInitialIntake();
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
@@ -201,7 +201,7 @@ public abstract class AutonomousOp extends OpMode {
             }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
             if (target == 1) {
-                actions.add(new ActionMove(-395, 360));
+                actions.add(new ActionMove(-165, 360));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -210,43 +210,40 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(-TILE + (165/2), (165 / 2) + TILE));
             } else if (target == 2) {
                 // zone 2
-                actions.add(new ActionMove(165/2, 1.5 * TILE));
-                actions.add(new ActionMove(165/2, 590));
+                actions.add(new ActionMove(-165/2, 1.5 * TILE));
+                actions.add(new ActionMove(-165/2, 590));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+                actions.add(new ActionMove(-TILE  + (165 / 2), (165 / 2) + TILE));
             } else {
                 // zone 3 (under truss)
-                actions.add(new ActionMove(0, 165 / 2 + TILE));
-                actions.add(new ActionTurn(90));
-                actions.add(new ActionMove(TILE, 165 / 2 + TILE));
-                actions.add(new ActionMove(-5, TILE + 35));
+                actions.add(new ActionMove(-(165/2), 165 / 2 + TILE));
+                actions.add(new ActionTurn(-90));
+                actions.add(new ActionMove(TILE / 2, 165 / 2 + TILE));
+                actions.add(new ActionMove(-25, TILE + 35));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-TILE + (165 / 2), (165 / 2) + TILE));
+                actions.add(new ActionMove(-TILE  + (165 / 2), (165 / 2) + TILE));
                 actions.add(new ActionTurn(0));
             }
 
             // no matter what we did with the pixel above, we're in the same position and can go to the board
 
-            if (false) {
-                actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
-                actions.add(new ActionTurn(-90));//turn to face the arm towards the backdrop
-                actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
+            if (true) {
+                actions.add(new ActionMove( -TILE + (165 / 2), (2 * TILE) + (165 / 2))); // center lane
+                actions.add(new ActionTurn(90));//turn to face the arm towards the backdrop
+                actions.add(new ActionMove(((3 * TILE) - (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
 
-                if (target == 1) {
-                    //blue far backdrop one
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
+                if (target == 3) {
+                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (550)));
                 } else if (target == 2) {
-                    // blue far backdrop 2
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (690)));
-                } else if (target == 3) {
-                    //blue far backrop 3
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
+                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (690)));
+                } else if (target == 1) {
+                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (925)));
                 }
                 // "score the pixel" actions (and return arm to start)
                 actions.add(new ActionArm("resting"));
@@ -254,7 +251,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionPause(2));
                 actions.add(new ActionArm("open"));
                 actions.add(new ActionPause(1));
-                actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 150), (925)));
+                actions.add(new ActionMove(((3 * TILE) - (165 / 2) - 150), (925)));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionPause(1));
                 actions.add(new ActionArm("intake"));
@@ -291,6 +288,7 @@ public abstract class AutonomousOp extends OpMode {
                     createActions();
                 }
                 front_cam.stopStreaming();
+                telemetry.addData("detected-target", target);
             }
         }
 
