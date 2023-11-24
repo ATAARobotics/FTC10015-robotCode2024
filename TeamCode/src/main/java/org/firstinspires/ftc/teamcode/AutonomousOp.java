@@ -217,7 +217,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionIntake(true, true));
                 actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
             } else {
-                // zone 1
+                // zone 3 (under truss)
                 actions.add(new ActionMove(0, 165 / 2 + TILE));
                 actions.add(new ActionTurn(90));
                 actions.add(new ActionMove(TILE, 165 / 2 + TILE));
