@@ -129,11 +129,15 @@ public abstract class AutonomousOp extends OpMode {
         // We can call getZone() or getAlliance() to figure out which place we started in
         // ...also, "target" is valid when we get here (will be 1, 2 or 3).
 
+        // positive y is robot-forward, positive x is robot-right
+
+
+        actions.add(new ActionArm("close"));
+
         if (getZone() == Zone.FAR && getAlliance() == Alliance.BLUE) {
             if (target == 3) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 3
-                actions.add(new ActionArm("close"));
                 actions.add(new ActionMove(165, 360));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
@@ -144,7 +148,6 @@ public abstract class AutonomousOp extends OpMode {
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionArm("close"));
                 actions.add(new ActionMove(0, 1.5 * TILE));
                 actions.add(new ActionMove(0, 590));
                 actions.add(new ActionIntake(false));
@@ -155,7 +158,6 @@ public abstract class AutonomousOp extends OpMode {
             } else {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 1
-                actions.add(new ActionArm("close"));
                 actions.add(new ActionMove(0, 165 / 2 + TILE));
                 actions.add(new ActionTurn(90));
                 actions.add(new ActionMove(-TILE, 165 / 2 + TILE));
@@ -196,8 +198,69 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionPause(1));
                 actions.add(new ActionArm("intake"));
             }
+        } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
+            if (target == 1) {
+                actions.add(new ActionMove(-230, 360));
+                actions.add(new ActionIntake(false));
+                actions.add(new ActionSuck(false));
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionIntake(true, true));
+                actions.add(new ActionMove(-TILE + (165/2), (360)));
+                actions.add(new ActionMove(-TILE (+165/2), (165 / 2) + TILE));
+            } else if (target == 2) {
+                // zone 2
+                actions.add(new ActionMove(165/2, 1.5 * TILE));
+                actions.add(new ActionMove(165/2, 590));
+                actions.add(new ActionIntake(false));
+                actions.add(new ActionSuck(false));
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionIntake(true, true));
+                actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+            } else {
+                // zone 1
+                actions.add(new ActionMove(0, 165 / 2 + TILE));
+                actions.add(new ActionTurn(90));
+                actions.add(new ActionMove(TILE, 165 / 2 + TILE));
+                actions.add(new ActionMove(-5, TILE + 35));
+                actions.add(new ActionIntake(false));
+                actions.add(new ActionSuck(false));
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionIntake(true, true));
+                actions.add(new ActionMove(-TILE + (165 / 2), (165 / 2) + TILE));
+                actions.add(new ActionTurn(0));
+            }
+
+            // no matter what we did with the pixel above, we're in the same position and can go to the board
+
+            if (false) {
+                actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
+                actions.add(new ActionTurn(-90));//turn to face the arm towards the backdrop
+                actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
+
+                if (target == 1) {
+                    //blue far backdrop one
+                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
+                } else if (target == 2) {
+                    // blue far backdrop 2
+                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (690)));
+                } else if (target == 3) {
+                    //blue far backrop 3
+                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
+                }
+                // "score the pixel" actions (and return arm to start)
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionArm("low-scoring"));
+                actions.add(new ActionPause(2));
+                actions.add(new ActionArm("open"));
+                actions.add(new ActionPause(1));
+                actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 150), (925)));
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionPause(1));
+                actions.add(new ActionArm("intake"));
+            }
         }
 
+        // always at the end we want to do this...
         actions.add(new ActionNothing());
     }
 
