@@ -130,18 +130,46 @@ public class AutonomousOp extends OpMode {
         // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
         // (if no result in 2 seconds, guess)
 
+        if (false) {
+            // blue-side initial bits of motion .. spit out purple pixel
+            // zone 3
+            actions.add(new ActionArm("close"));
+            actions.add(new ActionMove(165, 360));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionMove(-(165 / 2) + TILE, (360)));
+            actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+            actions.add(new ActionNothing());
+        }
+
         if (true) {
+            // blue-side initial bits of motion .. spit out purple pixel
+            // zone 2
+            actions.add(new ActionArm("close"));
+            actions.add(new ActionMove(0, 1.5 * TILE));
+            actions.add(new ActionMove(0,590));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+            actions.add(new ActionNothing());
+        }
+
+        if (false) {
             actions.add(new ActionAprilLock(rear_cam, 1));
         }
 
         if (false) {
             // test of turning odometry etc (go out, turn 90, come back)
-            actions.add(new ActionArm("close"));
+            //actions.add(new ActionArm("close"));
             actions.add(new ActionMove(0, 300)); // forward 30cm
             actions.add(new ActionTurn(90));
             actions.add(new ActionMove(0, 0));
             actions.add(new ActionTurn(0));
-            //actions.add(new ActionNothing());
+            actions.add(new ActionNothing());
         }
 
         if (false) {

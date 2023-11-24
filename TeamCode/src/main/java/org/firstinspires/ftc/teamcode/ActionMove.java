@@ -27,6 +27,9 @@ public class ActionMove extends ActionBase {
         control_y = new PIDController(0.02, 0.15, 0.0025);
       //  control_x = new PIDController(0.005, 0.08,0.0025);
       //  control_y = new PIDController(0.005, 0.08, 0.0025);
+        // from the april-tag locker .. also set a max-speed!
+        //control_x = new PIDController(0.01, 0.05, 0.0005);
+        //control_y = new PIDController(0.01, 0.05, 0.0005);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
         set_target(x, y);
@@ -41,6 +44,15 @@ public class ActionMove extends ActionBase {
     public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         double strafe = control_x.calculate(drive.odo.position_x());
         double forward = control_y.calculate(drive.odo.position_y());
+
+        if (true) {
+            double speedcap = 0.75;
+            if (forward > speedcap) { forward = speedcap; }
+            if (forward < -speedcap) { forward = -speedcap; }
+            if (strafe > speedcap) { strafe = speedcap; }
+            if (strafe < -speedcap) { strafe = -speedcap; }
+        }
+
         if (started < 0.0) {
             started = time;
         }
@@ -56,7 +68,7 @@ public class ActionMove extends ActionBase {
         pack.put("target_y", target_y);
         pack.put("at_target", at_target(drive));
 
-        if (at_target(drive)){// || timed_out(time)) {
+        if (at_target(drive) || timed_out(time)) {
             drive.robotInputs(0, 0);
             return true;
         }
