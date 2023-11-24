@@ -201,7 +201,7 @@ public abstract class AutonomousOp extends OpMode {
             }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
             if (target == 1) {
-                actions.add(new ActionMove(-300, 380));
+                actions.add(new ActionMove(-305, 380));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -222,7 +222,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(-(165/2), 165 / 2 + TILE));
                 actions.add(new ActionTurn(-90));
                 actions.add(new ActionMove(TILE / 2, 165 / 2 + TILE));
-                actions.add(new ActionMove(-25, TILE + 35));
+                actions.add(new ActionMove(-35, TILE + 35));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -234,24 +234,23 @@ public abstract class AutonomousOp extends OpMode {
             // no matter what we did with the pixel above, we're in the same position and can go to the board
 
             if (true) {
-                actions.add(new ActionMove( -TILE + (165 / 2), (2 * TILE) + (165 / 2))); // center lane
+                actions.add(new ActionMove( -TILE + (165 / 2), (2 * TILE) + 20)); // center lane
                 actions.add(new ActionTurn(90));//turn to face the arm towards the backdrop
-                actions.add(new ActionMove(((3 * TILE) - (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
+                actions.add(new ActionMove(((3 * TILE)), (2 * TILE) + 20)); // centered on second-last row
 
                 if (target == 3) {
-                    actions.add(new ActionMove(((3 * TILE) + 120), (545)));
+                    actions.add(new ActionMove(((3 * TILE) + 130), (550)));
                 } else if (target == 2) {
-                    actions.add(new ActionMove(((3 * TILE) + 120), (685)));
+                    actions.add(new ActionMove(((3 * TILE) + 130), (690)));
                 } else if (target == 1) {
-                    actions.add(new ActionMove(((3 * TILE) + 120), (920)));
+                    actions.add(new ActionMove(((3 * TILE) + 130), (910)));
                 }
                 // "score the pixel" actions (and return arm to start)
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionArm("low-scoring"));
-                actions.add(new ActionPause(2));
+                actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("open"));
-                actions.add(new ActionPause(1));
-                actions.add(new ActionMove(((3 * TILE) - (165 / 2) - 150), (925)));
+                actions.add(new ActionPause(.1));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionPause(1));
                 actions.add(new ActionArm("intake"));
