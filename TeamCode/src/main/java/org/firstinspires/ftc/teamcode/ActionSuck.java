@@ -24,7 +24,7 @@ public class ActionSuck extends ActionBase {
             return false;
         }
         pack.put("suck-elapsed", (time - started));
-        if ((time - started) > 1.0) {
+        if ((time - started) > 1.4) {
             intake.suck_mode = Intake.SuckMode.NOTHING;
             return true;
         }

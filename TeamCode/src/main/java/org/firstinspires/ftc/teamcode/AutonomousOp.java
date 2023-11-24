@@ -196,18 +196,18 @@ public abstract class AutonomousOp extends OpMode {
                 //actions.add(new ActionPause(0.2));
                // actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 150), (925)));
                 actions.add(new ActionArm("resting"));
-                actions.add(new ActionPause(1));
+                actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("intake"));
             }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
             if (target == 1) {
-                actions.add(new ActionMove(-305, 380));
+                actions.add(new ActionMove(-340, 365));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-TILE + (165/2), (360)));
-                actions.add(new ActionMove(-TILE + (165/2), (165 / 2) + TILE));
+                actions.add(new ActionMove(-TILE, (360)));
+                actions.add(new ActionMove(-TILE, (165 / 2) + TILE));
             } else if (target == 2) {
                 // zone 2
                 actions.add(new ActionMove(-165/2, 1.5 * TILE));
@@ -222,7 +222,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(-(165/2), 165 / 2 + TILE));
                 actions.add(new ActionTurn(-90));
                 actions.add(new ActionMove(TILE / 2, 165 / 2 + TILE));
-                actions.add(new ActionMove(-35, TILE + 35));
+                actions.add(new ActionMove(-150, TILE + 55));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -232,6 +232,7 @@ public abstract class AutonomousOp extends OpMode {
             }
 
             // no matter what we did with the pixel above, we're in the same position and can go to the board
+            // RED
 
             if (true) {
                 actions.add(new ActionMove( -TILE + (165 / 2), (2 * TILE) + 20)); // center lane
@@ -239,11 +240,11 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(((3 * TILE)), (2 * TILE) + 20)); // centered on second-last row
 
                 if (target == 3) {
-                    actions.add(new ActionMove(((3 * TILE) + 130), (550)));
+                    actions.add(new ActionMove(((3 * TILE) + 170), (520)));
                 } else if (target == 2) {
-                    actions.add(new ActionMove(((3 * TILE) + 130), (690)));
+                    actions.add(new ActionMove(((3 * TILE) + 170), (655)));
                 } else if (target == 1) {
-                    actions.add(new ActionMove(((3 * TILE) + 130), (910)));
+                    actions.add(new ActionMove(((3 * TILE) + 170), (890)));
                 }
                 // "score the pixel" actions (and return arm to start)
                 actions.add(new ActionArm("resting"));
@@ -252,7 +253,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("open"));
                 actions.add(new ActionPause(.1));
                 actions.add(new ActionArm("resting"));
-                actions.add(new ActionPause(1));
+                actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("intake"));
             }
         }

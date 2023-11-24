@@ -10,7 +10,7 @@ public class ActionInitialIntake extends ActionBase {
     public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         if (started < 0.0) {
             started = time;
-            intake.goDown(time, 1.95);
+            intake.goDown(time, 2.0);
         }
         pack.put("action-intake", started);
         pack.put("action-time", time);
