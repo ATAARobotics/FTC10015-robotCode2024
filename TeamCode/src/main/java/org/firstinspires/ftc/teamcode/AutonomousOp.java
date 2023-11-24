@@ -201,7 +201,7 @@ public abstract class AutonomousOp extends OpMode {
             }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
             if (target == 1) {
-                actions.add(new ActionMove(-165, 360));
+                actions.add(new ActionMove(-300, 380));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -239,11 +239,11 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(((3 * TILE) - (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
 
                 if (target == 3) {
-                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (550)));
+                    actions.add(new ActionMove(((3 * TILE) + 120), (545)));
                 } else if (target == 2) {
-                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (690)));
+                    actions.add(new ActionMove(((3 * TILE) + 120), (685)));
                 } else if (target == 1) {
-                    actions.add(new ActionMove(((3 * TILE) - (165 / 2) + 193), (925)));
+                    actions.add(new ActionMove(((3 * TILE) + 120), (920)));
                 }
                 // "score the pixel" actions (and return arm to start)
                 actions.add(new ActionArm("resting"));
