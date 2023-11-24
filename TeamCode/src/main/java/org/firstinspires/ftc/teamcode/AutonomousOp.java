@@ -144,7 +144,7 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionNothing());
         }
 
-        if (true) {
+        if (false) {
             // blue-side initial bits of motion .. spit out purple pixel
             // zone 2
             actions.add(new ActionArm("close"));
@@ -157,6 +157,23 @@ public class AutonomousOp extends OpMode {
             actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
             actions.add(new ActionNothing());
         }
+        if (true) {
+            // blue-side initial bits of motion .. spit out purple pixel
+            // zone 1
+            actions.add(new ActionArm("close"));
+            actions.add(new ActionMove(0,165/2 + TILE));
+            actions.add(new ActionTurn(90));
+            actions.add(new ActionMove(-TILE,165/2 + TILE));
+            actions.add(new ActionMove(60,TILE));
+            actions.add(new ActionIntake(false));
+            actions.add(new ActionSuck(false));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+            actions.add(new ActionTurn(0));
+            actions.add(new ActionNothing());
+        }
+
 
         if (false) {
             actions.add(new ActionAprilLock(rear_cam, 1));
