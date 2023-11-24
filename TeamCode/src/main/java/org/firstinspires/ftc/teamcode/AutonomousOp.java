@@ -206,7 +206,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
                 actions.add(new ActionMove(-TILE + (165/2), (360)));
-                actions.add(new ActionMove(-TILE (+165/2), (165 / 2) + TILE));
+                actions.add(new ActionMove(-TILE + (165/2), (165 / 2) + TILE));
             } else if (target == 2) {
                 // zone 2
                 actions.add(new ActionMove(165/2, 1.5 * TILE));
