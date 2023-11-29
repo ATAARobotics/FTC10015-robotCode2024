@@ -58,7 +58,7 @@ public class Intake {
         if (only_half) {
             timeout = time + 0.77;
         } else {
-            timeout = time + 1.4;
+            timeout = time + 1.3;
         }
     }
 

@@ -118,6 +118,7 @@ public abstract class AutonomousOp extends OpMode {
         intake_is_up = true;
         last_loop = time;
         special_action = new ActionInitialIntake();
+        arm.arm.resetEncoder();
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
 
@@ -140,7 +141,7 @@ public abstract class AutonomousOp extends OpMode {
             if (target == 3) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 3
-                actions.add(new ActionMove(165, 360));
+                actions.add(new ActionMove(150, 375));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -211,7 +212,7 @@ public abstract class AutonomousOp extends OpMode {
             } else if (target == 2) {
                 // zone 2
                 actions.add(new ActionMove(-165/2, 1.5 * TILE));
-                actions.add(new ActionMove(-165/2, 590));
+                actions.add(new ActionMove(-165/2, 585));
                 //actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -240,7 +241,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(((3 * TILE)), (2 * TILE) + 20)); // centered on second-last row
 
                 if (target == 3) {
-                    actions.add(new ActionMove(((3 * TILE) + 170), (520)));
+                    actions.add(new ActionMove(((3 * TILE) + 170), (505)));
                 } else if (target == 2) {
                     actions.add(new ActionMove(((3 * TILE) + 170), (655)));
                 } else if (target == 1) {
