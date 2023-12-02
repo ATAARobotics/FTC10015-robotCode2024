@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReverseTeamElementPipeline extends OpenCvPipeline {
-    public String result = "unknown";
+    public enum Result {Unknown, Left, Middle, Right};
+    public Result result = Result.Unknown;
     Scalar min;
     Scalar max;
     public Mat processed;
@@ -97,9 +98,9 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         Scalar green = new Scalar(0, 255, 0);
         int biggest = Math.max(left, Math.max(mid, right));
         if (biggest > 100) {
-            if (left == biggest) { result = "left";  }
-            if (mid == biggest) { result = "middle"; }
-            if (right == biggest) { result = "right"; }
+            if (left == biggest) { result = Result.Left;  }
+            if (mid == biggest) { result = Result.Middle; }
+            if (right == biggest) { result = Result.Right; }
         }
 
 
@@ -107,11 +108,10 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         Imgproc.putText(annotated, "L:" + left, new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(annotated, "M:" + mid, new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(annotated, "R:" + right, new Point(x2, y2), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
-        Imgproc.putText(annotated, result, new Point(0, 100), Imgproc.FONT_HERSHEY_PLAIN, 1, green);
 
-        Imgproc.rectangle(annotated, new Point(x0, y0), new Point(x0 + width, y0 + width), result.equals("left") ? green : red, 2);
-        Imgproc.rectangle(annotated, new Point(x1, y1), new Point(x1 + width, y1 + width), result.equals("middle") ? green : red, 2);
-        Imgproc.rectangle(annotated, new Point(x2, y2), new Point(x2 + width, y2 + width), result.equals("right") ? green : red, 2);
+        Imgproc.rectangle(annotated, new Point(x0, y0), new Point(x0 + width, y0 + width), result == Result.Left ? green : red, 2);
+        Imgproc.rectangle(annotated, new Point(x1, y1), new Point(x1 + width, y1 + width), result == Result.Middle ? green : red, 2);
+        Imgproc.rectangle(annotated, new Point(x2, y2), new Point(x2 + width, y2 + width), result == Result.Right ? green : red, 2);
 
         return annotated;
     }
