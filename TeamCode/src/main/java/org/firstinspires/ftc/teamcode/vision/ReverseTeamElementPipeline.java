@@ -58,10 +58,10 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         int width = 50;
         int height = 55;
 
-        int x0 = 120;
-        int y0 = 292;
+        int x0 = 130;
+        int y0 = 255;
         int x1 = 469;
-        int y1 = 235;
+        int y1 = 142;
         int x2 = 560;
         int y2 = 247;
 

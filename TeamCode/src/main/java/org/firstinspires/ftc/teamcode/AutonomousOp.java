@@ -174,18 +174,18 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionTurn(90)); //turn to face the arm towards the backdrop
                 actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
+                // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
-
                     actions.add(new ActionAprilLock(rear_cam, 1));
-                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
+                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170 - 90 - 90)));
                 } else if (target == 2) {
                     // blue far backdrop 2
                     actions.add(new ActionAprilLock(rear_cam, 2));
-                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (670)));
+                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170 - 90)));
                 } else if (target == 3) {
                     //blue far backrop 3
-                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2 - 203.2))));
+                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170)));
                     actions.add(new ActionAprilLock(rear_cam, 3));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }

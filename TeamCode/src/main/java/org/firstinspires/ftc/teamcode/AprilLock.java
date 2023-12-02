@@ -30,7 +30,7 @@ public class AprilLock {
         control_x.setTolerance(5);
         control_y.setTolerance(5);
         control_x.setSetPoint(0);
-        control_y.setSetPoint(500); // mm
+        control_y.setSetPoint(450); // mm
     }
 
     // calculate (strafe, forward) values for control (would be nice
