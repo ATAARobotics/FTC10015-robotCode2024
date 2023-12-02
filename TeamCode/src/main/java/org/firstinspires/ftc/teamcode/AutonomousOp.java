@@ -178,7 +178,7 @@ public abstract class AutonomousOp extends OpMode {
                 // position "2" was actual for position 1
                 double board_position_horiz = -((2*TILE) - 290); // position 1
                 double board_position_front = (3 * TILE) + 185;
-                double board_space = 160;
+                double board_space = 180;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
