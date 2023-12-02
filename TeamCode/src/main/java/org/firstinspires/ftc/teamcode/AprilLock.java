@@ -39,6 +39,7 @@ public class AprilLock {
     void update(double time) {
         if (started < 0) {
             started = time;
+            // XXX should we do this just once in TeleOp / init?
             camera.setPipeline(pipeline);
         }
 

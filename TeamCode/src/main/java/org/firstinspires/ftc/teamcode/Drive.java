@@ -14,6 +14,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 public class Drive {
     public Odometry odo = null;
@@ -35,7 +36,11 @@ public class Drive {
     private double turn = 0.0;
     private double heading = 0.0;  // from IMU
 
-    public Drive(HardwareMap hardwareMap) {
+    AprilLock april_locker;
+    OpenCvWebcam webcam;
+    int last_april_tag = 1;  // used by april-tag locker
+
+    public Drive(HardwareMap hardwareMap, OpenCvWebcam webcam) {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu = hardwareMap.get(IMU.class, "imu");
@@ -75,46 +80,62 @@ public class Drive {
         headingControl.setPID(0.03, 0.0, 0.001);
         headingLock();
     }
-    public void humanInputs(GamepadEx driver){
+    public void humanInputs(GamepadEx driver, double time){
         // this method called ONCE per loop from teleop controller
 
-        // heading-lock from right joystick
-        if (driver.getLeftX() < -0.5) {
-            headingControl.setSetPoint(90.0); // west
-        } else if (driver.getLeftX() > 0.5) {
-            headingControl.setSetPoint(-90.0); // east
-        } else if (driver.getLeftY() < -0.5) {
-            headingControl.setSetPoint(180.0); // south
-        } else if (driver.getLeftY() > 0.5) {
-            headingControl.setSetPoint(0); // north
-        }
-
-        // heading lock from DPAD
-        /*
-        if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-            headingControl.setSetPoint(0.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            headingControl.setSetPoint(90.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            headingControl.setSetPoint(-90.0);
-        } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-            headingControl.setSetPoint(0.0);
-        }
-         */
-
-        // turbo mode or not
-        // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
-        if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            drivebase.setMaxSpeed(0.80);
-            headingControl.setPID(0.03, 0.00, 0.001);
+        // if X is held down, we only look at an April tag (otherwise,
+        // we let the other controls work)
+        if (driver.isDown(GamepadKeys.Button.X)) {
+            // FIXME, need to account for red vs blue alliance
+            aprilLock(time, last_april_tag);
+            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                if (last_april_tag < 3) {
+                    last_april_tag += 1;
+                }
+            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                if (last_april_tag > 1) {
+                    last_april_tag -= 1;
+                }
+            }
         } else {
-            drivebase.setMaxSpeed(0.50);
-            headingControl.setPID(0.05, 0.00, 0.002);
-        }
+            if (april_locker != null) {
+                // need to stop camera?
+                april_locker = null;
+            }
+            // heading-lock from right joystick
+            // (HAVE TO FIX for "backwards" autonomous start)
+            if (driver.getLeftX() < -0.5) {
+                headingControl.setSetPoint(90.0); // west
+            } else if (driver.getLeftX() > 0.5) {
+                headingControl.setSetPoint(-90.0); // east
+            } else if (driver.getLeftY() < -0.5) {
+                headingControl.setSetPoint(180.0); // south
+            } else if (driver.getLeftY() > 0.5) {
+                headingControl.setSetPoint(0); // north
+            }
 
-        forward = -driver.getRightY();
-        strafe = driver.getRightX();
+            // turbo mode or not
+            // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
+            if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                drivebase.setMaxSpeed(0.80);
+                headingControl.setPID(0.03, 0.00, 0.001);
+            } else {
+                drivebase.setMaxSpeed(0.50);
+                headingControl.setPID(0.05, 0.00, 0.002);
+            }
+
+            forward = -driver.getRightY();
+            strafe = driver.getRightX();
+        }
         headingLock();
+    }
+
+    // lock on to a particular April tag
+    private void aprilLock(double time, int tag_id) {
+        if (april_locker == null) {
+            april_locker = new AprilLock(webcam, tag_id);
+        }
+        april_locker.update(time);
     }
 
     private void headingLock() {

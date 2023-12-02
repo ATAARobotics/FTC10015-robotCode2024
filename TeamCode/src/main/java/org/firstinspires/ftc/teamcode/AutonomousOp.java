@@ -78,10 +78,6 @@ public abstract class AutonomousOp extends OpMode {
 
     @Override
     public void init() {
-        drive = new Drive(hardwareMap);
-        intake = new Intake(hardwareMap);
-        arm = new Arm(hardwareMap);
-
         actions = new LinkedList<ActionBase>();
 
         pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
@@ -109,6 +105,10 @@ public abstract class AutonomousOp extends OpMode {
             public void onError(int errorCode) {
             }
         });
+
+        drive = new Drive(hardwareMap, rear_cam);
+        intake = new Intake(hardwareMap);
+        arm = new Arm(hardwareMap);
     }
 
     @Override

@@ -16,6 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 // put all FTCLib imports here
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
@@ -36,11 +40,26 @@ public class TeleOp extends OpMode   {
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
+    protected OpenCvWebcam rear_cam;
+
     BNO055IMU arm_imu = null;
 
     @Override
     public void init() {
-        drive = new Drive(hardwareMap);
+        rear_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_2"));
+        rear_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+
+
+        drive = new Drive(hardwareMap, rear_cam);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
         arm = new Arm(hardwareMap);
@@ -64,7 +83,7 @@ public class TeleOp extends OpMode   {
         driver.readButtons();
         operator.readButtons();
 
-        drive.humanInputs(driver);
+        drive.humanInputs(driver, time);
         drive.loop(time);
         arm.humanInputs(operator);
         arm.loop(time);
