@@ -58,10 +58,10 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         int width = 50;
         int height = 55;
 
-        int x0 = 140;
-        int y0 = 192;
-        int x1 = 500;
-        int y1 = 135;
+        int x0 = 120;
+        int y0 = 292;
+        int x1 = 469;
+        int y1 = 235;
         int x2 = 560;
         int y2 = 247;
 
@@ -110,7 +110,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             result = Result.Right;
         }
 
-        if (false) {
+        if (true) {
             input.copyTo(annotated);
             Imgproc.putText(annotated, "L:" + (left / (50.0*55)), new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
             Imgproc.putText(annotated, "M:" + (mid / (50.0*55)), new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);

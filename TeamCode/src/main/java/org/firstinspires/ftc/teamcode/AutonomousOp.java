@@ -82,7 +82,7 @@ public abstract class AutonomousOp extends OpMode {
 
         pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
         front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
-        front_cam.setPipeline(pipeline);
+
         front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -99,6 +99,7 @@ public abstract class AutonomousOp extends OpMode {
             @Override
             public void onOpened() {
                 rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+                rear_cam.setPipeline(pipeline);
             }
 
             @Override
@@ -130,7 +131,7 @@ public abstract class AutonomousOp extends OpMode {
         // We can call getZone() or getAlliance() to figure out which place we started in
         // ...also, "target" is valid when we get here (will be 1, 2 or 3).
 
-        // positive y is robot-forward, positive x is robot-right
+        // negative y is robot-forward, negative x is robot-right
 
         actions.add(new ActionArm("close"));
 
@@ -138,44 +139,44 @@ public abstract class AutonomousOp extends OpMode {
             if (target == 3) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 3
-                actions.add(new ActionMove(150, TILE + TILE));
+                actions.add(new ActionMove(-385, -(TILE + TILE)));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
                 // "common" tile? 3 out -- just past the "scoring" tile
-                actions.add(new ActionMove(150, TILE*3 + (165/2)));
+                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionMove((165/2), TILE + TILE + 300));
+                actions.add(new ActionMove((-165/2), -(TILE  + 730)));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(150, TILE*3 + (165/2)));
+                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
             } else {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 1
-                actions.add(new ActionMove(165/2, TILE));
-                actions.add(new ActionTurn(90));
-                actions.add(new ActionMove(0, TILE));
+                actions.add(new ActionMove(-165/2, -TILE));
+                actions.add(new ActionTurn(-90));
+                actions.add(new ActionMove(0, -TILE));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(150, TILE*3 + (165/2)));
+                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
             }
 
             // no matter what we did with the pixel above, we're in the same position and can go to the board
 
             if (true) {
-                actions.add(new ActionTurn(-90)); //turn to face the arm towards the backdrop
-                actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
-                actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
+                actions.add(new ActionTurn(90)); //turn to face the arm towards the backdrop
+                actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
                 if (target == 1) {
                     //blue far backdrop one
+
                     actions.add(new ActionAprilLock(rear_cam, 1));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
                 } else if (target == 2) {
@@ -184,6 +185,7 @@ public abstract class AutonomousOp extends OpMode {
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (670)));
                 } else if (target == 3) {
                     //blue far backrop 3
+                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2 - 203.2))));
                     actions.add(new ActionAprilLock(rear_cam, 3));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }
