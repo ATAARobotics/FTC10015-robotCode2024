@@ -55,22 +55,22 @@ public class TeamElementPipeline extends OpenCvPipeline {
 
         // count how many pixels are "on" in each region of interest
 
-        double left = 0;
+        int left = 0;
         for (int x=x0; x < x0 + width; x++) {
             for (int y=y0; y < y0 + height; y++) {
                 double[] px = input.get(y, x);
-                if (px != null && (int)px[0] > 0) {
+                if (px != null && (int)px[0] > 128) {
                     left++;
                 }
             }
         }
 
-        double mid = 0;
+        int mid = 0;
         for (int x=x1; x < x1 + width; x++) {
             for (int y=y1; y < y1 + height; y++) {
                 double[] px = input.get(y, x);
-                if (px != null){
-                    mid += px[0];
+                if (px != null && (int)px[0] > 128){
+                    mid++;
                 }
             }
         }
@@ -79,7 +79,7 @@ public class TeamElementPipeline extends OpenCvPipeline {
         for (int x=x2; x < x2 + width; x++) {
             for (int y=y2; y < y2 + height; y++) {
                 double[] px = input.get(y, x);
-                if (px != null && px[0] > 0.5) {
+                if (px != null && (int)px[0] > 128) {
                     right++;
                 }
             }
@@ -89,7 +89,7 @@ public class TeamElementPipeline extends OpenCvPipeline {
         Scalar red = new Scalar(255, 0, 0);
         Scalar green = new Scalar(0, 255, 0);
         double biggest = Math.max(left, Math.max(mid, right));
-        if (result == "unknown"){ // && biggest > 100) {
+        if (biggest > 100) {
             if (left == biggest) { result = "left";  }
             if (mid == biggest) { result = "middle"; }
             if (right == biggest) { result = "right"; }
