@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -24,6 +28,11 @@ import java.util.List;
 public class TeleOp extends OpMode   {
     public Drive drive = null;
     public Arm arm = null;
+    // ideally make a class for "plane launcher", but it's just one servo so :shrug:
+    public ServoEx plane_launcher;
+    double plane_countdown_start = -1; // > 0 if we've started the timer
+    boolean plane_launched = false;
+
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
@@ -37,7 +46,7 @@ public class TeleOp extends OpMode   {
         operator = new GamepadEx(gamepad2);
         arm = new Arm(hardwareMap);
 
-
+        plane_launcher = new SimpleServo(hardwareMap, "plane", 0, 180.0, AngleUnit.DEGREES);
 
         //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
         //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
@@ -48,6 +57,7 @@ public class TeleOp extends OpMode   {
         drive.imu.resetYaw();
         drive.start();
         arm.arm.resetEncoder();
+        plane_launched = false;
     }
 
     @Override
@@ -59,6 +69,25 @@ public class TeleOp extends OpMode   {
         drive.loop(time);
         arm.humanInputs(operator);
         arm.loop(time);
+        // ideally put in PlaneLauncher or something, but for now it lives here
+        if (operator.isDown(GamepadKeys.Button.Y)) {
+            if (plane_countdown_start < 0) {
+                plane_countdown_start = time;
+            }
+            double elapsed = time - plane_countdown_start;
+            if (elapsed > 0.6) {
+                plane_launcher.setPosition(0.5);
+                plane_launched = true;
+            }
+        } else {
+            plane_countdown_start = -1;
+        }
+
+        if (plane_launched && operator.wasJustPressed(GamepadKeys.Button.Y)){
+            plane_launcher.setPosition(0.0);
+            plane_launched = false;
+            plane_countdown_start = -1;
+        }
         //imu stuff
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
