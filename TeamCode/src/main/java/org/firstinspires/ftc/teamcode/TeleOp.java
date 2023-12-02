@@ -40,7 +40,6 @@ public class TeleOp extends OpMode   {
 
     @Override
     public void init() {
-        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new Drive(hardwareMap);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
@@ -70,6 +69,7 @@ public class TeleOp extends OpMode   {
         arm.humanInputs(operator);
         arm.loop(time);
         // ideally put in PlaneLauncher or something, but for now it lives here
+        // (if we press Y for more than 0.6 seconds, release the plane)
         if (operator.isDown(GamepadKeys.Button.Y)) {
             if (plane_countdown_start < 0) {
                 plane_countdown_start = time;
@@ -83,11 +83,13 @@ public class TeleOp extends OpMode   {
             plane_countdown_start = -1;
         }
 
+        // if we already launched the plane, pressing Y shuts the trigger again
         if (plane_launched && operator.wasJustPressed(GamepadKeys.Button.Y)){
             plane_launcher.setPosition(0.0);
             plane_launched = false;
             plane_countdown_start = -1;
         }
+
         //imu stuff
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
