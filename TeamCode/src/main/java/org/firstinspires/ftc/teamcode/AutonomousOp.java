@@ -118,7 +118,7 @@ public abstract class AutonomousOp extends OpMode {
         drive.imu.resetYaw();
         intake_is_up = true;
         last_loop = time;
-        special_action = new ActionInitialIntake();
+        special_action = null;//new ActionInitialIntake();
         arm.arm.resetEncoder();
         //FtcDashboard.getInstance().startCameraStream(camera, 0);
     }
@@ -127,14 +127,10 @@ public abstract class AutonomousOp extends OpMode {
 
         double TILE = 610; // 24inches = 610mm
 
-        // XXX FIXME don't do the detection as an action, just do it first -- then build up other autonomous commands (because we need the result to do that ...)
-        // (if no result in 2 seconds, guess)
-
         // We can call getZone() or getAlliance() to figure out which place we started in
         // ...also, "target" is valid when we get here (will be 1, 2 or 3).
 
         // positive y is robot-forward, positive x is robot-right
-
 
         actions.add(new ActionArm("close"));
 
@@ -142,54 +138,54 @@ public abstract class AutonomousOp extends OpMode {
             if (target == 3) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 3
-                actions.add(new ActionMove(150, 375));
-                //actions.add(new ActionIntake(false));
+                actions.add(new ActionMove(150, TILE + TILE));
+                actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-(165 / 2) + TILE, (360)));
-                actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+                // "common" tile? 3 out -- just past the "scoring" tile
+                actions.add(new ActionMove(150, TILE*3 + (165/2)));
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionMove(0, 1.5 * TILE));
-                actions.add(new ActionMove(0, 590));
-                //actions.add(new ActionIntake(false));
+                actions.add(new ActionMove((165/2), TILE + TILE + 300));
+                actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
+                actions.add(new ActionMove(150, TILE*3 + (165/2)));
             } else {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 1
-                actions.add(new ActionMove(0, 165 / 2 + TILE));
+                actions.add(new ActionMove(165/2, TILE));
                 actions.add(new ActionTurn(90));
-                actions.add(new ActionMove(-TILE/2, 165 / 2 + TILE));
-                actions.add(new ActionMove(5, TILE + 60));
-                //actions.add(new ActionIntake(false));
+                actions.add(new ActionMove(0, TILE));
+                actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-(165 / 2) + TILE, (165 / 2) + TILE));
-                actions.add(new ActionTurn(0));
+                actions.add(new ActionMove(150, TILE*3 + (165/2)));
             }
 
             // no matter what we did with the pixel above, we're in the same position and can go to the board
 
             if (true) {
+                actions.add(new ActionTurn(-90)); //turn to face the arm towards the backdrop
                 actions.add(new ActionMove(-(165 / 2) + TILE, (2 * TILE) + (165 / 2))); // center lane
-                actions.add(new ActionTurn(-90));//turn to face the arm towards the backdrop
                 actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), (2 * TILE) + (165 / 2))); // centered on second-last row
 
                 if (target == 1) {
                     //blue far backdrop one
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
+                    actions.add(new ActionAprilLock(rear_cam, 1));
+                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (550)));
                 } else if (target == 2) {
                     // blue far backdrop 2
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (670)));
+                    actions.add(new ActionAprilLock(rear_cam, 2));
+                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (670)));
                 } else if (target == 3) {
                     //blue far backrop 3
-                    actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
+                    actions.add(new ActionAprilLock(rear_cam, 3));
+                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }
                 // "score the pixel" actions (and return arm to start)
                 actions.add(new ActionArm("low-scoring"));
