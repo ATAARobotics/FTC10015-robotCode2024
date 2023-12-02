@@ -149,7 +149,7 @@ public abstract class AutonomousOp extends OpMode {
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionMove((-165/2), -(TILE  + 730)));
+                actions.add(new ActionMove((-165/2), -(TILE  + 700)));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -160,12 +160,12 @@ public abstract class AutonomousOp extends OpMode {
                 // zone 1
                 actions.add(new ActionMove(-165/2, -TILE));
                 actions.add(new ActionTurn(-90));
-                actions.add(new ActionMove(0, -TILE));
+                actions.add(new ActionMove(-160, -TILE));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
+                actions.add(new ActionMove(-250, -(TILE*2 + (165/2))));
             }
 
             // no matter what we did with the pixel above, we're in the same position and can go to the board
@@ -174,17 +174,20 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionTurn(90)); //turn to face the arm towards the backdrop
                 actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
-                double board_position_horiz = -((2*TILE) - 400); // position 3
-                double board_position_front = (3 * TILE) + 200;
+
+                // position "2" was actual for position 1
+                double board_position_horiz = -((2*TILE) - 290); // position 1
+                double board_position_front = (3 * TILE) + 185;
+                double board_space = 150;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
                     ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz - 90 - 90));
+                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space + board_space));
                 } else if (target == 2) {
                     // blue far backdrop 2
                     ///actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz - 90));
+                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space));
                 } else if (target == 3) {
                     //blue far backrop 3
                     actions.add(new ActionMove(board_position_front, board_position_horiz));
@@ -195,8 +198,8 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("low-scoring"));
                 actions.add(new ActionPause(0.1));
                 actions.add(new ActionArm("open"));
-                //actions.add(new ActionPause(0.2));
-               // actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 150), (925)));
+                actions.add(new ActionPause(0.2));
+                actions.add(new ActionMove(board_position_front - 50, board_position_horiz));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("intake"));
