@@ -23,7 +23,7 @@ public class ActionAprilLock extends ActionBase {
         if (started < 0) {
             started = time;
         }
-        if (time - started > 2.5) {
+        if (time - started > 5.0) {
             drive.robotInputs(0, 0);
             return true;
         }
@@ -34,6 +34,7 @@ public class ActionAprilLock extends ActionBase {
         pack.put("last-result", (time - april.last_result));
         pack.put("stick-fwd", april.fwd);
         pack.put("stick-strafe", april.strafe);
+        pack.put("april-distance", april.pipeline.distance());
         return april.locked();
     }
 
