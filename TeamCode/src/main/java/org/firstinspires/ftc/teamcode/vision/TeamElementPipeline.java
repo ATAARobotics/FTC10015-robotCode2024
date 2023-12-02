@@ -18,13 +18,13 @@ public class TeamElementPipeline extends OpenCvPipeline {
     Scalar min;
     Scalar max;
     public TeamElementPipeline() {
-        min = new Scalar(120, 120, 120);
-        max = new Scalar(160, 180, 160);
+        min = new Scalar(100, 100, 100);
+        max = new Scalar(160, 255, 255);
     }
     public TeamElementPipeline(boolean red) {
         if (red) {
-            min = new Scalar(120, 120, 120);
-            max = new Scalar(160, 180, 160);
+            min = new Scalar(100, 100, 100);
+            max = new Scalar(160, 255, 255);
         } else {
             // blue
             min = new Scalar(22, 31, 69);
@@ -95,7 +95,7 @@ public class TeamElementPipeline extends OpenCvPipeline {
             if (right == biggest) { result = "right"; }
         }
 
-        /*
+
         Imgproc.putText(input, "L:" + left, new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(input, "M:" + mid, new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
         Imgproc.putText(input, "R:" + right, new Point(x2, y2), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
@@ -103,7 +103,7 @@ public class TeamElementPipeline extends OpenCvPipeline {
         Imgproc.rectangle(input, new Point(x0, y0), new Point(x0 + width, y0 + width), biggest == left ? green : red, 2);
         Imgproc.rectangle(input, new Point(x1, y1), new Point(x1 + width, y1 + width), biggest == mid ? green : red, 2);
         Imgproc.rectangle(input, new Point(x2, y2), new Point(x2 + width, y2 + width), biggest == right ? green : red, 2);
-        */
+
         return input;
     }
 }
