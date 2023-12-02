@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.vision.ReverseTeamElementPipeline;
 import org.firstinspires.ftc.teamcode.vision.TeamElementPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -37,7 +38,7 @@ public abstract class AutonomousOp extends OpMode {
     private ActionBase special_action;
 
     //OpenCvPipeline pipeline;
-    TeamElementPipeline pipeline;
+    ReverseTeamElementPipeline pipeline;
     OpenCvWebcam front_cam;
     OpenCvWebcam rear_cam;
     int target = -1;
@@ -83,7 +84,7 @@ public abstract class AutonomousOp extends OpMode {
 
         actions = new LinkedList<ActionBase>();
 
-        pipeline = new TeamElementPipeline(getAlliance() == Alliance.RED);
+        pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
         front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
         front_cam.setPipeline(pipeline);
         front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -276,13 +277,13 @@ public abstract class AutonomousOp extends OpMode {
                 special_action = null;
             }
         } else {
-            if (pipeline.result != "unknown") {
+            if (pipeline.result != ReverseTeamElementPipeline.Result.Unknown) {
                 target = 3;
-                if (pipeline.result == "left") {
+                if (pipeline.result == ReverseTeamElementPipeline.Result.Left) {
                     target = 1;
-                } else if (pipeline.result == "middle") {
+                } else if (pipeline.result == ReverseTeamElementPipeline.Result.Middle) {
                     target = 2;
-                } else if (pipeline.result == "right") {
+                } else if (pipeline.result == ReverseTeamElementPipeline.Result.Right) {
                     target = 3;
                 }
                 if (actions.size() == 0) {
