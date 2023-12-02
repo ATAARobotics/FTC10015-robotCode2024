@@ -13,12 +13,20 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class ActionAprilLock extends ActionBase {
 
     AprilLock april;
+    double started = -1;
 
     ActionAprilLock(OpenCvWebcam cm, int tag_id) {
         april = new AprilLock(cm, tag_id);
     }
 
     boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
+        if (started < 0) {
+            started = time;
+        }
+        if (time - started > 2.5) {
+            drive.robotInputs(0, 0);
+            return true;
+        }
         april.update(time);
         drive.robotInputs(april.strafe, april.fwd);
 
