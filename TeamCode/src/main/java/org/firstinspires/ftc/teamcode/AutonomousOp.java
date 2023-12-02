@@ -149,7 +149,7 @@ public abstract class AutonomousOp extends OpMode {
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionMove((-165/2), -(TILE  + 700)));
+                actions.add(new ActionMove((-165/2), -(TILE  + 710)));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -178,7 +178,7 @@ public abstract class AutonomousOp extends OpMode {
                 // position "2" was actual for position 1
                 double board_position_horiz = -((2*TILE) - 290); // position 1
                 double board_position_front = (3 * TILE) + 185;
-                double board_space = 150;
+                double board_space = 160;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
