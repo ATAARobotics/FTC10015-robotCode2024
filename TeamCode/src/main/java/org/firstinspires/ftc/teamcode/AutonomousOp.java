@@ -132,7 +132,7 @@ public abstract class AutonomousOp extends OpMode {
         // ...also, "target" is valid when we get here (will be 1, 2 or 3).
 
         // negative y is robot-forward, negative x is robot-right
-/*
+
         actions.add(new ActionArm("close"));
 
         if (getZone() == Zone.FAR && getAlliance() == Alliance.BLUE) {
@@ -174,19 +174,21 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionTurn(90)); //turn to face the arm towards the backdrop
                 actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
+                double board_position_horiz = -((2*TILE) - 400); // position 3
+                double board_position_front = (3 * TILE) + 200;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
-                    actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170 - 90 - 90)));
+                    ///actions.add(new ActionAprilLock(rear_cam, 1));
+                    actions.add(new ActionMove(board_position_front, board_position_horiz - 90 - 90));
                 } else if (target == 2) {
                     // blue far backdrop 2
-                    actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170 - 90)));
+                    ///actions.add(new ActionAprilLock(rear_cam, 2));
+                    actions.add(new ActionMove(board_position_front, board_position_horiz - 90));
                 } else if (target == 3) {
                     //blue far backrop 3
-                    actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) - 170)));
-                    actions.add(new ActionAprilLock(rear_cam, 3));
+                    actions.add(new ActionMove(board_position_front, board_position_horiz));
+                    ///actions.add(new ActionAprilLock(rear_cam, 3));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }
                 // "score the pixel" actions (and return arm to start)
@@ -257,10 +259,9 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("intake"));
             }
         }
-*/
 
-        actions.add(new ActionAprilLock(rear_cam, 3));
         /*
+        actions.add(new ActionAprilLock(rear_cam, 3));
         actions.add(new ActionArm("resting"));
         actions.add(new ActionArm("low-scoring"));
         actions.add(new ActionPause(.2));
