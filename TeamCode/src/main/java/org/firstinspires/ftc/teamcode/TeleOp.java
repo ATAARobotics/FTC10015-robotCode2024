@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.vision.AprilTagPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -41,16 +42,19 @@ public class TeleOp extends OpMode   {
     public GamepadEx operator = null;
 
     protected OpenCvWebcam rear_cam;
+    protected AprilTagPipeline pipeline;
 
     BNO055IMU arm_imu = null;
 
     @Override
     public void init() {
+        pipeline = new AprilTagPipeline(1);
         rear_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_2"));
         rear_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
                 rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+                rear_cam.setPipeline(pipeline);
             }
 
             @Override
@@ -58,16 +62,21 @@ public class TeleOp extends OpMode   {
             }
         });
 
-
-        drive = new Drive(hardwareMap, rear_cam);
+        arm = new Arm(hardwareMap);
+        drive = new Drive(hardwareMap, pipeline, arm);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
-        arm = new Arm(hardwareMap);
 
         plane_launcher = new SimpleServo(hardwareMap, "plane", 0, 180.0, AngleUnit.DEGREES);
 
         //arm_imu = hardwareMap.get(BNO055IMU.class, "arm imu");
         //arm_imu.initialize(new IMU.Parameters(orientationOnRobot));
+    }
+
+    @Override
+    public void init_loop() {
+        telemetry.addData("april", pipeline.has_result());
+        telemetry.addData("distance", pipeline.distance());
     }
 
     @Override
@@ -121,6 +130,10 @@ public class TeleOp extends OpMode   {
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         pack.put("claw", arm.clawp);
         pack.put("wrist", arm.wristp);
+        pack.put("april_lock", drive.april_locker.locked());
+        pack.put("april_target", drive.last_april_tag);
+        pack.put("april_tag_target", drive.april_locker.pipeline.has_result());
+        pack.put("april_tag_distance", drive.april_locker.pipeline.distance());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?

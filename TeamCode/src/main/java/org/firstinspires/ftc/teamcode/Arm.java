@@ -10,6 +10,8 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
+
+    public enum Position {Intake, Resting, Scoring, LowScoring};
     MotorEx arm_main;
     MotorEx arm_follower;
     MotorGroup arm;
@@ -20,13 +22,13 @@ public class Arm {
     ServoEx claw;
 
     Intake intake;
-    public String state;
+    public Position state;
 
     double wristp = 0.0;
     double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
 
     public Arm(HardwareMap hm){
-        state = "intake";
+        state = Position.Intake;
         arm_main = new MotorEx(hm,"arm_main");
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
@@ -36,30 +38,29 @@ public class Arm {
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
         intake = new Intake(hm);
-        state = "resting";
         intake();
     }
     public void intake(){
-        state = "intake";
+        state = Position.Intake;
         claw.setPosition(1.0);
         arm_control.setSetPoint(0);
         wristp = 0.75;
         clawp = 0.65;
     }
     public void resting(){
-        state = "resting";
+        state = Position.Resting;
         arm_control.setSetPoint(-88);
         wristp = 0.4;
         clawp = 0.37;
     }
     public void scoring(){
-        state = "scoring";
+        state = Position.Scoring;
         arm_control.setSetPoint(-360);
         wristp = 0.6;
     }
 
     public void low_scoring(){
-        state = "low-scoring";
+        state = Position.LowScoring;
         arm_control.setSetPoint(-440);
         wristp = 0.5;
     }
@@ -74,21 +75,21 @@ public class Arm {
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-            if (state.equals("intake")) {
+            if (state == Position.Intake) {
                 resting();
-            } else if (state.equals("scoring")) {
+            } else if (state == Position.Scoring) {
                 low_scoring();
-            } else if (state.equals("resting")) {
+            } else if (state == Position.Resting) {
                 scoring();
             } // can't go up past "low-scoring"
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
-            if (state == "intake") {
+            if (state == Position.Intake) {
                 // nothing, intake is lowest
-            } else if (state == "low-scoring"){
+            } else if (state == Position.LowScoring) {
                 scoring();
-            } else if (state == "scoring") {
+            } else if (state == Position.Scoring) {
                 resting();
-            } else if (state == "resting"){
+            } else if (state == Position.Resting){
                 intake();
             }
         }
@@ -104,6 +105,12 @@ public class Arm {
             if (wristp > 1.0) {
                 wristp = 0.0;
             }
+        }
+        if (game.getLeftY() < -0.5 ){
+            arm_control.setSetPoint(arm_control.getSetPoint() + 1);
+        }
+        else if (game.getLeftY() > 0.5) {
+            arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
 /*
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -121,13 +128,13 @@ public class Arm {
 
         // A is close, B is open
         if (game.wasJustPressed(GamepadKeys.Button.A)) {
-            if (true || state == "intake") {
+            if (true || state == Position.Intake) {
                 clawp = 0.37; // closed
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.B)){
-            if (state == "intake") {
+            if (state == Position.Intake) {
                 clawp = 0.6; // open
-            } else if (state == "scoring" || state == "low-scoring") {
+            } else if (state == Position.Scoring || state == Position.LowScoring) {
                 clawp = 0.6; // open
             }
         }

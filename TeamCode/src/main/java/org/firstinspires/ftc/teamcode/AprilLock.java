@@ -21,13 +21,25 @@ public class AprilLock {
     public double strafe = 0;
     public double fwd = 0;
 
-    private static final double board_distance = 250; // mm
-    AprilLock(OpenCvWebcam cm, int tag_id) {
-        camera = cm;
-        pipeline = new AprilTagPipeline(tag_id);
-        pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
-        control_x = new PIDController(0.005, 0.005, 0.0005);
-        control_y = new PIDController(0.005, 0.005, 0.0005);
+    // should depend on "scoring position low" vs normal
+    // "low" is about 39cm
+    // "normal" is about 25cm
+    public double board_distance = 250; // 390; // mm
+
+    public void close_position() {
+        board_distance = 250;
+        control_y.setSetPoint(board_distance);
+    }
+    public void far_position() {
+        board_distance = 390;
+        control_y.setSetPoint(board_distance);
+    }
+
+    AprilLock(AprilTagPipeline pipe) {
+        pipeline = pipe;
+        //pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
+        control_x = new PIDController(0.005, 0.05, 0.0005);
+        control_y = new PIDController(0.005, 0.05, 0.0005);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
         control_x.setSetPoint(-20);
@@ -38,10 +50,13 @@ public class AprilLock {
     // to return both but java makes that awkward, so we use .fwd and
     // .strafe)
     void update(double time) {
+        if (pipeline == null) {
+            return;
+        }
         if (started < 0) {
             started = time;
             // XXX should we do this just once in TeleOp / init?
-            camera.setPipeline(pipeline);
+            //camera.setPipeline(pipeline);
         }
 
         if (pipeline.has_result()) {
@@ -51,10 +66,11 @@ public class AprilLock {
             if (true) {
                 // "simple static-friction feed-forward"
                 // (if we're trying to move "at all", make it at least 0.1 input)
-                if (fwd < 0.01) {
-                    fwd = -0.10 + fwd;
-                } else if (fwd > 0.01) {
-                    fwd = 0.10 + fwd;
+                double static_friction = 0.15;
+                if (fwd < 0.025) {
+                    fwd = -static_friction + fwd;
+                } else if (fwd > 0.025) {
+                    fwd = static_friction + fwd;
                 }
             }
             // cap max speed at 0.5 -- we're in "delicate" zone

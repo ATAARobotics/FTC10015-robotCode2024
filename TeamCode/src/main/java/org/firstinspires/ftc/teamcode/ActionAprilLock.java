@@ -15,8 +15,8 @@ public class ActionAprilLock extends ActionBase {
     AprilLock april;
     double started = -1;
 
-    ActionAprilLock(OpenCvWebcam cm, int tag_id) {
-        april = new AprilLock(cm, tag_id);
+    ActionAprilLock(AprilTagPipeline pipe) {
+        april = new AprilLock(pipe);
     }
 
     boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {

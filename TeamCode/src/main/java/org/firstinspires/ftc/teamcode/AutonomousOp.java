@@ -107,9 +107,14 @@ public abstract class AutonomousOp extends OpMode {
             }
         });
 
-        drive = new Drive(hardwareMap, rear_cam);
-        intake = new Intake(hardwareMap);
         arm = new Arm(hardwareMap);
+        drive = new Drive(hardwareMap, null, arm);
+        intake = new Intake(hardwareMap);
+    }
+
+    @Override
+    public void init_loop() {
+        telemetry.addData("result", pipeline.result);
     }
 
     @Override

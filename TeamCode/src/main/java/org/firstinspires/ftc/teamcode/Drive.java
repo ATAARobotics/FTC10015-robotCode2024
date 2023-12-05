@@ -14,6 +14,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.vision.AprilTagPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class Drive {
@@ -27,6 +28,8 @@ public class Drive {
     IMU imu;
     PIDController headingControl = null;
 
+    private Arm arm; // ONLY for looking at arm-position for april-lock
+
     // have to pretend our encoders are motors
    // public Motor parallel_encoder = null;
 
@@ -37,10 +40,12 @@ public class Drive {
     private double heading = 0.0;  // from IMU
 
     AprilLock april_locker;
-    OpenCvWebcam webcam;
     int last_april_tag = 1;  // used by april-tag locker
 
-    public Drive(HardwareMap hardwareMap, OpenCvWebcam webcam) {
+    public Drive(HardwareMap hardwareMap, AprilTagPipeline pipe, Arm a) {
+        arm = a;
+        april_locker = new AprilLock(pipe);
+
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu = hardwareMap.get(IMU.class, "imu");
@@ -86,22 +91,29 @@ public class Drive {
         // if X is held down, we only look at an April tag (otherwise,
         // we let the other controls work)
         if (driver.isDown(GamepadKeys.Button.X)) {
-            // FIXME, need to account for red vs blue alliance
+
+            // could we do something like "move up to 6cm left/right" on dpad press, until we get april-tag lock? we're too close to see them all with our camera currently..
+
+            if (arm.state == Arm.Position.Scoring) {
+                april_locker.close_position();
+            } else {
+                april_locker.far_position();
+            }
             aprilLock(time, last_april_tag);
-            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
                 if (last_april_tag < 3) {
                     last_april_tag += 1;
                 }
-            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
                 if (last_april_tag > 1) {
                     last_april_tag -= 1;
                 }
             }
+            forward = april_locker.fwd;
+            strafe = april_locker.strafe;
         } else {
-            if (april_locker != null) {
-                // need to stop camera?
-                april_locker = null;
-            }
+            // XXX FIXME need to stop april-tag locker?
+            april_locker.started = -1;
             // heading-lock from right joystick
             // (HAVE TO FIX for "backwards" autonomous start)
             if (driver.getLeftX() < -0.5) {
@@ -124,17 +136,19 @@ public class Drive {
                 headingControl.setPID(0.05, 0.00, 0.002);
             }
 
+            // when we started "forward" this was true:
             forward = -driver.getRightY();
             strafe = driver.getRightX();
+            // ...but now we usually start "backwards"
+            forward = driver.getRightY();
+            strafe = -driver.getRightX();
         }
         headingLock();
     }
 
     // lock on to a particular April tag
     private void aprilLock(double time, int tag_id) {
-        if (april_locker == null) {
-            april_locker = new AprilLock(webcam, tag_id);
-        }
+        april_locker.pipeline.set_target(tag_id);
         april_locker.update(time);
     }
 
