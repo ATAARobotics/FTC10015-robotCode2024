@@ -190,7 +190,7 @@ public abstract class AutonomousOp extends OpMode {
                 if (target == 1) {
                     //blue far backdrop one
                     ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, -495));
+                    actions.add(new ActionMove(board_position_front, -510));
                     horiz = -495;
                 } else if (target == 2) {
                     // blue far backdrop 2
