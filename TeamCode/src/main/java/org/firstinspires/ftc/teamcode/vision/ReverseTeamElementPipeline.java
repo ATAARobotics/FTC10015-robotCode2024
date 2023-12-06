@@ -20,12 +20,25 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
     Scalar max;
     public Mat processed;
     public Mat annotated;
+    // for blue side only
+    int x0 = 130;
+    int y0 = 255;
+    int x1 = 469;
+    int y1 = 142;
+    int x2 = 560;
+    int y2 = 247;
     public ReverseTeamElementPipeline() {
         min = new Scalar(100, 100, 100);
         max = new Scalar(160, 255, 255);
         if (true){
-            min = new Scalar(10, 31, 69);
-            max = new Scalar(69, 255, 255);
+            min = new Scalar(100, 100, 100);
+            max = new Scalar(160, 255, 255);
+            x0 = 0;
+            y0 = 270;
+            x1 = 300;
+            y1 = 210;
+            x2 = 0;
+            y2 = 0;
         }
         processed = new Mat();
         annotated = new Mat();
@@ -34,6 +47,12 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         if (red) {
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);
+            x0 = 0;
+            y0 = 270;
+            x1 = 300;
+            y1 = 210;
+            x2 = 0;
+            y2 = 0;
         } else {
             // blue
             min = new Scalar(10, 31, 69);
@@ -58,12 +77,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         int width = 50;
         int height = 55;
 
-        int x0 = 130;
-        int y0 = 255;
-        int x1 = 469;
-        int y1 = 142;
-        int x2 = 560;
-        int y2 = 247;
+
 
         // count how many pixels are "on" in each region of interest
 
@@ -110,7 +124,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             result = Result.Right;
         }
 
-        if (false) {
+        if (true) {
             input.copyTo(annotated);
             Imgproc.putText(annotated, "L:" + (left / (50.0*55)), new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
             Imgproc.putText(annotated, "M:" + (mid / (50.0*55)), new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
