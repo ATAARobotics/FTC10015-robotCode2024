@@ -182,7 +182,7 @@ public abstract class AutonomousOp extends OpMode {
 
                 // position "2" was actual for position 1
                 double board_position_horiz = -((2*TILE) - 290); // position 1
-                double board_position_front = (3 * TILE) + 185;
+                double board_position_front = (3 * TILE) + 150;
                 double board_space = 180;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
@@ -249,22 +249,24 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
 
-                // position "2" was actual for position 1
-                double board_position_horiz = -((2 * TILE) - 550); // position 3
-                double board_position_front = -((3 * TILE) + 185);
-                double board_space = 180;
+                // negative y is robot-forward
+                // measured
+                // position 1: 34", position 2:28.75", position 3:19.5"
+                //866, 730, 495
+                double board_position_horiz = -866; // furthest from wall
+                double board_position_front = -((3 * TILE) + 150);
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 3) {
                     //blue far backdrop one
                     ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space + board_space));
+                    actions.add(new ActionMove(board_position_front, -495));
                 } else if (target == 2) {
                     // blue far backdrop 2
                     ///actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space));
+                    actions.add(new ActionMove(board_position_front, -730));
                 } else if (target == 1) {
                     //blue far backrop 3
-                    actions.add(new ActionMove(board_position_front, board_position_horiz));
+                    actions.add(new ActionMove(board_position_front, -866));
                     ///actions.add(new ActionAprilLock(rear_cam, 3));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }
@@ -273,7 +275,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionPause(0.1));
                 actions.add(new ActionArm("open"));
                 actions.add(new ActionPause(0.2));
-                actions.add(new ActionMove(board_position_front + 50, board_position_horiz + (board_space * (target - 1))));
+                actions.add(new ActionMove(board_position_front + 50, board_position_horiz));
                 actions.add(new ActionPause(0.5));
                 actions.add(new ActionMove(board_position_front + 50, board_position_horiz));
                 actions.add(new ActionArm("resting"));
