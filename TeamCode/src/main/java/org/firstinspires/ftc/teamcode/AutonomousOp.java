@@ -180,22 +180,27 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
 
 
-                // position "2" was actual for position 1
-                double board_position_horiz = -((2*TILE) - 290); // position 1
+                // negative y is robot-forward
+                // measured
+                // position 1: 20, position 2: 28.5, position 3: 33
+                // 508, 724, 838
                 double board_position_front = (3 * TILE) + 150;
-                double board_space = 180;
+                double horiz = -495;
                 // april tags on the backdrop are 3.5" apart / 90mm
                 if (target == 1) {
                     //blue far backdrop one
                     ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space + board_space));
+                    actions.add(new ActionMove(board_position_front, -495));
+                    horiz = -495;
                 } else if (target == 2) {
                     // blue far backdrop 2
                     ///actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(board_position_front, board_position_horiz + board_space));
+                    actions.add(new ActionMove(board_position_front, -724));
+                    horiz = -724;
                 } else if (target == 3) {
                     //blue far backrop 3
-                    actions.add(new ActionMove(board_position_front, board_position_horiz));
+                    horiz = -855;
+                    actions.add(new ActionMove(board_position_front, -855));
                     ///actions.add(new ActionAprilLock(rear_cam, 3));
                     //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
                 }
@@ -204,7 +209,8 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionPause(0.1));
                 actions.add(new ActionArm("open"));
                 actions.add(new ActionPause(0.2));
-                actions.add(new ActionMove(board_position_front - 50, board_position_horiz));
+                actions.add(new ActionMove(board_position_front - 50, horiz));
+                actions.add(new ActionMove(board_position_front - 50, -900));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("intake"));
