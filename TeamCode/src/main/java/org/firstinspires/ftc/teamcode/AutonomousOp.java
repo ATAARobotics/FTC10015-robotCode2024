@@ -229,7 +229,7 @@ public abstract class AutonomousOp extends OpMode {
             } else if (target == 2) {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 2
-                actions.add(new ActionMove((165 / 2), -(TILE + 690)));
+                actions.add(new ActionMove((165 / 2), -(TILE + 680)));
                 actions.add(new ActionIntake(false));
                 actions.add(new ActionSuck(false));
                 actions.add(new ActionArm("resting"));
@@ -238,7 +238,7 @@ public abstract class AutonomousOp extends OpMode {
             } else {
                 // blue-side initial bits of motion .. spit out purple pixel
                 // zone 3
-                actions.add(new ActionMove(165 / 2, -TILE));
+                actions.add(new ActionMove(165 / 2, -(TILE + 15)));
                 actions.add(new ActionTurn(90));
                 actions.add(new ActionMove(160, -TILE));
                 actions.add(new ActionIntake(false));
