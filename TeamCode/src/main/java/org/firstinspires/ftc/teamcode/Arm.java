@@ -73,7 +73,7 @@ public class Arm {
     }
 
     public void humanInputs(GamepadEx game){
-        intake.humanInputs(game);
+        intake.humanInputs(game, state);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
             if (state == Position.Intake) {
                 resting();

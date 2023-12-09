@@ -34,7 +34,7 @@ public class Intake {
         // 1706 milliseconds is down
     }
 
-    public void humanInputs(GamepadEx pad) {
+    public void humanInputs(GamepadEx pad, Arm.Position position) {
         if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
             rise_mode = RaisingMode.GO_DOWN;
         } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
@@ -45,7 +45,10 @@ public class Intake {
 
         // forward/back suckage on intake
         if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-            suck_mode = SuckMode.SUCK;
+            // we do not allow "suck" mode unless the arm is in "intake" position!
+            if (position == Arm.Position.Intake) {
+                suck_mode = SuckMode.SUCK;
+            }
         } else if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
             suck_mode = SuckMode.BLOW;
         } else {
