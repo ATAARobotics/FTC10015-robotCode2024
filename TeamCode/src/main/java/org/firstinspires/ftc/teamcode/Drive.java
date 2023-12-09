@@ -90,7 +90,7 @@ public class Drive {
 
         // if X is held down, we only look at an April tag (otherwise,
         // we let the other controls work)
-        if (driver.isDown(GamepadKeys.Button.X)) {
+        if (false && driver.isDown(GamepadKeys.Button.X)) {
 
             // could we do something like "move up to 6cm left/right" on dpad press, until we get april-tag lock? we're too close to see them all with our camera currently..
 

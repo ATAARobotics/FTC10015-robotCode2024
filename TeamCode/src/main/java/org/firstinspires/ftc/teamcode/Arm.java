@@ -55,14 +55,14 @@ public class Arm {
     }
     public void scoring(){
         state = Position.Scoring;
-        arm_control.setSetPoint(-360);
+        arm_control.setSetPoint(-371);
         wristp = 0.6;
     }
 
     public void low_scoring(){
         state = Position.LowScoring;
         arm_control.setSetPoint(-440);
-        wristp = 0.5;
+        wristp = 0.55;
     }
     public void open_claw() {
         clawp = 0.6;
