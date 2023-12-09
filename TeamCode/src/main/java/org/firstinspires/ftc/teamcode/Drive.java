@@ -117,9 +117,9 @@ public class Drive {
             // heading-lock from right joystick
             // (HAVE TO FIX for "backwards" autonomous start)
             if (driver.getLeftX() < -0.5) {
-                headingControl.setSetPoint(90.0); // west
+                headingControl.setSetPoint(-90.0); // west
             } else if (driver.getLeftX() > 0.5) {
-                headingControl.setSetPoint(-90.0); // east
+                headingControl.setSetPoint(90.0); // east
             } else if (driver.getLeftY() < -0.5) {
                 headingControl.setSetPoint(180.0); // south
             } else if (driver.getLeftY() > 0.5) {

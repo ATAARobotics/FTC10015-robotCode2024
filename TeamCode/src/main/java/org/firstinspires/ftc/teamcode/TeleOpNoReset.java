@@ -30,6 +30,7 @@ import java.util.List;
 public class TeleOpNoReset extends TeleOp {
     @Override
     public void start() {
+        plane_launched = false;
         drive.start();
     }
 }
