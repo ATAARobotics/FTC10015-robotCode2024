@@ -121,9 +121,9 @@ public class Drive {
             } else if (driver.getLeftX() > 0.5) {
                 headingControl.setSetPoint(90.0); // east
             } else if (driver.getLeftY() < -0.5) {
-                headingControl.setSetPoint(180.0); // south
+                headingControl.setSetPoint(0); // south
             } else if (driver.getLeftY() > 0.5) {
-                headingControl.setSetPoint(0); // north
+                headingControl.setSetPoint(180.0); // north
             }
 
             // turbo mode or not
