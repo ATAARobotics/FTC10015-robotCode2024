@@ -30,13 +30,22 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
     public ReverseTeamElementPipeline() {
         min = new Scalar(100, 100, 100);
         max = new Scalar(160, 255, 255);
-        if (true){
+        if (false) {
+            // RED side 920s webcam
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);
-            x0 = 0;
-            y0 = 270;
-            x1 = 300;
-            y1 = 210;
+            x0 = 205;
+            y0 = 320;
+            x1 = 480;
+            y1 = 330;
+            x2 = 0;
+            y2 = 0;
+        } else {
+            // blue side, 920s camera
+            x0 = 92;
+            y0 = 340;
+            x1 = 382;
+            y1 = 310;
             x2 = 0;
             y2 = 0;
         }
@@ -47,16 +56,22 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         if (red) {
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);
-            x0 = 0;
-            y0 = 270;
-            x1 = 300;
-            y1 = 210;
+            x0 = 205;
+            y0 = 320;
+            x1 = 480;
+            y1 = 330;
             x2 = 0;
             y2 = 0;
         } else {
             // blue
             min = new Scalar(10, 31, 69);
             max = new Scalar(69, 255, 255);
+            x0 = 92;
+            y0 = 340;
+            x1 = 382;
+            y1 = 310;
+            x2 = 0;
+            y2 = 0;
         }
         processed = new Mat();
         annotated = new Mat();
