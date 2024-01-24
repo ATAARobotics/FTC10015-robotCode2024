@@ -39,8 +39,7 @@ public abstract class AutonomousOp extends OpMode {
 
     //OpenCvPipeline pipeline;
     ReverseTeamElementPipeline pipeline;
-    OpenCvWebcam front_cam;
-    OpenCvWebcam rear_cam;
+    OpenCvWebcam megacam;
     int target = -1;
     double last_loop;
 
@@ -81,25 +80,25 @@ public abstract class AutonomousOp extends OpMode {
         actions = new LinkedList<ActionBase>();
 
         pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
-        front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
+        // front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
 
-        front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        // front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        //     @Override
+        //     public void onOpened() {
+        //         front_cam.startStreaming(800, 600, OpenCvCameraRotation.SENSOR_NATIVE);
+        //     }
+
+        //     @Override
+        //     public void onError(int errorCode) {
+        //     }
+        // });
+
+        megacam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "megacam"));
+        megacam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                front_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-
-        rear_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_2"));
-        rear_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
-                rear_cam.setPipeline(pipeline);
+                megacam.startStreaming(800, 600, OpenCvCameraRotation.SENSOR_NATIVE);
+                megacam.setPipeline(pipeline);
             }
 
             @Override
@@ -329,7 +328,7 @@ public abstract class AutonomousOp extends OpMode {
                 if (actions.size() == 0) {
                     createActions();
                 }
-                front_cam.stopStreaming();
+                //fixme front_cam.stopStreaming();
                 telemetry.addData("detected-target", target);
             }
         }

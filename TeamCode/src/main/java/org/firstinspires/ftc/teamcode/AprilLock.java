@@ -37,12 +37,16 @@ public class AprilLock {
 
     AprilLock(AprilTagPipeline pipe) {
         pipeline = pipe;
+        //// XXX "control_x" is left / right at the board
         //pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
-        control_x = new PIDController(0.005, 0.05, 0.0005);
-        control_y = new PIDController(0.005, 0.05, 0.0005);
+        control_x = new PIDController(0.0, 0.0, 0.0);
+        control_y = new PIDController(0.025, 0.0, 0);
+        ////april_y_i: 0.0  april_y_p: 0.008373477958327108
+        //control_x = new PIDController(0.02, 0.15,0.0025);
+        //control_y = new PIDController(0.02, 0.15, 0.0025);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
-        control_x.setSetPoint(-20);
+        control_x.setSetPoint(0);
         control_y.setSetPoint(board_distance); // mm
     }
 
@@ -63,7 +67,7 @@ public class AprilLock {
             last_result = time;
             fwd = control_y.calculate(pipeline.distance());
             strafe = control_x.calculate(pipeline.strafe());
-            if (true) {
+            if (false) {
                 // "simple static-friction feed-forward"
                 // (if we're trying to move "at all", make it at least 0.1 input)
                 double static_friction = 0.15;

@@ -34,7 +34,7 @@ public class Drive {
    // public Motor parallel_encoder = null;
 
     // inputs into the drivebase, from human or auto
-    private double forward = 0.0;
+    public double forward = 0.0;
     private double strafe = 0.0;
     private double turn = 0.0;
     private double heading = 0.0;  // from IMU
@@ -90,7 +90,7 @@ public class Drive {
 
         // if X is held down, we only look at an April tag (otherwise,
         // we let the other controls work)
-        if (false && driver.isDown(GamepadKeys.Button.X)) {
+        if (driver.isDown(GamepadKeys.Button.X)) {
 
             // could we do something like "move up to 6cm left/right" on dpad press, until we get april-tag lock? we're too close to see them all with our camera currently..
 
@@ -108,6 +108,10 @@ public class Drive {
                 if (last_april_tag > 1) {
                     last_april_tag -= 1;
                 }
+            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                april_locker.control_y.setP(april_locker.control_y.getP() * 1.1);
+            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                april_locker.control_y.setP(april_locker.control_y.getP() * 0.9);
             }
             forward = april_locker.fwd;
             strafe = april_locker.strafe;

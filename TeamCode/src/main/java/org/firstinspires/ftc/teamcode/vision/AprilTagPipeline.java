@@ -64,14 +64,38 @@ public class AprilTagPipeline extends OpenCvPipeline
         double tagsize = 0.0508; // meters (!!)
         // Lens intrinsics
         // UNITS ARE PIXELS
-        // (copied from XML in this project, for C270 640x480
+        // these are for C920s
+        // <Calibration
+        //     size="800 600"
+        //     focalLength="775.79f, 775.79f"
+        //     principalPoint="400.898f, 300.79f"
+        //     distortionCoefficients="0.112507, -0.272067, 0, 0, 0.15775, 0, 0, 0"
+        //     />
+       // double fx = 775.79;
+       // double fy = 775.79;
+       // double cx = 400.898;
+       // double cy = 300.79;
 
+
+        //        <Calibration
+        //    size="640 480"
+        //    focalLength="622.001f, 622.001f"
+        //    principalPoint="319.803f, 241.251f"
+        //    distortionCoefficients="0.1208, -0.261599, 0, 0, 0.10308, 0, 0, 0"
+        //    />
+        double fx = 622.001;
+        double fy = 622.001;
+        double cx = 319.803;
+        double cy = 241.251;
+
+
+        // (copied from XML in this project, for C270 640x480
         //focalLength="822.317f, 822.317f"
         //principalPoint="319.495f, 242.502f"
-        double fx = 822.317;
-        double fy = 822.317;
-        double cx = 319.495;
-        double cy = 242.502;
+        // double fx = 822.317;
+        // double fy = 822.317;
+        // double cx = 319.495;
+        // double cy = 242.502;
 
 
         this.tagsize = tagsize;
@@ -143,7 +167,7 @@ public class AprilTagPipeline extends OpenCvPipeline
                 distance_mm = detection.pose.z * 1000;
                 strafe_mm = detection.pose.x * 1000;
                 detected = true;
-                //Imgproc.putText(input, "z=" + (int) (detection.pose.z * 100) + "x=" + (int) (detection.pose.x * 100) + "    ", new Point(10, 10), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
+                Imgproc.putText(input, "z=" + (int) (detection.pose.z * 100) + "x=" + (int) (detection.pose.x * 100) + "    ", new Point(10, 10), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
             }
         }
 

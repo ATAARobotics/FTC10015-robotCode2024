@@ -41,7 +41,7 @@ public class TeleOp extends OpMode   {
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
-    protected OpenCvWebcam rear_cam;
+    protected OpenCvWebcam megacam;
     protected AprilTagPipeline pipeline;
 
     BNO055IMU arm_imu = null;
@@ -49,12 +49,12 @@ public class TeleOp extends OpMode   {
     @Override
     public void init() {
         pipeline = new AprilTagPipeline(1);
-        rear_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_2"));
-        rear_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        megacam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "megacam"));
+        megacam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                rear_cam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
-                rear_cam.setPipeline(pipeline);
+                megacam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+                megacam.setPipeline(pipeline);
             }
 
             @Override
@@ -134,6 +134,10 @@ public class TeleOp extends OpMode   {
         pack.put("april_target", drive.last_april_tag);
         pack.put("april_tag_target", drive.april_locker.pipeline.has_result());
         pack.put("april_tag_distance", drive.april_locker.pipeline.distance());
+        pack.put("april_fwd", drive.forward);
+        pack.put("april_y_p", drive.april_locker.control_y.getP());
+        pack.put("april_y_i", drive.april_locker.control_y.getI());
+        pack.put("april_y_d", drive.april_locker.control_y.getD());
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?
