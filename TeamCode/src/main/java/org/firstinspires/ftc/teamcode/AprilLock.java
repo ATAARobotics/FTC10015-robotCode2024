@@ -24,14 +24,14 @@ public class AprilLock {
     // should depend on "scoring position low" vs normal
     // "low" is about 39cm
     // "normal" is about 25cm
-    public double board_distance = 250; // 390; // mm
+    public double board_distance = 275; // 390; // mm
 
     public void close_position() {
-        board_distance = 250;
+        board_distance = 275;
         control_y.setSetPoint(board_distance);
     }
     public void far_position() {
-        board_distance = 390;
+        board_distance = 275;
         control_y.setSetPoint(board_distance);
     }
 
@@ -39,8 +39,8 @@ public class AprilLock {
         pipeline = pipe;
         //// XXX "control_x" is left / right at the board
         //pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
-        control_x = new PIDController(0.0, 0.0, 0.0);
-        control_y = new PIDController(0.025, 0.0, 0);
+        control_x = new PIDController(0.009, 0.00, 0.001);
+        control_y = new PIDController(0.009, 0.0, 0.001);
         ////april_y_i: 0.0  april_y_p: 0.008373477958327108
         //control_x = new PIDController(0.02, 0.15,0.0025);
         //control_y = new PIDController(0.02, 0.15, 0.0025);

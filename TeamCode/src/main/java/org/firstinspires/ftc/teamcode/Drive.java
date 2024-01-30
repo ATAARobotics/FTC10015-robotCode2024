@@ -85,6 +85,7 @@ public class Drive {
         headingControl.setPID(0.03, 0.0, 0.001);
         headingLock();
     }
+
     public void humanInputs(GamepadEx driver, double time){
         // this method called ONCE per loop from teleop controller
 
@@ -109,17 +110,18 @@ public class Drive {
                     last_april_tag -= 1;
                 }
             } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                april_locker.control_y.setP(april_locker.control_y.getP() * 1.1);
+                april_locker.control_y.setD(april_locker.control_y.getD() * 1.1);
             } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                april_locker.control_y.setP(april_locker.control_y.getP() * 0.9);
+                april_locker.control_y.setD(april_locker.control_y.getD() * 0.9);
             }
             forward = april_locker.fwd;
             strafe = april_locker.strafe;
         } else {
             // XXX FIXME need to stop april-tag locker?
-            april_locker.started = -1;
+            //april_locker.started = -1;
             // heading-lock from right joystick
             // (HAVE TO FIX for "backwards" autonomous start)
+
             if (driver.getLeftX() < -0.5) {
                 headingControl.setSetPoint(-90.0); // west
             } else if (driver.getLeftX() > 0.5) {
@@ -141,11 +143,19 @@ public class Drive {
             }
 
             // when we started "forward" this was true:
-            forward = -driver.getRightY();
-            strafe = driver.getRightX();
+//            forward = -driver.getRightY();
+//            strafe = driver.getRightX();
             // ...but now we usually start "backwards"
             forward = driver.getRightY();
             strafe = -driver.getRightX();
+
+            // virtual fence
+            if (true) {
+                double dist = april_locker.pipeline.closestAprilTag();
+                if (dist > 0.0 && dist < 300 && forward > 0) {
+                    forward = 0;
+                }
+            }
         }
         headingLock();
     }

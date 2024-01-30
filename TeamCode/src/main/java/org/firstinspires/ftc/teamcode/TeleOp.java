@@ -104,7 +104,7 @@ public class TeleOp extends OpMode   {
             }
             double elapsed = time - plane_countdown_start;
             if (elapsed > 0.6) {
-                plane_launcher.setPosition(0.5);
+                plane_launcher.setPosition(1.0);
                 plane_launched = true;
             }
         } else {
@@ -113,7 +113,7 @@ public class TeleOp extends OpMode   {
 
         // if we already launched the plane, pressing Y shuts the trigger again
         if (plane_launched && operator.wasJustPressed(GamepadKeys.Button.Y)){
-            plane_launcher.setPosition(0.0);
+            plane_launcher.setPosition(0.5);
             plane_launched = false;
             plane_countdown_start = -1;
         }
@@ -130,6 +130,7 @@ public class TeleOp extends OpMode   {
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         pack.put("claw", arm.clawp);
         pack.put("wrist", arm.wristp);
+        pack.put("close_april", drive.april_locker.pipeline.closestAprilTag());
         pack.put("april_lock", drive.april_locker.locked());
         pack.put("april_target", drive.last_april_tag);
         pack.put("april_tag_target", drive.april_locker.pipeline.has_result());

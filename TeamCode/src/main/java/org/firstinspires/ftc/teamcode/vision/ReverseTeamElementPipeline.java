@@ -28,8 +28,6 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
     int x2 = 560;
     int y2 = 247;
     public ReverseTeamElementPipeline() {
-        min = new Scalar(100, 100, 100);
-        max = new Scalar(160, 255, 255);
         if (false) {
             // RED side 920s webcam
             min = new Scalar(100, 100, 100);
@@ -42,6 +40,8 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             y2 = 0;
         } else {
             // blue side, 920s camera
+            min = new Scalar(10, 31, 69);
+            max = new Scalar(69, 255, 255);
             x0 = 92;
             y0 = 340;
             x1 = 382;

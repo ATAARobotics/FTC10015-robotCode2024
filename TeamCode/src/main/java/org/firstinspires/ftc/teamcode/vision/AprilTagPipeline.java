@@ -27,6 +27,11 @@ public class AprilTagPipeline extends OpenCvPipeline
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
 
+    // one distance for every april tag (1 through 6) that we "might"
+    // care about. Negative numbers means we can't see it
+    // currently. Useful for "virtual fence". index 0 is not used.
+    public double[] distances;
+
     Mat cameraMatrix;
 
     Scalar blue = new Scalar(7,197,235,255);
@@ -60,6 +65,8 @@ public class AprilTagPipeline extends OpenCvPipeline
 
     public AprilTagPipeline(int target_tag_id)
     {
+        distances = new double[7];
+        resetDistances();
         target_tag = target_tag_id;
         double tagsize = 0.0508; // meters (!!)
         // Lens intrinsics
@@ -111,6 +118,32 @@ public class AprilTagPipeline extends OpenCvPipeline
         // Allocate a native context object. See the corresponding deletion in the finalizer
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
+
+    private void resetDistances()
+    {
+        for (int i=0; i < 7; i++)
+        {
+            distances[i] = -1;
+        }
+    }
+
+    // returns -1 if we can't see ANY backdrop april tags, else
+    // returns the one which is closest to the robot
+    public double closestAprilTag()
+    {
+        double min = Double.MAX_VALUE;
+        for (int i=1; i < 7; i++)
+        {
+            if (distances[i] > 0.0 && distances[i] < min) {
+                min = distances[i];
+            }
+        }
+        if (min == Double.MAX_VALUE) {
+            return -1;
+        }
+        return min;
+    }
+
 /*
     @Override
     protected void finalize()
@@ -155,6 +188,7 @@ public class AprilTagPipeline extends OpenCvPipeline
         Scalar red = new Scalar(255, 0, 0);
 
         // For fun, use OpenCV to draw 6DOF markers on the image.
+        resetDistances();
         for(AprilTagDetection detection : detections)
         {
             if (false) {
@@ -162,6 +196,9 @@ public class AprilTagPipeline extends OpenCvPipeline
                 //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
                 drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
                 draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
+            }
+            if (detection.id >= 1 && detection.id < 7) {
+                distances[detection.id] = distance_mm = detection.pose.z * 1000;
             }
             if (detection.id == target_tag || detection.id == target_tag + 3) {
                 distance_mm = detection.pose.z * 1000;
