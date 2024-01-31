@@ -40,6 +40,12 @@ public class Arm {
         intake = new Intake(hm);
         intake();
     }
+
+    public void reset() {
+        // reset both motors, for real .. should be done at start of Auto ONLY in normal opreation
+        arm_main.stopAndResetEncoder();
+        arm_follower.stopAndResetEncoder();
+    }
     public void intake(){
         state = Position.Intake;
         claw.setPosition(1.0);

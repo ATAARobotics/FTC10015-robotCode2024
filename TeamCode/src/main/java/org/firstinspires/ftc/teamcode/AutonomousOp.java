@@ -124,8 +124,9 @@ public abstract class AutonomousOp extends OpMode {
         intake_is_up = true;
         last_loop = time;
         special_action = null;//new ActionInitialIntake();
-        arm.arm.resetEncoder();
-        //FtcDashboard.getInstance().startCameraStream(camera, 0);
+
+        // jan 30 2024, changed how we reset after seeing "that one weird arm thing" again; this seems to work
+        arm.reset();
     }
 
     protected void createActions() {

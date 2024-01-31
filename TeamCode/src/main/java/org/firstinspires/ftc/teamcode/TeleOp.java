@@ -83,7 +83,7 @@ public class TeleOp extends OpMode   {
     public void start() {
         drive.imu.resetYaw();
         drive.start();
-        arm.arm.resetEncoder();
+        arm.reset();  // see comment in AutonomousOp
         plane_launched = false;
     }
 
