@@ -70,7 +70,7 @@ public class AprilLock {
             last_result = time;
             // remember normal "robot forward" is toward / away from the drive-team
             // so "strafe" is towards the board
-            fwd = 0.0;//control_y.calculate(pipeline.strafe());
+            fwd = control_y.calculate(pipeline.strafe());
             strafe = -control_x.calculate(pipeline.distance());
             if (false) {
                 // "simple static-friction feed-forward"
@@ -92,7 +92,7 @@ public class AprilLock {
         {
             // lost lock; reset the setpoints so that the controllers
             // reset their I value history
-            control_y.setSetPoint(0);
+            control_y.setSetPoint(control_y.getSetPoint());
             control_x.setSetPoint(board_distance);
             fwd = 0.0;
             strafe = 0.0;

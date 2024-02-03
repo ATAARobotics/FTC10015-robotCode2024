@@ -159,10 +159,10 @@ public class Drive {
             strafe = -driver.getRightX();
 
             // virtual fence
-            if (false) {
+            if (true) {
                 double dist = april_locker.pipeline.closestAprilTag();
-                if (dist > 0.0 && dist < 300 && forward > 0) {
-                    forward = 0;
+                if (dist > 0.0 && dist < 300 && strafe > 0) {
+                    strafe = 0;
                 }
             }
         }

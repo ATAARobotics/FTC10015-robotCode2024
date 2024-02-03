@@ -191,7 +191,7 @@ public class AprilTagPipeline extends OpenCvPipeline
         resetDistances();
         for(AprilTagDetection detection : detections)
         {
-            if (true) {
+            if (false) {
                 Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
                 //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
                 drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
