@@ -21,18 +21,21 @@ public class AprilLock {
     public double strafe = 0;
     public double fwd = 0;
 
+    public static final double CLOSE_DISTANCE = 265;
+    public static final double FAR_DISTANCE = 265; // mm
+
     // should depend on "scoring position low" vs normal
     // "low" is about 39cm
     // "normal" is about 25cm
-    public double board_distance = 275; // 390; // mm
+    public double board_distance = CLOSE_DISTANCE;
 
     public void close_position() {
-        board_distance = 275;
-        control_y.setSetPoint(board_distance);
+        board_distance = CLOSE_DISTANCE;
+        control_x.setSetPoint(board_distance);
     }
     public void far_position() {
-        board_distance = 275;
-        control_y.setSetPoint(board_distance);
+        board_distance = CLOSE_DISTANCE;
+        control_x.setSetPoint(board_distance);
     }
 
     AprilLock(AprilTagPipeline pipe) {
@@ -46,8 +49,8 @@ public class AprilLock {
         //control_y = new PIDController(0.02, 0.15, 0.0025);
         control_x.setTolerance(5);
         control_y.setTolerance(5);
-        control_x.setSetPoint(0);
-        control_y.setSetPoint(board_distance); // mm
+        control_y.setSetPoint(0);
+        control_x.setSetPoint(board_distance); // mm
     }
 
     // calculate (strafe, forward) values for control (would be nice
@@ -65,8 +68,10 @@ public class AprilLock {
 
         if (pipeline.has_result()) {
             last_result = time;
-            fwd = control_y.calculate(pipeline.distance());
-            strafe = control_x.calculate(pipeline.strafe());
+            // remember normal "robot forward" is toward / away from the drive-team
+            // so "strafe" is towards the board
+            fwd = 0.0;//control_y.calculate(pipeline.strafe());
+            strafe = -control_x.calculate(pipeline.distance());
             if (false) {
                 // "simple static-friction feed-forward"
                 // (if we're trying to move "at all", make it at least 0.1 input)
@@ -87,8 +92,8 @@ public class AprilLock {
         {
             // lost lock; reset the setpoints so that the controllers
             // reset their I value history
-            control_x.setSetPoint(0);
-            control_y.setSetPoint(board_distance);
+            control_y.setSetPoint(0);
+            control_x.setSetPoint(board_distance);
             fwd = 0.0;
             strafe = 0.0;
         }

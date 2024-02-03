@@ -89,27 +89,36 @@ public class Drive {
     public void humanInputs(GamepadEx driver, double time){
         // this method called ONCE per loop from teleop controller
 
-        // if X is held down, we only look at an April tag (otherwise,
+        // tweak "left" or "right" pixel based on last dpad press
+        // (but, yes let them do this any time)
+        if (false) {
+            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                april_locker.control_x.setSetPoint(0.0);
+            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                april_locker.control_x.setSetPoint(-10.0);
+            }
+        }
+
+        // if X, A, B is held down, we only look at an April tag (otherwise,
         // we let the other controls work)
-        if (driver.isDown(GamepadKeys.Button.X)) {
+        if (driver.isDown(GamepadKeys.Button.X) || driver.isDown(GamepadKeys.Button.A) || driver.isDown(GamepadKeys.Button.B)) {
 
-            // could we do something like "move up to 6cm left/right" on dpad press, until we get april-tag lock? we're too close to see them all with our camera currently..
-
+            // could we do something like "move up to 6cm left/right" on dpad press?
             if (arm.state == Arm.Position.Scoring) {
                 april_locker.close_position();
             } else {
                 april_locker.far_position();
             }
+            last_april_tag = 1; // or 4
+            if (driver.isDown(GamepadKeys.Button.A)) {
+                last_april_tag = 2; // or 5
+            } else if (driver.isDown(GamepadKeys.Button.B)) {
+                last_april_tag = 3; // or 6
+            }
             aprilLock(time, last_april_tag);
-            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                if (last_april_tag < 3) {
-                    last_april_tag += 1;
-                }
-            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                if (last_april_tag > 1) {
-                    last_april_tag -= 1;
-                }
-            } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+
+            // TEMPORARY for tuning the locker PIDs
+            if (driver.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 april_locker.control_y.setD(april_locker.control_y.getD() * 1.1);
             } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 april_locker.control_y.setD(april_locker.control_y.getD() * 0.9);
@@ -150,7 +159,7 @@ public class Drive {
             strafe = -driver.getRightX();
 
             // virtual fence
-            if (true) {
+            if (false) {
                 double dist = april_locker.pipeline.closestAprilTag();
                 if (dist > 0.0 && dist < 300 && forward > 0) {
                     forward = 0;
