@@ -42,9 +42,9 @@ public class Drive {
     AprilLock april_locker;
     int last_april_tag = 1;  // used by april-tag locker
 
-    public Drive(HardwareMap hardwareMap, AprilTagPipeline pipe, Arm a) {
+    public Drive(HardwareMap hardwareMap, AprilTagPipeline pipe, Arm a, boolean is_red) {
         arm = a;
-        april_locker = new AprilLock(pipe);
+        april_locker = new AprilLock(pipe, is_red);
 
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
@@ -123,7 +123,8 @@ public class Drive {
             } else if (driver.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 april_locker.control_y.setD(april_locker.control_y.getD() * 0.9);
             }
-            forward = april_locker.fwd;
+            // positive / negative here depends on red/blue alliance? this for red
+            forward = -april_locker.fwd;
             strafe = april_locker.strafe;
         } else {
             // XXX FIXME need to stop april-tag locker?
@@ -161,7 +162,8 @@ public class Drive {
             // virtual fence
             if (true) {
                 double dist = april_locker.pipeline.closestAprilTag();
-                if (dist > 0.0 && dist < 300 && strafe > 0) {
+                // XXX depends on red/blue ... this for red
+                if (dist > 0.0 && dist < 300 && strafe < 0) {
                     strafe = 0;
                 }
             }

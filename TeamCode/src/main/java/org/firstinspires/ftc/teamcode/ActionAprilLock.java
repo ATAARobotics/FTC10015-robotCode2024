@@ -12,11 +12,16 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class ActionAprilLock extends ActionBase {
 
+    AprilTagPipeline pipe;
+    OpenCvWebcam cam;
     AprilLock april;
     double started = -1;
 
-    ActionAprilLock(AprilTagPipeline pipe) {
-        april = new AprilLock(pipe);
+    ActionAprilLock(OpenCvWebcam megacam, int target, boolean is_red) {
+        cam = megacam;
+        pipe = new AprilTagPipeline(target);
+        cam.setPipeline(pipe);
+        april = new AprilLock(pipe, is_red);
     }
 
     boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
@@ -29,6 +34,7 @@ public class ActionAprilLock extends ActionBase {
         }
         april.update(time);
         drive.robotInputs(april.strafe, april.fwd);
+        drive.robotInputs(-april.fwd, april.strafe);
 
         pack.put("has-target", april.pipeline.has_result());
         pack.put("last-result", (time - april.last_result));
@@ -39,6 +45,5 @@ public class ActionAprilLock extends ActionBase {
     }
 
     void draw_field(TelemetryPacket pack){
-
     }
 }

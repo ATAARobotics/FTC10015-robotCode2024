@@ -27,6 +27,9 @@ public class Arm {
     double wristp = 0.0;
     double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
 
+    boolean manual_override = false;
+    double manual_power = 0.0;
+
     public Arm(HardwareMap hm){
         state = Position.Intake;
         arm_main = new MotorEx(hm,"arm_main");
@@ -118,6 +121,17 @@ public class Arm {
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
+
+        if (game.getRightY() > 0.5) {
+            manual_override = true;
+            manual_power = 1.0;
+        } else if (game.getRightY() < -0.5) {
+            manual_override = true;
+            manual_power = -1.0;
+        } else {
+            //manual_override = false;
+            manual_power = 0.0;
+        }
 /*
          if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
             clawp -= 0.1;
@@ -153,7 +167,11 @@ public class Arm {
         if (move < -0.5) { move = -0.5; }
         wrist.setPosition(wristp);
         claw.setPosition(clawp);
-        arm.set(move);
+        if (manual_override) {
+            arm.set(manual_power);
+        } else {
+            arm.set(move);
+        }
         intake.loop(time);
     }
 }

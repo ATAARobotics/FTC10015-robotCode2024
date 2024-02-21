@@ -107,7 +107,7 @@ public abstract class OldAutonomousOp extends OpMode {
         });
 
         arm = new Arm(hardwareMap);
-        drive = new Drive(hardwareMap, null, arm);
+        drive = new Drive(hardwareMap, null, arm, false);  // only blue
         intake = new Intake(hardwareMap);
     }
 

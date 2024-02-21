@@ -63,7 +63,7 @@ public class TeleOp extends OpMode   {
         });
 
         arm = new Arm(hardwareMap);
-        drive = new Drive(hardwareMap, pipeline, arm);
+        drive = new Drive(hardwareMap, pipeline, arm, true); // FIXME getAlliance() == Alliance.RED);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
 

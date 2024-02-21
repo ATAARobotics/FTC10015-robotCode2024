@@ -107,7 +107,7 @@ public abstract class AutonomousOp extends OpMode {
         });
 
         arm = new Arm(hardwareMap);
-        drive = new Drive(hardwareMap, null, arm);
+        drive = new Drive(hardwareMap, null, arm, getAlliance() == Alliance.RED);
         intake = new Intake(hardwareMap);
     }
 
@@ -288,18 +288,93 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionPause(.2));
                 actions.add(new ActionArm("intake"));
             }
+        } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.RED) {
+            // negative y is robot-forward
+            // negative x is robot-left (towards board on blue side, away from board on red)
+            // "165/2" is "half the leftover space: to center our robot on the tile"
+
+            // we have a "common point" to get to before the april-locker takes over
+            ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
+
+            if (target == 1) {
+                // this one is "under the truss"
+                actions.add(new ActionMove(-165/2, -TILE));
+                actions.add(new ActionTurn(-90));
+                actions.add(new ActionMove(-160, -(TILE + 20)));
+            } else if (target == 2) {
+                actions.add(new ActionMove((-165/2), -(TILE  + 690)));
+            } else {
+                actions.add(new ActionMove(-385, -(TILE + TILE)));
+            }
+
+            // the above moves got us to "spit out the purple pixel"
+            // location; then we do that and move to our common point
+//            actions.add(new ActionIntake(false));
+//            actions.add(new ActionSuck(false));
+//            actions.add(new ActionArm("resting"));
+//            actions.add(new ActionIntake(true, true));
+            actions.add(new ActionPause(2));
+            actions.add(new ActionTurn(-90));  // face the board
+            actions.add(common_point);
+
+            actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+
+            // once we're locked, we score the pixel
+            actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionPause(0.1));
+            actions.add(new ActionArm("open"));
+            actions.add(new ActionPause(0.2));
+            // we actually probably want an "ActionMoveBack(200mm)" or
+            // similar; that is, move "positive x" but whatever our Y
+            // is currntly at
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionPause(.2));
+            actions.add(new ActionArm("intake"));
+        } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
+            // negative y is robot-forward
+            // negative x is robot-left (towards board on blue side)
+            // "165/2" is "half the leftover space: to center our robot on the tile"
+
+            // we have a "common point" to get to before the april-locker takes over
+            ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
+
+            if (target == 3) {
+                // this one is "under the truss"
+                actions.add(new ActionMove(-165/2, -TILE));
+                actions.add(new ActionTurn(-90));
+                actions.add(new ActionMove(-160, -(TILE + 20)));
+            } else if (target == 2) {
+                actions.add(new ActionMove((-165/2), -(TILE  + 690)));
+            } else {
+                actions.add(new ActionMove(-385, -(TILE + TILE)));
+            }
+
+            // the above moves got us to "spit out the purple pixel"
+            // location; then we do that and move to our common point
+//            actions.add(new ActionIntake(false));
+//            actions.add(new ActionSuck(false));
+//            actions.add(new ActionArm("resting"));
+//            actions.add(new ActionIntake(true, true));
+            actions.add(common_point);
+
+            actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+
+            if (false) {
+                // once we're locked, we score the pixel
+                actions.add(new ActionArm("low-scoring"));
+                actions.add(new ActionPause(0.1));
+                actions.add(new ActionArm("open"));
+                actions.add(new ActionPause(0.2));
+                // we actually probably want an "ActionMoveBack(200mm)" or
+                // similar; that is, move "positive x" but whatever our Y
+                // is currntly at
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionPause(.2));
+                actions.add(new ActionArm("intake"));
+            }
         }
-        /*
-        actions.add(new ActionAprilLock(rear_cam, 3));
-        actions.add(new ActionArm("resting"));
-        actions.add(new ActionArm("low-scoring"));
-        actions.add(new ActionPause(.2));
-        actions.add(new ActionArm("open"));
-        actions.add(new ActionPause(.1));
-        actions.add(new ActionArm("resting"));
-        actions.add(new ActionPause(.2));
-        actions.add(new ActionArm("intake"));
-         */
+
+
         // always at the end we want to do this...
         actions.add(new ActionNothing());
     }

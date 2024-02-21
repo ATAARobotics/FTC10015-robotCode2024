@@ -20,6 +20,7 @@ public class AprilLock {
 
     public double strafe = 0;
     public double fwd = 0;
+    public boolean is_red = false;
 
     public static final double CLOSE_DISTANCE = 265;
     public static final double FAR_DISTANCE = 265; // mm
@@ -38,8 +39,9 @@ public class AprilLock {
         control_x.setSetPoint(board_distance);
     }
 
-    AprilLock(AprilTagPipeline pipe) {
+    AprilLock(AprilTagPipeline pipe, boolean red) {
         pipeline = pipe;
+        is_red = red;
         //// XXX "control_x" is left / right at the board
         //pipeline.setDecimation(3); // "HIGH" from example https://github.com/OpenFTC/EOCV-AprilTag-Plugin/blob/master/examples/src/main/java/org/firstinspires/ftc/teamcode/AprilTagDemo.java
         control_x = new PIDController(0.009, 0.00, 0.001);
@@ -71,14 +73,18 @@ public class AprilLock {
             // remember normal "robot forward" is toward / away from the drive-team
             // so "strafe" is towards the board
             fwd = control_y.calculate(pipeline.strafe());
-            strafe = -control_x.calculate(pipeline.distance());
-            if (false) {
+            if (is_red) {
+                strafe = control_x.calculate(pipeline.distance());
+            } else {
+                strafe = -control_x.calculate(pipeline.distance());
+            }
+            if (true) {
                 // "simple static-friction feed-forward"
                 // (if we're trying to move "at all", make it at least 0.1 input)
-                double static_friction = 0.15;
-                if (fwd < 0.025) {
+                double static_friction = 0.16;
+                if (fwd < -0.01) {
                     fwd = -static_friction + fwd;
-                } else if (fwd > 0.025) {
+                } else if (fwd > 0.01) {
                     fwd = static_friction + fwd;
                 }
             }
