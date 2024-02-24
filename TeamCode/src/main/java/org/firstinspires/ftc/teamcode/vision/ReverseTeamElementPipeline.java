@@ -53,6 +53,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         annotated = new Mat();
     }
     public ReverseTeamElementPipeline(boolean red) {
+        // XXX going to want to do "near/far" AND "red/blue" probably?
         if (red) {
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);

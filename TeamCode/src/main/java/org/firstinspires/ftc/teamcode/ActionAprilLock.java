@@ -33,15 +33,18 @@ public class ActionAprilLock extends ActionBase {
             return true;
         }
         april.update(time);
-        drive.robotInputs(april.strafe, april.fwd);
-        drive.robotInputs(-april.fwd, april.strafe);
+        drive.robotInputs(april.strafe, -april.fwd);
 
         pack.put("has-target", april.pipeline.has_result());
         pack.put("last-result", (time - april.last_result));
         pack.put("stick-fwd", april.fwd);
         pack.put("stick-strafe", april.strafe);
         pack.put("april-distance", april.pipeline.distance());
-        return april.locked();
+        if (april.locked()) {
+            drive.robotInputs(0, 0);
+            return true;
+        }
+        return false;
     }
 
     void draw_field(TelemetryPacket pack){

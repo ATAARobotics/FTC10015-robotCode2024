@@ -320,16 +320,13 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
 
             // once we're locked, we score the pixel
-            actions.add(new ActionArm("low-scoring"));
-            actions.add(new ActionPause(0.1));
-            actions.add(new ActionArm("open"));
-            actions.add(new ActionPause(0.2));
-            // we actually probably want an "ActionMoveBack(200mm)" or
-            // similar; that is, move "positive x" but whatever our Y
-            // is currntly at
-            actions.add(new ActionArm("resting"));
-            actions.add(new ActionPause(.2));
-            actions.add(new ActionArm("intake"));
+            // XXX score-pixel stuff (share with all other modes)
+            actions.add(new ActionPause(2));
+
+            // "go to pixel stack for more"
+            actions.add(new ActionMove(-TILE, -165/2));
+            actions.add(new ActionMove((TILE*2) + (TILE/2), -165/2));
+            actions.add(new ActionMove((TILE*2) + (TILE/2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
             // negative y is robot-forward
             // negative x is robot-left (towards board on blue side)
@@ -373,7 +370,6 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("intake"));
             }
         }
-
 
         // always at the end we want to do this...
         actions.add(new ActionNothing());
