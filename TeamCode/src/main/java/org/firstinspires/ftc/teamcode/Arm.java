@@ -7,11 +7,14 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
 
     public enum Position {Intake, Resting, Scoring, LowScoring};
+    public enum Roller {Off, In, Out};
     MotorEx arm_main;
     MotorEx arm_follower;
     MotorGroup arm;
@@ -19,13 +22,15 @@ public class Arm {
     MotorEx slide;
 
     ServoEx wrist;
-    ServoEx claw;
+    ServoEx roller;
+
+    RevTouchSensor touch;
 
     Intake intake;
     public Position state;
 
     double wristp = 0.0;
-    double clawp = 0.0; // 0.6 is open, 0.4 (0.37?) is closed
+    Roller roller_state = Roller.Off;
 
     boolean manual_override = false;
     double manual_power = 0.0;
@@ -38,10 +43,10 @@ public class Arm {
         arm_control = new PIDController(.01,0.01,0);
         arm_control.setTolerance(15);
         // slide = new MotorEx(hm,"slide");
-        /*
+
         wrist = new SimpleServo(hm,"wrist", 0, 360);
-        claw = new SimpleServo(hm,"claw", 0, 360);
-         */
+        roller = new SimpleServo(hm,"roller", 0, 360);
+        touch = hm.get(RevTouchSensor.class , "touch");
         intake = new Intake(hm);
         intake();
     }
@@ -55,32 +60,32 @@ public class Arm {
         state = Position.Intake;
         //claw.setPosition(1.0);
         arm_control.setSetPoint(0);
-        wristp = 0.75;
-        clawp = 0.65;
+        wristp = 1.0;
+        roller_state = Roller.In;
     }
     public void resting(){
         state = Position.Resting;
         arm_control.setSetPoint(-88);
-        wristp = 0.4;
-        clawp = 0.37;
+        wristp = 0.9;
+        roller_state = Roller.Off;
     }
     public void scoring(){
         state = Position.Scoring;
         arm_control.setSetPoint(-371);
-        wristp = 0.6;
+        wristp = 0;
     }
 
     public void low_scoring(){
         state = Position.LowScoring;
         arm_control.setSetPoint(-440);
-        wristp = 0.55;
+        wristp = 0;
     }
-    public void open_claw() {
-        clawp = 0.6;
+    public void roller_out() {
+        roller_state = Roller.Out;
     }
 
-    public void close_claw() {
-        clawp = 0.37;
+    public void roller_in() {
+        roller_state = Roller.In;
     }
 
     public void humanInputs(GamepadEx game){
@@ -123,7 +128,7 @@ public class Arm {
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
-
+        /**
         if (game.getRightY() > 0.5) {
             manual_override = true;
             manual_power = 1.0;
@@ -134,31 +139,16 @@ public class Arm {
             //manual_override = false;
             manual_power = 0.0;
         }
-/*
-         if (game.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            clawp -= 0.1;
-            if (clawp < 0.0) {
-                clawp = 1.0;
-            }
-         } else if (game.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-             clawp += 0.1;
-            if (clawp > 1.0) {
-                clawp = 0.0;
-            }
-         }
          **/
 
         // A is close, B is open
-        if (game.wasJustPressed(GamepadKeys.Button.A)) {
-            if (true || state == Position.Intake) {
-                clawp = 0.37; // closed
-            }
-        } else if (game.wasJustPressed(GamepadKeys.Button.B)){
-            if (state == Position.Intake) {
-                clawp = 0.6; // open
-            } else if (state == Position.Scoring || state == Position.LowScoring) {
-                clawp = 0.6; // open
-            }
+        if (game.isDown(GamepadKeys.Button.A)) {
+            roller_state = Roller.In;
+        } else if (game.isDown(GamepadKeys.Button.B)){
+            roller_state = Roller.Out;
+        }
+        else {
+            roller_state = Roller.Off;
         }
     }
 
@@ -167,8 +157,17 @@ public class Arm {
         // clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
-        //wrist.setPosition(wristp);
-        //claw.setPosition(clawp);
+        wrist.setPosition(wristp);
+
+        // roller logic
+        if (roller_state == Roller.In && !touch.isPressed() ) {
+            roller.setPosition(1.0);
+        } else if (roller_state == Roller.Out) {
+            roller.setPosition(0.0);
+        } else {
+            roller.setPosition(0.5);
+        }
+
         if (manual_override) {
             arm.set(manual_power);
         } else {

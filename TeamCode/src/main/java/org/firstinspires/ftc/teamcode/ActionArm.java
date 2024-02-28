@@ -22,11 +22,11 @@ public class ActionArm extends ActionBase {
             } else if (desired == "scoring") {
                 arm.scoring();
             } else if (desired == "open") {
-                arm.open_claw();
+                //arm.open_claw();
             } else if (desired == "low-scoring") {
                 arm.low_scoring();
             } else if (desired == "close") {
-                arm.close_claw();
+                //arm.close_claw();
             }
         }
         pack.put("action-arm-at", arm.arm_control.atSetPoint());

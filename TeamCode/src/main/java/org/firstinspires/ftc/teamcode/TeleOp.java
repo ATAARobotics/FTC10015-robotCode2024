@@ -128,7 +128,6 @@ public class TeleOp extends OpMode   {
         pack.put("target_heading", drive.headingControl.getSetPoint());
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
-        pack.put("claw", arm.clawp);
         pack.put("wrist", arm.wristp);
         pack.put("close_april", drive.april_locker.pipeline.closestAprilTag());
         pack.put("april_lock", drive.april_locker.locked());
