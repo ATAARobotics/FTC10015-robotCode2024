@@ -15,6 +15,7 @@ public class Arm {
 
     public enum Position {Intake, Resting, Scoring, LowScoring};
     public enum Roller {Off, In, Out};
+    public enum Climber {Sheathed, Stabby};
     MotorEx arm_main;
     MotorEx arm_follower;
     MotorGroup arm;
@@ -23,19 +24,23 @@ public class Arm {
 
     ServoEx wrist;
     ServoEx roller;
+    ServoEx climber;
 
     RevTouchSensor touch;
 
     Intake intake;
     public Position state;
 
-    double wristp = 0.0;
+    public Climber knives;
+
+    double wristp = 1.0;
     Roller roller_state = Roller.Off;
 
     boolean manual_override = false;
     double manual_power = 0.0;
 
     public Arm(HardwareMap hm){
+        knives = Climber.Sheathed;
         state = Position.Intake;
         arm_main = new MotorEx(hm,"arm_main");
         arm_follower = new MotorEx(hm,"arm_follower");
@@ -43,7 +48,7 @@ public class Arm {
         arm_control = new PIDController(.01,0.01,0);
         arm_control.setTolerance(15);
         // slide = new MotorEx(hm,"slide");
-
+        climber = new SimpleServo(hm,"climber", 0, 360);
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         roller = new SimpleServo(hm,"roller", 0, 360);
         touch = hm.get(RevTouchSensor.class , "touch");
@@ -66,19 +71,19 @@ public class Arm {
     public void resting(){
         state = Position.Resting;
         arm_control.setSetPoint(-88);
-        wristp = 0.9;
+        wristp = 0.8;
         roller_state = Roller.Off;
     }
     public void scoring(){
         state = Position.Scoring;
         arm_control.setSetPoint(-371);
-        wristp = 0;
+        wristp = 0.0;
     }
 
     public void low_scoring(){
         state = Position.LowScoring;
         arm_control.setSetPoint(-440);
-        wristp = 0;
+        wristp = 0.0;
     }
     public void roller_out() {
         roller_state = Roller.Out;
@@ -128,7 +133,7 @@ public class Arm {
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
-        /**
+
         if (game.getRightY() > 0.5) {
             manual_override = true;
             manual_power = 1.0;
@@ -139,7 +144,6 @@ public class Arm {
             //manual_override = false;
             manual_power = 0.0;
         }
-         **/
 
         // A is close, B is open
         if (game.isDown(GamepadKeys.Button.A)) {
@@ -150,6 +154,15 @@ public class Arm {
         else {
             roller_state = Roller.Off;
         }
+        if (game.wasJustPressed(GamepadKeys.Button.X)){
+            if (knives == Climber.Sheathed){
+                knives = Climber.Stabby;
+                arm_control.setSetPoint(-200);
+                wristp = 1.0;
+            } else {
+                knives = Climber.Sheathed;
+            }
+        }
     }
 
     public void loop(double time){
@@ -157,6 +170,7 @@ public class Arm {
         // clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
+
         wrist.setPosition(wristp);
 
         // roller logic
@@ -166,6 +180,14 @@ public class Arm {
             roller.setPosition(0.0);
         } else {
             roller.setPosition(0.5);
+        }
+
+        // climber thing
+        if (knives == Climber.Stabby) {
+            // XXX TODO don't deploy if arm is "too low"
+            climber.setPosition(0.0);
+        } else {
+            climber.setPosition(1.0);
         }
 
         if (manual_override) {
