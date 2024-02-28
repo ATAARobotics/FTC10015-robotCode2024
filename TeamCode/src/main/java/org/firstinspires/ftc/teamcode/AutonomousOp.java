@@ -324,9 +324,13 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionPause(2));
 
             // "go to pixel stack for more"
-            actions.add(new ActionMove(-TILE, -165/2));
-            actions.add(new ActionMove((TILE*2) + (TILE/2), -165/2));
-            actions.add(new ActionMove((TILE*2) + (TILE/2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
+            if (true) {
+                actions.add(new ActionMove(0, 0));
+            } else {
+                actions.add(new ActionMove(-TILE, -165 / 2));
+                actions.add(new ActionMove((TILE * 2) + (TILE / 2), -165 / 2));
+                actions.add(new ActionMove((TILE * 2) + (TILE / 2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
+            }
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
             // negative y is robot-forward
             // negative x is robot-left (towards board on blue side)

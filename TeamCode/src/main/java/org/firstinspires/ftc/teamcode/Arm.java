@@ -38,8 +38,10 @@ public class Arm {
         arm_control = new PIDController(.01,0.01,0);
         arm_control.setTolerance(15);
         // slide = new MotorEx(hm,"slide");
+        /*
         wrist = new SimpleServo(hm,"wrist", 0, 360);
         claw = new SimpleServo(hm,"claw", 0, 360);
+         */
         intake = new Intake(hm);
         intake();
     }
@@ -51,7 +53,7 @@ public class Arm {
     }
     public void intake(){
         state = Position.Intake;
-        claw.setPosition(1.0);
+        //claw.setPosition(1.0);
         arm_control.setSetPoint(0);
         wristp = 0.75;
         clawp = 0.65;
@@ -165,8 +167,8 @@ public class Arm {
         // clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
-        wrist.setPosition(wristp);
-        claw.setPosition(clawp);
+        //wrist.setPosition(wristp);
+        //claw.setPosition(clawp);
         if (manual_override) {
             arm.set(manual_power);
         } else {
