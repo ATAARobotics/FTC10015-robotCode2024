@@ -65,24 +65,24 @@ public class Arm {
         state = Position.Intake;
         //claw.setPosition(1.0);
         arm_control.setSetPoint(0);
-        wristp = 1.0;
+        wristp = 1.0;//find out if 0 is left or right
         roller_state = Roller.In;
     }
     public void resting(){
         state = Position.Resting;
         arm_control.setSetPoint(-88);
-        wristp = 0.8;
+        wristp = 01.0;
         roller_state = Roller.Off;
     }
     public void scoring(){
         state = Position.Scoring;
-        arm_control.setSetPoint(-371);
+        arm_control.setSetPoint(-300);
         wristp = 0.0;
     }
 
     public void low_scoring(){
         state = Position.LowScoring;
-        arm_control.setSetPoint(-440);
+        arm_control.setSetPoint(-380);
         wristp = 0.0;
     }
     public void roller_out() {
@@ -133,7 +133,7 @@ public class Arm {
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
-
+        /**
         if (game.getRightY() > 0.5) {
             manual_override = true;
             manual_power = 1.0;
@@ -144,6 +144,7 @@ public class Arm {
             //manual_override = false;
             manual_power = 0.0;
         }
+         **/
 
         // A is close, B is open
         if (game.isDown(GamepadKeys.Button.A)) {
@@ -157,7 +158,7 @@ public class Arm {
         if (game.wasJustPressed(GamepadKeys.Button.X)){
             if (knives == Climber.Sheathed){
                 knives = Climber.Stabby;
-                arm_control.setSetPoint(-200);
+                arm_control.setSetPoint(-237);
                 wristp = 1.0;
             } else {
                 knives = Climber.Sheathed;
@@ -167,10 +168,9 @@ public class Arm {
 
     public void loop(double time){
         double move = arm_control.calculate(arm_main.getCurrentPosition());
-        // clamp max speed
+         //clamp max speed
         if (move > 0.7) { move = 0.7; }
         if (move < -0.5) { move = -0.5; }
-
         wrist.setPosition(wristp);
 
         // roller logic
@@ -185,9 +185,9 @@ public class Arm {
         // climber thing
         if (knives == Climber.Stabby) {
             // XXX TODO don't deploy if arm is "too low"
-            climber.setPosition(0.0);
-        } else {
             climber.setPosition(1.0);
+        } else {
+            climber.setPosition(0.0);
         }
 
         if (manual_override) {
