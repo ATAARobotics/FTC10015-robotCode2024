@@ -143,7 +143,10 @@ public class Arm {
             roller_state = Roller.Off;
         }
 
-        // if we are in knives-out, then
+        // if we are in knives-out, then mega-power is enabled (so manual_power is only applied then)
+        if (game.getLeftY() < -0.5) {
+            manual_power = -0.5;
+        }
 
         if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake){
             roller_state = Roller.In;
@@ -187,11 +190,13 @@ public class Arm {
             // XXX TODO don't deploy if arm is "too low"
             climber.setPosition(1.0);
             // in this mode, we have "full-power mega-climb" enabled
-
+            if (arm.getCurrentPosition() > -400 && arm.getCurrentPosition() < -250) {
+                final_move = manual_power;
+            }
         } else {
             climber.setPosition(0.0);
         }
-        arm.set(move);
+        arm.set(final_move);
         intake.loop(time);
     }
 }
