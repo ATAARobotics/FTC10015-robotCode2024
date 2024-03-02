@@ -35,8 +35,6 @@ public class Arm {
 
     double wristp = 1.0;
     Roller roller_state = Roller.Off;
-
-    boolean manual_override = false;
     double manual_power = 0.0;
 
     public Arm(HardwareMap hm){
@@ -71,7 +69,7 @@ public class Arm {
     public void resting(){
         state = Position.Resting;
         arm_control.setSetPoint(-88);
-        wristp = 01.0;
+        wristp = 0.7;
         roller_state = Roller.Off;
     }
     public void scoring(){
@@ -82,7 +80,7 @@ public class Arm {
 
     public void low_scoring(){
         state = Position.LowScoring;
-        arm_control.setSetPoint(-380);
+        arm_control.setSetPoint(-370);
         wristp = 0.0;
     }
     public void roller_out() {
@@ -133,18 +131,7 @@ public class Arm {
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
-        /**
-        if (game.getRightY() > 0.5) {
-            manual_override = true;
-            manual_power = 1.0;
-        } else if (game.getRightY() < -0.5) {
-            manual_override = true;
-            manual_power = -1.0;
-        } else {
-            //manual_override = false;
-            manual_power = 0.0;
-        }
-         **/
+
 
         // A is close, B is open
         if (game.isDown(GamepadKeys.Button.A)) {
@@ -154,6 +141,12 @@ public class Arm {
         }
         else {
             roller_state = Roller.Off;
+        }
+
+        // if we are in knives-out, then
+
+        if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake){
+            roller_state = Roller.In;
         }
         if (game.wasJustPressed(GamepadKeys.Button.X)){
             if (knives == Climber.Sheathed){
@@ -174,27 +167,28 @@ public class Arm {
         wrist.setPosition(wristp);
 
         // roller logic
+        double roller_pos = 0.5;
         if (roller_state == Roller.In && !touch.isPressed() ) {
-            roller.setPosition(1.0);
+            roller_pos = 1.0;
         } else if (roller_state == Roller.Out) {
-            roller.setPosition(0.0);
+            roller_pos = 0.0;
         } else {
-            roller.setPosition(0.5);
+            roller_pos = 0.5;
         }
+        // override: if touch sensor is on, no roller movement
+        roller.setPosition(roller_pos);
 
         // climber thing
+        double final_move = move;
         if (knives == Climber.Stabby) {
             // XXX TODO don't deploy if arm is "too low"
             climber.setPosition(1.0);
+            // in this mode, we have "full-power mega-climb" enabled
+
         } else {
             climber.setPosition(0.0);
         }
-
-        if (manual_override) {
-            arm.set(manual_power);
-        } else {
-            arm.set(move);
-        }
+        arm.set(move);
         intake.loop(time);
     }
 }
