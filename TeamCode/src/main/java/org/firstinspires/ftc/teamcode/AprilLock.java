@@ -103,6 +103,11 @@ public class AprilLock {
             fwd = 0.0;
             strafe = 0.0;
         }
+
+        if (!is_red) {
+            fwd = -fwd;
+            //strafe = -strafe;
+        }
     }
 
     boolean locked() {

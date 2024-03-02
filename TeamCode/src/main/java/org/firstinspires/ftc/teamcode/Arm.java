@@ -75,7 +75,7 @@ public class Arm {
     public void scoring(){
         state = Position.Scoring;
         arm_control.setSetPoint(-300);
-        wristp = 0.2;
+        wristp = 0.0;
     }
 
     public void low_scoring(){
