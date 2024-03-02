@@ -75,7 +75,7 @@ public class Arm {
     public void scoring(){
         state = Position.Scoring;
         arm_control.setSetPoint(-300);
-        wristp = 0.1;
+        wristp = 0.2;
     }
 
     public void low_scoring(){
@@ -125,12 +125,15 @@ public class Arm {
                 wristp = 0.0;
             }
         }
+        /**
+         * debugging control
         if (game.getLeftY() < -0.5 ){
             arm_control.setSetPoint(arm_control.getSetPoint() + 1);
         }
         else if (game.getLeftY() > 0.5) {
             arm_control.setSetPoint(arm_control.getSetPoint() - 1);
         }
+         **/
 
 
         // A is close, B is open
@@ -144,8 +147,10 @@ public class Arm {
         }
 
         // if we are in knives-out, then mega-power is enabled (so manual_power is only applied then)
-        if (game.getLeftY() < -0.5) {
-            manual_power = -0.5;
+        if (game.getRightY() > 0.5 || game.getLeftY() > 0.5) {
+            manual_power = 1.0;
+        } else {
+            manual_power = 0.0;
         }
 
         if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake){
@@ -157,7 +162,7 @@ public class Arm {
         if (game.wasJustPressed(GamepadKeys.Button.X)){
             if (knives == Climber.Sheathed){
                 knives = Climber.Stabby;
-                arm_control.setSetPoint(-237);
+                arm_control.setSetPoint(-250);
                 wristp = 1.0;
             } else {
                 knives = Climber.Sheathed;
@@ -190,7 +195,7 @@ public class Arm {
             // XXX TODO don't deploy if arm is "too low"
             climber.setPosition(1.0);
             // in this mode, we have "full-power mega-climb" enabled
-            if (arm.getCurrentPosition() > -400 && arm.getCurrentPosition() < -250) {
+            if (manual_power != 0.0) {
                 final_move = manual_power;
             }
         } else {
