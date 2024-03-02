@@ -148,6 +148,9 @@ public class Arm {
         if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake){
             roller_state = Roller.In;
         }
+        if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER) && state == Position.Intake){
+            roller_state = Roller.In;
+        }
         if (game.wasJustPressed(GamepadKeys.Button.X)){
             if (knives == Climber.Sheathed){
                 knives = Climber.Stabby;
