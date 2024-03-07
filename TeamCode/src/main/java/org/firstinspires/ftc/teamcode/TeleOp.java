@@ -28,21 +28,21 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import java.util.List;
 
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="DriveMaster9000", group="Opmode")
-public class TeleOp extends OpMode   {
+public abstract class TeleOp extends OpMode   {
     public Drive drive = null;
     public Arm arm = null;
     // ideally make a class for "plane launcher", but it's just one servo so :shrug:
     public ServoEx plane_launcher;
     double plane_countdown_start = -1; // > 0 if we've started the timer
-    boolean plane_launched = false;
+    protected boolean plane_launched = false;
 
     public GamepadEx driver = null;
     public GamepadEx operator = null;
 
     protected OpenCvWebcam megacam;
     protected AprilTagPipeline pipeline;
+
+    public enum Alliance {RED, BLUE};
 
     BNO055IMU arm_imu = null;
 
@@ -63,7 +63,7 @@ public class TeleOp extends OpMode   {
         });
 
         arm = new Arm(hardwareMap);
-        drive = new Drive(hardwareMap, pipeline, arm, true); // FIXME getAlliance() == Alliance.RED);
+        drive = new Drive(hardwareMap, pipeline, arm, getAlliance() == Alliance.RED);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
 
@@ -78,6 +78,8 @@ public class TeleOp extends OpMode   {
         telemetry.addData("april", pipeline.has_result());
         telemetry.addData("distance", pipeline.distance());
     }
+
+    public abstract Alliance getAlliance();
 
     @Override
     public void start() {

@@ -22,8 +22,8 @@ public class AprilLock {
     public double fwd = 0;
     public boolean is_red = false;
 
-    public static final double CLOSE_DISTANCE = 245;
-    public static final double FAR_DISTANCE = 245; // mm
+    public static final double CLOSE_DISTANCE = 230;
+    public static final double FAR_DISTANCE = 230; // mm
 
     // should depend on "scoring position low" vs normal
     // "low" is about 39cm

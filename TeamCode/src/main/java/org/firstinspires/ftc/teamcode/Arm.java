@@ -64,7 +64,7 @@ public class Arm {
         //claw.setPosition(1.0);
         arm_control.setSetPoint(0);
         wristp = 1.0;//find out if 0 is left or right
-        roller_state = Roller.In;
+        //roller_state = Roller.In;
     }
     public void resting(){
         state = Position.Resting;
@@ -80,7 +80,7 @@ public class Arm {
 
     public void low_scoring(){
         state = Position.LowScoring;
-        arm_control.setSetPoint(-365);
+        arm_control.setSetPoint(-385);
         wristp = 0.0;
     }
     public void roller_out() {
@@ -90,6 +90,8 @@ public class Arm {
     public void roller_in() {
         roller_state = Roller.In;
     }
+
+    public void roller_off() {roller_state = Roller.Off; }
 
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game, state);

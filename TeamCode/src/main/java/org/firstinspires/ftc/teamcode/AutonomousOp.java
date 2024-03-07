@@ -49,6 +49,12 @@ public abstract class AutonomousOp extends OpMode {
     public abstract Zone getZone();
     public abstract Alliance getAlliance();
 
+    public static final double TILE = 610; // 24inches = 610mm
+
+    boolean get_white = false;
+    GamepadEx gp;
+
+
     /*
     notes:
     - want to do a series of actions
@@ -77,6 +83,7 @@ public abstract class AutonomousOp extends OpMode {
 
     @Override
     public void init() {
+        gp = new GamepadEx(gamepad1);
         actions = new LinkedList<ActionBase>();
 
         pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
@@ -113,7 +120,13 @@ public abstract class AutonomousOp extends OpMode {
 
     @Override
     public void init_loop() {
+        gp.readButtons();
+        if (gp.wasJustPressed(GamepadKeys.Button.A)) {
+            get_white = !get_white;
+        }
+
         telemetry.addData("result", pipeline.result);
+        telemetry.addData("get white", get_white);
     }
 
     @Override
@@ -130,9 +143,6 @@ public abstract class AutonomousOp extends OpMode {
     }
 
     protected void createActions() {
-
-        double TILE = 610; // 24inches = 610mm
-
         // We can call getZone() or getAlliance() to figure out which place we started in
         // ...also, "target" is valid when we get here (will be 1, 2 or 3).
 
@@ -289,48 +299,7 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("intake"));
             }
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.RED) {
-            // negative y is robot-forward
-            // negative x is robot-left (towards board on blue side, away from board on red)
-            // "165/2" is "half the leftover space: to center our robot on the tile"
-
-            // we have a "common point" to get to before the april-locker takes over
-            ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
-
-            if (target == 1) {
-                // this one is "under the truss"
-                actions.add(new ActionMove(-165/2, -TILE));
-                actions.add(new ActionTurn(-90));
-                actions.add(new ActionMove(-160, -(TILE + 20)));
-            } else if (target == 2) {
-                actions.add(new ActionMove((-165/2), -(TILE  + 690)));
-            } else {
-                actions.add(new ActionMove(-385, -(TILE + TILE)));
-            }
-
-            // the above moves got us to "spit out the purple pixel"
-            // location; then we do that and move to our common point
-//            actions.add(new ActionIntake(false));
-//            actions.add(new ActionSuck(false));
-//            actions.add(new ActionArm("resting"));
-//            actions.add(new ActionIntake(true, true));
-            actions.add(new ActionPause(2));
-            actions.add(new ActionTurn(-90));  // face the board
-            actions.add(common_point);
-
-            actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
-
-            // once we're locked, we score the pixel
-            // XXX score-pixel stuff (share with all other modes)
-            actions.add(new ActionPause(2));
-
-            // "go to pixel stack for more"
-            if (true) {
-                actions.add(new ActionMove(0, 0));
-            } else {
-                actions.add(new ActionMove(-TILE, -165 / 2));
-                actions.add(new ActionMove((TILE * 2) + (TILE / 2), -165 / 2));
-                actions.add(new ActionMove((TILE * 2) + (TILE / 2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
-            }
+            nearRedActions(actions);
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
             // negative y is robot-forward
             // negative x is robot-left (towards board on blue side)
@@ -359,24 +328,86 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(common_point);
 
             actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
-
-            if (false) {
-                // once we're locked, we score the pixel
-                actions.add(new ActionArm("low-scoring"));
-                actions.add(new ActionPause(0.1));
-                actions.add(new ActionArm("open"));
-                actions.add(new ActionPause(0.2));
-                // we actually probably want an "ActionMoveBack(200mm)" or
-                // similar; that is, move "positive x" but whatever our Y
-                // is currntly at
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionPause(.2));
-                actions.add(new ActionArm("intake"));
-            }
         }
 
         // always at the end we want to do this...
         actions.add(new ActionNothing());
+    }
+
+    protected void nearRedActions(LinkedList<ActionBase> actions) {
+        // negative y is robot-forward
+        // negative x is robot-left (towards board on blue side, away from board on red)
+        // "165/2" is "half the leftover space: to center our robot on the tile"
+
+        if (get_white) {
+            actions.add(new ActionMove(-TILE, -120));
+            actions.add(new ActionTurn(-90));
+            actions.add(new ActionMove((TILE * 2), -120));
+            actions.add(new ActionMove((TILE * 2), -(693))); // 26.5" == 673mm == wall to first stack
+            // get the pixel "somehow"
+            actions.add(new ActionPause(2.0));
+            // just pause for now
+            actions.add(new ActionMove((TILE * 2), -120));
+            actions.add(new ActionMove(-TILE, -120));
+            // back to "common point"
+            actions.add(new ActionMove(-TILE, -(TILE + 20)));
+            actions.add(new ActionAprilLock(megacam, 2, getAlliance() == Alliance.RED));
+            return;
+        }
+
+        // we have a "common point" to get to before the april-locker takes over
+        ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
+
+        if (target == 1) {
+            // this one is "under the truss"
+            actions.add(new ActionMove(-165/2, -TILE));
+            actions.add(new ActionTurn(-90));
+            actions.add(new ActionMove(-160, -(TILE + 20)));
+        } else if (target == 2) {
+            actions.add(new ActionMove((-165/2), -(TILE  + 690)));
+        } else {
+            actions.add(new ActionMove(-385, -(TILE + TILE)));
+        }
+
+        // the above moves got us to "spit out the purple pixel"
+        // location; then we do that and move to our common point
+        spitOutPurple(actions);
+        actions.add(new ActionTurn(-90));  // face the board
+        actions.add(common_point);
+
+        // lock onto the correct april target
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+
+        addYellowScoring(actions);
+        if (false) {
+            actions.add(new ActionMove(-TILE, -165 / 2));
+            actions.add(new ActionMove((TILE * 2), -165 / 2));
+            actions.add(new ActionMove((TILE * 2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
+        }
+    }
+    protected void spitOutPurple(LinkedList<ActionBase> actions) {
+        actions.add(new ActionIntake(false));
+        actions.add(new ActionSuck(false));
+        actions.add(new ActionArm("resting"));
+        actions.add(new ActionIntake(true, true));
+    }
+
+    protected void addYellowScoring(LinkedList<ActionBase> actions) {
+        if (true) {
+            // once we're locked, we score the pixel
+            actions.add(new ActionArm("low-scoring"));
+            actions.add(new ActionPause(0.1));
+            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-off", 0.1));
+            // we actually probably want an "ActionMoveBack(200mm)" or
+            // similar; that is, move "positive x" but whatever our Y
+            // is currntly at
+
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionPause(.2));
+            actions.add(new ActionArm("intake"));
+        }
+
     }
 
     @Override
