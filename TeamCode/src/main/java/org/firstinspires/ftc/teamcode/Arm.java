@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
 
-    public enum Position {Intake, Resting, Scoring, LowScoring};
+    public enum Position {Intake, Resting, HighScoring, MediumScoring, LowScoring};
     public enum Roller {Off, In, Out};
     public enum Climber {Sheathed, Stabby};
     MotorEx arm_main;
@@ -43,8 +43,8 @@ public class Arm {
         arm_main = new MotorEx(hm,"arm_main");
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
-        arm_control = new PIDController(.01,0.01,0);
-        arm_control.setTolerance(15);
+        arm_control = new PIDController(.02,0.0,0.0);
+        arm_control.setTolerance(5);
         // slide = new MotorEx(hm,"slide");
         climber = new SimpleServo(hm,"climber", 0, 360);
         wrist = new SimpleServo(hm,"wrist", 0, 360);
@@ -72,15 +72,21 @@ public class Arm {
         wristp = 0.7;
         roller_state = Roller.Off;
     }
-    public void scoring(){
-        state = Position.Scoring;
-        arm_control.setSetPoint(-300);
-        wristp = 0.0;
+    public void high_scoring(){
+        state = Position.HighScoring;
+        arm_control.setSetPoint(-330);
+        wristp = 0.15;
+    }
+
+    public void medium_scoring(){
+        state = Position.MediumScoring;
+        arm_control.setSetPoint(-360);  // -385 worked better in auto
+        wristp = 0.05;
     }
 
     public void low_scoring(){
         state = Position.LowScoring;
-        arm_control.setSetPoint(-365);  // -385 worked better in auto
+        arm_control.setSetPoint(-375);
         wristp = 0.0;
     }
     public void roller_out() {
@@ -98,17 +104,21 @@ public class Arm {
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
             if (state == Position.Intake) {
                 resting();
-            } else if (state == Position.Scoring) {
-                low_scoring();
             } else if (state == Position.Resting) {
-                scoring();
+                high_scoring();
+            } else if (state == Position.HighScoring) {
+                medium_scoring();
+            } else if (state == Position.MediumScoring) {
+                low_scoring();
             } // can't go up past "low-scoring"
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
             if (state == Position.Intake) {
                 // nothing, intake is lowest
             } else if (state == Position.LowScoring) {
-                scoring();
-            } else if (state == Position.Scoring) {
+                medium_scoring();
+            } else if (state == Position.MediumScoring) {
+                high_scoring();
+            } else if (state == Position.HighScoring) {
                 resting();
             } else if (state == Position.Resting){
                 intake();

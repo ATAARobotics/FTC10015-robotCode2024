@@ -29,7 +29,7 @@ public class ActionArm extends ActionBase {
             } else if (desired == "resting") {
                 arm.resting();
             } else if (desired == "scoring") {
-                arm.scoring();
+                arm.high_scoring();
             } else if (desired == "spit-out") {
                 arm.roller_out();
             } else if (desired == "spit-stop") {
