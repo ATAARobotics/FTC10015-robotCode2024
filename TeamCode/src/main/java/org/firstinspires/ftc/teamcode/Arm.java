@@ -186,7 +186,7 @@ public class Arm {
         double move = arm_control.calculate(arm_main.getCurrentPosition());
          //clamp max speed
         if (move > 0.7) { move = 0.7; }
-        if (move < -0.5) { move = -0.5; }
+        if (move < -0.8) { move = -0.8; }
         wrist.setPosition(wristp);
 
         // roller logic

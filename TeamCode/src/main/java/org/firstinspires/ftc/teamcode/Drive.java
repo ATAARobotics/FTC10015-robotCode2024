@@ -147,10 +147,10 @@ public class Drive {
             // turbo mode or not
             // triggers return 0.0 -> 1.0 "more than 0.5" is "more than half pressed"
             if (driver.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-                drivebase.setMaxSpeed(0.80);
+                drivebase.setMaxSpeed(0.90);
                 headingControl.setPID(0.03, 0.00, 0.001);
             } else {
-                drivebase.setMaxSpeed(0.50);
+                drivebase.setMaxSpeed(0.55);
                 headingControl.setPID(0.05, 0.00, 0.002);
             }
 

@@ -7,13 +7,4 @@ public class TeleOpRed extends TeleOp
 {
     public Alliance getAlliance() { return RED; }
 
-
-    // no reset code-path
-    /*
-    @Override
-    public void start() {
-        plane_launched = false;
-        drive.start();
-    }
-    */
 }
