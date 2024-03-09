@@ -80,7 +80,7 @@ public class Arm {
 
     public void low_scoring(){
         state = Position.LowScoring;
-        arm_control.setSetPoint(-385);
+        arm_control.setSetPoint(-365);  // -385 worked better in auto
         wristp = 0.0;
     }
     public void roller_out() {
