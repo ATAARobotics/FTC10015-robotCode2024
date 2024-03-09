@@ -7,6 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Autonomous FAR Blue", group="Autonomous")
 public class AutoFarBlue  extends AutonomousOp {
-    public Zone getZone() { return FAR; }
+    public Zone getZone() { return Zone.FAR; }
     public Alliance getAlliance() { return Alliance.BLUE; }
 }

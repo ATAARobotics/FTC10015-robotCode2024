@@ -8,6 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Autonomous Near Blue", group="Autonomous")
 public class AutoNearBlue  extends AutonomousOp {
-    public Zone getZone() { return NEAR; }
-    public Alliance getAlliance() { return RED; }
+    public Zone getZone() { return Zone.NEAR; }
+    public Alliance getAlliance() { return Alliance.BLUE; }
 }

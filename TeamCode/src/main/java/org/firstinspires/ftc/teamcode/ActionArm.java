@@ -28,8 +28,10 @@ public class ActionArm extends ActionBase {
                 arm.intake();
             } else if (desired == "resting") {
                 arm.resting();
-            } else if (desired == "scoring") {
+            } else if (desired == "scoring" || desired == "high-scoring") {
                 arm.high_scoring();
+            } else if (desired == "medium-scoring") {
+                arm.medium_scoring();
             } else if (desired == "spit-out") {
                 arm.roller_out();
             } else if (desired == "spit-stop") {

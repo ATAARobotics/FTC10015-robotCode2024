@@ -52,6 +52,7 @@ public abstract class AutonomousOp extends OpMode {
     public static final double TILE = 610; // 24inches = 610mm
 
     boolean get_white = false;
+    double auto_pause = 0.0;
     GamepadEx gp;
 
 
@@ -124,9 +125,16 @@ public abstract class AutonomousOp extends OpMode {
         if (gp.wasJustPressed(GamepadKeys.Button.A)) {
             get_white = !get_white;
         }
+        if (gp.wasJustPressed(GamepadKeys.Button.B)) {
+            auto_pause += 1.0;
+        }
+        if (gp.wasJustPressed(GamepadKeys.Button.X)) {
+            auto_pause -= 1.0;
+        }
 
         telemetry.addData("result", pipeline.result);
         telemetry.addData("get white", get_white);
+        telemetry.addData("pause", auto_pause);
     }
 
     @Override
@@ -351,7 +359,7 @@ public abstract class AutonomousOp extends OpMode {
         // negative x is robot-left (towards board on blue side, away from board on red)
         // "165/2" is "half the leftover space: to center our robot on the tile"
 
-        actions.add(new ActionArm("purple"));
+        actions.add(new ActionMove(0, -100));
 
         double mult = -1.0;
         if (!is_red) {
@@ -359,18 +367,23 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         // we have a "common point" to get to before the april-locker takes over
-        ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
+        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE + 20));
 
         if (true) {
-            if (target == 1) {
-                // this one is "under the truss"
-                actions.add(new ActionMove(mult * (165 / 2), -TILE));
-                //actions.add(new ActionTurn(-90));
-                actions.add(new ActionMove(mult * 175, -(TILE + 20)));
-            } else if (target == 2) {
+            if (target == 2) {
+                actions.add(new ActionArm("purple"));
                 //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
-                actions.add(new ActionMove(mult * (165 / 2), -560));
-            } else {
+                actions.add(new ActionMove(mult * (165 / 2), -590));
+            }
+
+            if ((is_red && target == 1) || (!is_red && target == 3)) {
+                // this one is "under the truss"
+                actions.add(new ActionMove(mult * (165 / 2), -(TILE + 40)));
+                actions.add(new ActionArm("resting"));
+                actions.add(new ActionTurn((-mult) * 90));
+                actions.add(new ActionMove(mult * 175, -(TILE)));
+            } else if ((is_red && target == 3) || (!is_red && target == 1)) {
+                actions.add(new ActionArm("purple"));
                 //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
                 actions.add(new ActionMove(mult * 330, -330));
             }
@@ -378,12 +391,23 @@ public abstract class AutonomousOp extends OpMode {
             // the above moves got us to "spit out the purple pixel"
             // location; then we do that and move to our common point
             pizzaDeliverPurple(actions);
+
+            // don't run over our purple pixel after we placed it
+            if ((is_red && target == 3) || (!is_red && target == 1)) {
+                actions.add(new ActionMove(mult * 450, -330));
+            }
+
             //spitOutPurple(actions);
         } else {
             // if we're not doing purple right now, just go ahead a bit so we can turn
             actions.add(new ActionMove(0, -200));
         }
-        actions.add(new ActionTurn(-90));  // face the board
+        actions.add(new ActionTurn(mult * 90));  // face the board
+
+        if (auto_pause > 0.0) {
+            actions.add(new ActionPause(auto_pause));
+        }
+
         actions.add(common_point);
 
         // lock onto the correct april target
