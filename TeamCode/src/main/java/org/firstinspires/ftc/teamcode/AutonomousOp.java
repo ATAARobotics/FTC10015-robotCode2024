@@ -331,29 +331,51 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         // always at the end we want to do this...
+        actions.add(new ActionArm("intake"));
         actions.add(new ActionNothing());
+    }
+
+    protected void farRedActions(LinkedList<ActionBase> actions) {
+        // negative y is robot-forward
+        // negative x is robot-left (towards board on blue side, away from board on red)
+        // "165/2" is "half the leftover space: to center our robot on the tile"
+
+        // we have a "common point" to get to before the april-locker takes over
+        ActionMove far_point = new ActionMove(150, -(TILE * 2 + (165 / 2)));
+        ActionMove common_point = new ActionMove(150, -(TILE * 2 + (165 / 2)));
+
+        if (target == 1) {
+            // this one is "under the truss"
+            actions.add(new ActionMove(385, -(TILE*2)));
+        } else if (target == 2) {
+            actions.add(new ActionMove((165/2), -(TILE  + 700)));
+        } else {
+            actions.add(new ActionMove(165/2, -(TILE + 15)));
+            actions.add(new ActionTurn(90));
+            actions.add(new ActionMove(160, -(TILE + 30)));
+        }
+
+        // the above moves got us to "spit out the purple pixel"
+        // location; then we do that and move to our common point
+        spitOutPurple(actions);
+        actions.add(new ActionTurn(-90));  // face the board
+        actions.add(common_point);
+
+        // lock onto the correct april target
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+
+        addYellowScoring(actions, 1.0);
+
+        if (true) { //(get_white) {
+            getWhitePixelRedClose(actions);
+            addYellowScoring(actions, 2.5);
+        }
     }
 
     protected void nearRedActions(LinkedList<ActionBase> actions) {
         // negative y is robot-forward
         // negative x is robot-left (towards board on blue side, away from board on red)
         // "165/2" is "half the leftover space: to center our robot on the tile"
-
-        if (get_white) {
-            actions.add(new ActionMove(-TILE, -120));
-            actions.add(new ActionTurn(-90));
-            actions.add(new ActionMove((TILE * 2), -120));
-            actions.add(new ActionMove((TILE * 2), -(693))); // 26.5" == 673mm == wall to first stack
-            // get the pixel "somehow"
-            actions.add(new ActionPause(2.0));
-            // just pause for now
-            actions.add(new ActionMove((TILE * 2), -120));
-            actions.add(new ActionMove(-TILE, -120));
-            // back to "common point"
-            actions.add(new ActionMove(-TILE, -(TILE + 20)));
-            actions.add(new ActionAprilLock(megacam, 2, getAlliance() == Alliance.RED));
-            return;
-        }
 
         // we have a "common point" to get to before the april-locker takes over
         ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
@@ -378,12 +400,30 @@ public abstract class AutonomousOp extends OpMode {
         // lock onto the correct april target
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
 
-        addYellowScoring(actions);
-        if (false) {
-            actions.add(new ActionMove(-TILE, -165 / 2));
-            actions.add(new ActionMove((TILE * 2), -165 / 2));
-            actions.add(new ActionMove((TILE * 2), -(673 + 40))); // 26.5" == 673mm == wall to first stack
+        addYellowScoring(actions, 1.0);
+
+        if (true) { //(get_white) {
+            getWhitePixelRedClose(actions);
+            addYellowScoring(actions, 2.5);
         }
+    }
+
+    protected void getWhitePixelRedClose(LinkedList<ActionBase> actions) {
+        // this works for "red, close-side"
+        // might want to make this "the common spot" too?
+        actions.add(new ActionMove(-TILE, -120));
+        actions.add(new ActionTurn(-90));
+        actions.add(new ActionMove((TILE * 2), -120));
+        actions.add(new ActionMove((TILE * 2), -(693))); // 26.5" == 673mm == wall to first stack
+        // get the pixel "somehow"
+        actions.add(new ActionSuck(true, 4.0));
+        //actions.add(new ActionPause(2.0));
+        // just pause for now
+        actions.add(new ActionMove((TILE * 2), -120));
+        actions.add(new ActionMove(-TILE, -120));
+        // back to "common point"
+        actions.add(new ActionMove(-TILE, -(TILE + 20)));
+        actions.add(new ActionAprilLock(megacam, 2, getAlliance() == Alliance.RED));
     }
     protected void spitOutPurple(LinkedList<ActionBase> actions) {
         actions.add(new ActionIntake(false));
@@ -392,12 +432,12 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionIntake(true, true));
     }
 
-    protected void addYellowScoring(LinkedList<ActionBase> actions) {
+    protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long) {
         if (true) {
             // once we're locked, we score the pixel
             actions.add(new ActionArm("low-scoring"));
             actions.add(new ActionPause(0.1));
-            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-out", how_long));
             actions.add(new ActionArm("spit-off", 0.1));
             // we actually probably want an "ActionMoveBack(200mm)" or
             // similar; that is, move "positive x" but whatever our Y

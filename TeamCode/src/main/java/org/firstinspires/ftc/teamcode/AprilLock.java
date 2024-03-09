@@ -35,7 +35,7 @@ public class AprilLock {
         control_x.setSetPoint(board_distance);
     }
     public void far_position() {
-        board_distance = CLOSE_DISTANCE;
+        board_distance = FAR_DISTANCE;
         control_x.setSetPoint(board_distance);
     }
 
