@@ -431,7 +431,7 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionArm("purple"));
         actions.add(new ActionArm("spit-out", 1.2));
         actions.add(new ActionArm("spit-stop", 0.1));
-        actions.add(new ActionArm("high-scoring"), 1.0);
+        actions.add(new ActionArm("high-scoring", 1.0));
     }
 
     protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long) {
