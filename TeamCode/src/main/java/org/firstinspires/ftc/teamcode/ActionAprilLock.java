@@ -20,13 +20,16 @@ public class ActionAprilLock extends ActionBase {
     ActionAprilLock(OpenCvWebcam megacam, int target, boolean is_red) {
         cam = megacam;
         pipe = new AprilTagPipeline(target);
-        cam.setPipeline(pipe);
+        // TODO original code set the pipeline here; better to do it
+        // when we actually start this action I think?
         april = new AprilLock(pipe, is_red);
     }
 
     boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
         if (started < 0) {
             started = time;
+            cam.setPipeline(pipe);
+            april.close_position();
         }
         if (time - started > 5.0) {
             drive.robotInputs(0, 0);

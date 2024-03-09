@@ -22,7 +22,7 @@ public class AprilLock {
     public double fwd = 0;
     public boolean is_red = false;
 
-    public static final double CLOSE_DISTANCE = 225; // 230 with -385 for low-scoring arm...
+    public static final double CLOSE_DISTANCE = 220; // 230 with -385 for low-scoring arm...
     public static final double FAR_DISTANCE = 245; // 245mm (for MediumScoring)
 
     // should depend on "scoring position low" vs normal

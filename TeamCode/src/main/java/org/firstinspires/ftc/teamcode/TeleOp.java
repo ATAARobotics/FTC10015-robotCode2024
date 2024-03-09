@@ -123,7 +123,8 @@ public abstract class TeleOp extends OpMode   {
         //imu stuff
         // ftc-dashboard telemetry
         TelemetryPacket pack = new TelemetryPacket();
-      //  pack.put("arm_yaw", arm_imu.getAngularOrientation());
+        //pack.put("arm_yaw", arm_imu.getAngularOrientation());
+        /*
         pack.put("pos_y", drive.odo.position_y());
         pack.put("pos_x", drive.odo.position_x());
         pack.put("heading", drive.getHeading());
@@ -131,36 +132,43 @@ public abstract class TeleOp extends OpMode   {
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         pack.put("wrist", arm.wristp);
+        */
+        pack.put("pipeline-fps", megacam.getFps());
         pack.put("close_april", drive.april_locker.pipeline.closestAprilTag());
         pack.put("april_lock", drive.april_locker.locked());
         pack.put("april_target", drive.last_april_tag);
         pack.put("april_tag_target", drive.april_locker.pipeline.has_result());
         pack.put("april_tag_distance", drive.april_locker.pipeline.distance());
         pack.put("april_fwd", drive.forward);
+        /*
         pack.put("april_y_p", drive.april_locker.control_y.getP());
         pack.put("april_y_i", drive.april_locker.control_y.getI());
         pack.put("april_y_d", drive.april_locker.control_y.getD());
+        */
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         // it seems that you can't send both "number" telemetry _and_ "draw stuff" telemetry in the same "packet"?
         pack = new TelemetryPacket();
 
-        // actual robot is 407mm square
-        double INCHES_TO_MM = 0.03937008;
-        // move origin to bottom left
-        pack.fieldOverlay().setTranslation(-6*12, 6*12);
-        // do all other drawing in millimeters
-        pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
-        // center the drawing in the robot
-        //pack.fieldOverlay().setTranslation(-203, 203);
-        pack.fieldOverlay()
- //               .setFill("blue")
-  //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
-                .setFill("red")
-                .fillRect(drive.odo.position_y() - (407/2), drive.odo.position_x() - (407/2), 407, 407);
+        // turning off, mostly, to save loop time in production
+        if (false) {
+            // actual robot is 407mm square
+            double INCHES_TO_MM = 0.03937008;
+            // move origin to bottom left
+            pack.fieldOverlay().setTranslation(-6*12, 6*12);
+            // do all other drawing in millimeters
+            pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
+            // center the drawing in the robot
+            //pack.fieldOverlay().setTranslation(-203, 203);
+            pack.fieldOverlay()
+     //               .setFill("blue")
+      //              .fillCircle(parallel_encoder.getDistance(), 0.0, 2.0)
+                    .setFill("red")
+                    .fillRect(drive.odo.position_y() - (407/2), drive.odo.position_x() - (407/2), 407, 407);
 
+            FtcDashboard.getInstance().sendTelemetryPacket(pack);
+        }
         //telemetryTfod();
-        FtcDashboard.getInstance().sendTelemetryPacket(pack);
         //telemetry.update();
     }
 

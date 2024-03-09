@@ -23,7 +23,7 @@ public class ActionArm extends ActionBase {
         if (started < 0.0) {
             started = time;
             // TODO FIXME this needs to be Enum, not strings!
-            pack.put("action-arm", desired);
+            //pack.put("action-arm", desired);
             if (desired == "intake") {
                 arm.intake();
             } else if (desired == "resting") {
@@ -40,11 +40,11 @@ public class ActionArm extends ActionBase {
                 //arm.close_claw();
             }
         }
-        pack.put("action-arm-at", arm.arm_control.atSetPoint());
-        pack.put("action-arm-set", arm.arm_main.getCurrentPosition());
-        pack.put("action-arm-target", arm.arm_control.getSetPoint());
-        //return arm.arm_control.atSetPoint() || (time - started > 2.0);
-        return (time - started) > max_time;
+        //pack.put("action-arm-at", arm.arm_control.atSetPoint());
+        //pack.put("action-arm-set", arm.arm_main.getCurrentPosition());
+        //pack.put("action-arm-target", arm.arm_control.getSetPoint());
+        return arm.arm_control.atSetPoint() || (time - started > max_time);
+        //return (time - started) > max_time;
     }
 
     public void draw_field(TelemetryPacket pack) {

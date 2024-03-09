@@ -148,7 +148,7 @@ public abstract class AutonomousOp extends OpMode {
 
         // negative y is robot-forward, negative x is robot-right
 
-        actions.add(new ActionArm("close"));
+        //actions.add(new ActionArm("close"));
 
         if (getZone() == Zone.FAR && getAlliance() == Alliance.BLUE) {
             if (target == 3) {
@@ -340,7 +340,7 @@ public abstract class AutonomousOp extends OpMode {
 
         addYellowScoring(actions, 1.0);
 
-        if (true) { //(get_white) {
+        if (get_white) {
             getWhitePixelRedClose(actions, is_red);
             addYellowScoring(actions, 2.5);
         }
@@ -359,20 +359,25 @@ public abstract class AutonomousOp extends OpMode {
         // we have a "common point" to get to before the april-locker takes over
         ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
 
-        if (target == 1) {
-            // this one is "under the truss"
-            actions.add(new ActionMove(mult * (165/2), -TILE));
-            actions.add(new ActionTurn(-90));
-            actions.add(new ActionMove(mult * 160, -(TILE + 20)));
-        } else if (target == 2) {
-            actions.add(new ActionMove(mult * (165/2), -(TILE  + 690)));
-        } else {
-            actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-        }
+        if (false) {
+            if (target == 1) {
+                // this one is "under the truss"
+                actions.add(new ActionMove(mult * (165 / 2), -TILE));
+                actions.add(new ActionTurn(-90));
+                actions.add(new ActionMove(mult * 175, -(TILE + 20)));
+            } else if (target == 2) {
+                actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+            } else {
+                actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+            }
 
-        // the above moves got us to "spit out the purple pixel"
-        // location; then we do that and move to our common point
-        spitOutPurple(actions);
+            // the above moves got us to "spit out the purple pixel"
+            // location; then we do that and move to our common point
+            spitOutPurple(actions);
+        } else {
+            // if we're not doing purple right now, just go ahead a bit so we can turn
+            actions.add(new ActionMove(0, -200));
+        }
         actions.add(new ActionTurn(-90));  // face the board
         actions.add(common_point);
 
@@ -381,9 +386,9 @@ public abstract class AutonomousOp extends OpMode {
 
         addYellowScoring(actions, 1.0);
 
-        if (true) { //(get_white) {
+        if (get_white) {
             getWhitePixelRedClose(actions, is_red);
-            addYellowScoring(actions, 2.5);
+            addYellowScoring(actions, 1.5);
         }
     }
 
@@ -407,7 +412,7 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionMove(mult * TILE, -120));
         // back to "common point"
         actions.add(new ActionMove(mult * TILE, -(TILE + 20)));
-        actions.add(new ActionAprilLock(megacam, 2, getAlliance() == Alliance.RED));
+        //actions.add(new ActionAprilLock(megacam, 2, getAlliance() == Alliance.RED));
     }
 
     protected void spitOutPurple(LinkedList<ActionBase> actions) {
@@ -420,6 +425,7 @@ public abstract class AutonomousOp extends OpMode {
     protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long) {
         if (true) {
             // once we're locked, we score the pixel
+            actions.add(new ActionArm("high-scoring"));
             actions.add(new ActionArm("low-scoring"));
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("spit-out", how_long));
@@ -429,7 +435,7 @@ public abstract class AutonomousOp extends OpMode {
             // is currntly at
 
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionPause(.2));
+            actions.add(new ActionPause(.05));
             actions.add(new ActionArm("intake"));
         }
 
