@@ -55,7 +55,7 @@ public class ActionArm extends ActionBase {
         // early; for spit in / out things we ONLY want to look at the
         // time...
         if (desired == "purple" || desired == "scoring" || desired == "resting" ||
-            desired == "intake") {
+            desired == "intake" || desired == "high-scoring" || desired == "medium-scoring") {
             return arm.arm_control.atSetPoint() || (time - started > max_time);
         }
         return (time - started) > max_time;

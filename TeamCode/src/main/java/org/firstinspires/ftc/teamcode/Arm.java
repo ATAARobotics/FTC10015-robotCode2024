@@ -44,7 +44,7 @@ public class Arm {
         arm_follower = new MotorEx(hm,"arm_follower");
         arm = new MotorGroup(arm_main,arm_follower);
         arm_control = new PIDController(.02,0.0,0.0);
-        arm_control.setTolerance(5);
+        arm_control.setTolerance(10);
         // slide = new MotorEx(hm,"slide");
         climber = new SimpleServo(hm,"climber", 0, 360);
         wrist = new SimpleServo(hm,"wrist", 0, 360);

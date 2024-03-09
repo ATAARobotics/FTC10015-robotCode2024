@@ -346,11 +346,11 @@ public abstract class AutonomousOp extends OpMode {
         // lock onto the correct april target
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
 
-        addYellowScoring(actions, 1.0);
+        addYellowScoring(actions, 2.0);
 
         if (get_white) {
             getWhitePixelRedClose(actions, is_red);
-            addYellowScoring(actions, 2.5);
+            addYellowScoring(actions, 3.0);
         }
     }
 
@@ -378,10 +378,16 @@ public abstract class AutonomousOp extends OpMode {
 
             if ((is_red && target == 1) || (!is_red && target == 3)) {
                 // this one is "under the truss"
-                actions.add(new ActionMove(mult * (165 / 2), -(TILE + 40)));
+                actions.add(new ActionMove(mult * 200, -(TILE-20)));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionTurn((-mult) * 90));
-                actions.add(new ActionMove(mult * 175, -(TILE)));
+                actions.add(new ActionArm("purple"));
+                // why we gotta fudge red vs blue??
+                if (is_red) {
+                    actions.add(new ActionMove(mult * 80, -(TILE + 100)));
+                } else {
+                    actions.add(new ActionMove(mult * 175, -(TILE + 100)));
+                }
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
                 //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
@@ -396,12 +402,12 @@ public abstract class AutonomousOp extends OpMode {
             if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionMove(mult * 450, -330));
             }
-
-            //spitOutPurple(actions);
-        } else {
-            // if we're not doing purple right now, just go ahead a bit so we can turn
-            actions.add(new ActionMove(0, -200));
+            // same, but for "under the truss" one
+            if ((is_red && target == 1) || (!is_red && target == 3)) {
+                actions.add(new ActionMove(mult * 450, -(TILE + 60)));
+            }
         }
+
         actions.add(new ActionTurn(mult * 90));  // face the board
 
         if (auto_pause > 0.0) {
@@ -413,11 +419,11 @@ public abstract class AutonomousOp extends OpMode {
         // lock onto the correct april target
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
 
-        addYellowScoring(actions, 1.0);
+        addYellowScoring(actions, 2.0);
 
         if (get_white) {
             getWhitePixelRedClose(actions, is_red);
-            addYellowScoring(actions, 1.5);
+            addYellowScoring(actions, 3.0);
         }
     }
 
