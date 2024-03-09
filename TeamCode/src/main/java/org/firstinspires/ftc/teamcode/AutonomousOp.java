@@ -351,6 +351,8 @@ public abstract class AutonomousOp extends OpMode {
         // negative x is robot-left (towards board on blue side, away from board on red)
         // "165/2" is "half the leftover space: to center our robot on the tile"
 
+        actions.add(new ActionArm("purple"));
+
         double mult = -1.0;
         if (!is_red) {
             mult = 1.0;
@@ -359,21 +361,24 @@ public abstract class AutonomousOp extends OpMode {
         // we have a "common point" to get to before the april-locker takes over
         ActionMove common_point = new ActionMove(-TILE, -(TILE + 20));
 
-        if (false) {
+        if (true) {
             if (target == 1) {
                 // this one is "under the truss"
                 actions.add(new ActionMove(mult * (165 / 2), -TILE));
-                actions.add(new ActionTurn(-90));
+                //actions.add(new ActionTurn(-90));
                 actions.add(new ActionMove(mult * 175, -(TILE + 20)));
             } else if (target == 2) {
-                actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+                //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+                actions.add(new ActionMove(mult * (165 / 2), -560));
             } else {
-                actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+                //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+                actions.add(new ActionMove(mult * 330, -330));
             }
 
             // the above moves got us to "spit out the purple pixel"
             // location; then we do that and move to our common point
-            spitOutPurple(actions);
+            pizzaDeliverPurple(actions);
+            //spitOutPurple(actions);
         } else {
             // if we're not doing purple right now, just go ahead a bit so we can turn
             actions.add(new ActionMove(0, -200));
@@ -422,6 +427,13 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionIntake(true, true));
     }
 
+    protected void pizzaDeliverPurple(LinkedList<ActionBase> actions) {
+        actions.add(new ActionArm("purple"));
+        actions.add(new ActionArm("spit-out", 1.2));
+        actions.add(new ActionArm("spit-stop", 0.1));
+        actions.add(new ActionArm("high-scoring"), 1.0);
+    }
+
     protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long) {
         if (true) {
             // once we're locked, we score the pixel
@@ -429,7 +441,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionArm("low-scoring"));
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("spit-out", how_long));
-            actions.add(new ActionArm("spit-off", 0.1));
+            actions.add(new ActionArm("spit-stop", 0.1));
             // we actually probably want an "ActionMoveBack(200mm)" or
             // similar; that is, move "positive x" but whatever our Y
             // is currntly at

@@ -36,15 +36,27 @@ public class ActionArm extends ActionBase {
                 arm.roller_off();
             } else if (desired == "low-scoring") {
                 arm.low_scoring();
+            } else if (desired == "purple") {
+                arm.purple();
             } else if (desired == "close") {
                 //arm.close_claw();
             }
         }
-        //pack.put("action-arm-at", arm.arm_control.atSetPoint());
-        //pack.put("action-arm-set", arm.arm_main.getCurrentPosition());
-        //pack.put("action-arm-target", arm.arm_control.getSetPoint());
-        return arm.arm_control.atSetPoint() || (time - started > max_time);
-        //return (time - started) > max_time;
+
+        if (false) {
+            pack.put("action-arm-at", arm.arm_control.atSetPoint());
+            pack.put("action-arm-set", arm.arm_main.getCurrentPosition());
+            pack.put("action-arm-target", arm.arm_control.getSetPoint());
+        }
+
+        // ONLY for arm-movement controls do we want to short-circuit
+        // early; for spit in / out things we ONLY want to look at the
+        // time...
+        if (desired == "purple" || desired == "scoring" || desired == "resting" ||
+            desired == "intake") {
+            return arm.arm_control.atSetPoint() || (time - started > max_time);
+        }
+        return (time - started) > max_time;
     }
 
     public void draw_field(TelemetryPacket pack) {

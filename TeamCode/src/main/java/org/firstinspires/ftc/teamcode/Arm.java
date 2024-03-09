@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Arm {
 
-    public enum Position {Intake, Resting, HighScoring, MediumScoring, LowScoring};
+    public enum Position {Intake, Resting, HighScoring, MediumScoring, LowScoring, Purple};
     public enum Roller {Off, In, Out};
     public enum Climber {Sheathed, Stabby};
     MotorEx arm_main;
@@ -89,6 +89,13 @@ public class Arm {
         arm_control.setSetPoint(-385);
         wristp = 0.0;
     }
+
+    public void purple(){
+        state = Position.Purple;
+        arm_control.setSetPoint(-470);
+        wristp = 0.1;
+    }
+
     public void roller_out() {
         roller_state = Roller.Out;
     }
@@ -102,6 +109,14 @@ public class Arm {
     public void humanInputs(GamepadEx game){
         intake.humanInputs(game, state);
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+
+            if (state == Position.Purple) {
+                wristp += 0.1;
+                if (wristp > 1.0) {
+                    wristp = 0.0;
+                }
+            }
+
             if (state == Position.Intake) {
                 resting();
             } else if (state == Position.Resting) {
@@ -112,6 +127,14 @@ public class Arm {
                 low_scoring();
             } // can't go up past "low-scoring"
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+
+            if (state == Position.Purple) {
+                wristp -= 0.1;
+                if (wristp < 0.0) {
+                    wristp = 1.0;
+                }
+            }
+
             if (state == Position.Intake) {
                 // nothing, intake is lowest
             } else if (state == Position.LowScoring) {
@@ -127,14 +150,22 @@ public class Arm {
 
         // debug / placement for wrist etc
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            wristp -= 0.1;
-            if (wristp < 0.0) {
-                wristp = 1.0;
+            if (true) {
+                arm_control.setSetPoint(arm_control.getSetPoint() - 10);
+            } else {
+                wristp -= 0.1;
+                if (wristp < 0.0) {
+                    wristp = 1.0;
+                }
             }
         } else if (game.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            wristp += 0.1;
-            if (wristp > 1.0) {
-                wristp = 0.0;
+            if (true) {
+                arm_control.setSetPoint(arm_control.getSetPoint() + 10);
+            } else {
+                wristp += 0.1;
+                if (wristp > 1.0) {
+                    wristp = 0.0;
+                }
             }
         }
         /**
@@ -164,6 +195,17 @@ public class Arm {
         } else {
             manual_power = 0.0;
         }
+
+        /**
+           DEBUGGING for purple-arm placer
+        if (game.wasJustPressed(GamepadKeys.Button.Y)) {
+            if (state == Position.Purple) {
+                state = Position.LowScoring;
+            } else {
+                purple();
+            }
+        }
+        **/
 
         if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake){
             roller_state = Roller.In;
