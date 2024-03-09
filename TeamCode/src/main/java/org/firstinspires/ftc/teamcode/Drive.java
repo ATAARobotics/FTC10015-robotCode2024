@@ -104,10 +104,12 @@ public class Drive {
         if (driver.isDown(GamepadKeys.Button.X) || driver.isDown(GamepadKeys.Button.A) || driver.isDown(GamepadKeys.Button.B)) {
 
             // could we do something like "move up to 6cm left/right" on dpad press?
-            if (arm.state == Arm.Position.Scoring) {
-                april_locker.close_position();
-            } else {
-                april_locker.far_position();
+            if (driver.wasJustPressed(GamepadKeys.Button.X) || driver.wasJustPressed(GamepadKeys.Button.A) || driver.wasJustPressed(GamepadKeys.Button.B)) {
+                if (arm.state == Arm.Position.Scoring) {
+                    april_locker.close_position();
+                } else {
+                    april_locker.far_position();
+                }
             }
             last_april_tag = 1; // or 4
             if (driver.isDown(GamepadKeys.Button.A)) {
