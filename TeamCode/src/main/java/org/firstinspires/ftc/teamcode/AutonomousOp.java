@@ -51,7 +51,7 @@ public abstract class AutonomousOp extends OpMode {
 
     public static final double TILE = 610; // 24inches = 610mm
 
-    boolean get_white = false;
+    boolean park_close = true;
     double auto_pause = 0.0;
     GamepadEx gp;
 
@@ -123,7 +123,7 @@ public abstract class AutonomousOp extends OpMode {
     public void init_loop() {
         gp.readButtons();
         if (gp.wasJustPressed(GamepadKeys.Button.A)) {
-            get_white = !get_white;
+            park_close = !park_close;
         }
         if (gp.wasJustPressed(GamepadKeys.Button.B)) {
             auto_pause += 1.0;
@@ -133,7 +133,7 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         telemetry.addData("result", pipeline.result);
-        telemetry.addData("get white", get_white);
+        telemetry.addData("park close", park_close);
         telemetry.addData("pause", auto_pause);
     }
 
@@ -347,11 +347,6 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
 
         addYellowScoring(actions, 2.0);
-
-        if (get_white) {
-            getWhitePixelRedClose(actions, is_red);
-            addYellowScoring(actions, 3.0);
-        }
     }
 
     protected void nearSideActions(LinkedList<ActionBase> actions, boolean is_red) {
@@ -421,9 +416,13 @@ public abstract class AutonomousOp extends OpMode {
 
         addYellowScoring(actions, 2.0);
 
-        if (get_white) {
-            getWhitePixelRedClose(actions, is_red);
-            addYellowScoring(actions, 3.0);
+        if (park_close) {
+            actions.add(new ActionArm("intake"));
+            actions.add(new ActionMove(mult * (TILE + 160), -100));
+            actions.add(new ActionMove(mult * (2*TILE + 160), -100));
+        } else {
+            actions.add(new ActionArm("intake"));
+            actions.add(new ActionMove(mult * (2*TILE - 160), -(TILE*3)));
         }
     }
 
