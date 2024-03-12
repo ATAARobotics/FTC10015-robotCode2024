@@ -87,7 +87,7 @@ public abstract class AutonomousOp extends OpMode {
         gp = new GamepadEx(gamepad1);
         actions = new LinkedList<ActionBase>();
 
-        pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
+        pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED, getZone() == Zone.NEAR);
         // front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
 
         // front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -422,7 +422,8 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * (2*TILE + 160), -100));
         } else {
             actions.add(new ActionArm("intake"));
-            actions.add(new ActionMove(mult * (2*TILE - 160), -(TILE*3)));
+            actions.add(new ActionMove(mult * (2*TILE - 160), -(TILE*2)));
+            actions.add(new ActionMove(mult * (2*TILE + 160), -(TILE*2)));
         }
     }
 
@@ -458,7 +459,7 @@ public abstract class AutonomousOp extends OpMode {
 
     protected void pizzaDeliverPurple(LinkedList<ActionBase> actions) {
         actions.add(new ActionArm("purple"));
-        actions.add(new ActionArm("spit-out", 1.2));
+        actions.add(new ActionArm("spit-out", 1.0));
         actions.add(new ActionArm("spit-stop", 0.1));
         actions.add(new ActionArm("high-scoring", 1.0));
     }

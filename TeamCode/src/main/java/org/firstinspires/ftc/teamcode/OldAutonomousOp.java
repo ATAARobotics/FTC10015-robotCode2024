@@ -80,7 +80,7 @@ public abstract class OldAutonomousOp extends OpMode {
     public void init() {
         actions = new LinkedList<ActionBase>();
 
-        pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED);
+        pipeline = new ReverseTeamElementPipeline(getAlliance() == Alliance.RED, getZone() == Zone.NEAR);
         front_cam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cam_1"));
         front_cam.setPipeline(pipeline);
         front_cam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

@@ -27,52 +27,80 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
     int y1 = 142;
     int x2 = 560;
     int y2 = 247;
+
+
     public ReverseTeamElementPipeline() {
-        if (false) {
+        if (true) {
+            // march 12, 2024:final values for close-side red start
             // RED side 920s webcam
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);
-            x0 = 205;
-            y0 = 320;
-            x1 = 480;
-            y1 = 330;
+            x0 = 87;
+            y0 = 360;
+            x1 = 425;
+            y1 = 355;
             x2 = 0;
             y2 = 0;
         } else {
+            // march 12, 2024:values for far-side red start
+            // (which should be also for blue-side CLOSE start)
             // blue side, 920s camera
             min = new Scalar(10, 31, 69);
             max = new Scalar(69, 255, 255);
-            x0 = 92;
-            y0 = 340;
-            x1 = 382;
-            y1 = 310;
-            x2 = 0;
-            y2 = 0;
+            x0 = 0;
+            y0 = 0;
+            x1 = 358;
+            y1 = 340;
+            x2 = 645;
+            y2 = 360;
         }
         processed = new Mat();
         annotated = new Mat();
     }
-    public ReverseTeamElementPipeline(boolean red) {
+    public ReverseTeamElementPipeline(boolean red, boolean close) {
         // XXX going to want to do "near/far" AND "red/blue" probably?
         if (red) {
             min = new Scalar(100, 100, 100);
             max = new Scalar(160, 255, 255);
-            x0 = 92;
-            y0 = 340;
-            x1 = 382;
-            y1 = 310;
-            x2 = 0;
-            y2 = 0;
         } else {
-            // blue
             min = new Scalar(10, 31, 69);
             max = new Scalar(69, 255, 255);
-            x0 = 92;
-            y0 = 340;
-            x1 = 382;
-            y1 = 310;
-            x2 = 0;
-            y2 = 0;
+        }
+        if (red) {
+            if (close) {
+                // close-side red
+                x0 = 87;
+                y0 = 360;
+                x1 = 425;
+                y1 = 355;
+                x2 = 0;
+                y2 = 0;
+            } else {
+                x0 = 0;
+                y0 = 0;
+                x1 = 358;
+                y1 = 340;
+                x2 = 645;
+                y2 = 360;
+            }
+        } else {
+            if (close) {
+                // XXX same as far-side red!
+                x0 = 0;
+                y0 = 0;
+                x1 = 358;
+                y1 = 340;
+                x2 = 645;
+                y2 = 360;
+            } else {
+                // XXX same as far-side blue!
+                x0 = 87;
+                y0 = 360;
+                x1 = 425;
+                y1 = 355;
+                x2 = 0;
+                y2 = 0;
+            }
         }
         processed = new Mat();
         annotated = new Mat();
@@ -117,7 +145,6 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             }
         }
 
-        /*
         int right = 0;
         for (int x=x2; x < x2 + width; x++) {
             for (int y=y2; y < y2 + height; y++) {
@@ -127,17 +154,21 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
                 }
             }
         }
-        */
 
 
         Scalar red = new Scalar(255, 0, 0);
         Scalar green = new Scalar(0, 255, 0);
-        int biggest = Math.max(left, mid);
+        int biggest = Math.max(right, Math.max(left, mid));
         if (biggest > 100) {
             if (left == biggest) { result = Result.Left;  }
             if (mid == biggest) { result = Result.Middle; }
+            if (right == biggest) { result = Result.Right; }
         } else {
-            result = Result.Right;
+            if (x0 == 0) {
+                result = Result.Left;
+            } else {
+                result = Result.Right;
+            }
         }
 
         if (true) {
