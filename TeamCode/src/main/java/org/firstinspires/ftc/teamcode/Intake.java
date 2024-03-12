@@ -18,11 +18,12 @@ public class Intake {
     ServoEx intake_rev;
     MotorEx suck;
 
-    public enum RaisingMode {DO_NOTHING, GO_UP, GO_DOWN, GO_TO_TOP, GO_TO_BOTTOM}
     public enum SuckMode {SUCK, BLOW, NOTHING}
+    public enum IntakePlace {Intake, Resting, Stowed}
 
-    public RaisingMode rise_mode = RaisingMode.DO_NOTHING;
     public SuckMode suck_mode = SuckMode.NOTHING;
+    public double intake_position = 0.5; // XXX what are min / max positions?
+    public IntakePlace intake = Stowed; // we start in stowed
 
     private double timeout = -1.0; // for up/down
 
@@ -36,11 +37,9 @@ public class Intake {
 
     public void humanInputs(GamepadEx pad, Arm.Position position) {
         if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            rise_mode = RaisingMode.GO_DOWN;
+            intake_position -= 0.05;
         } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-            rise_mode = RaisingMode.GO_UP;
-        } else {
-            rise_mode = RaisingMode.DO_NOTHING;
+            intake_position += 0.05;
         }
 
         // forward/back suckage on intake
@@ -57,48 +56,26 @@ public class Intake {
     }
 
     public void goUp(double time, boolean only_half) {
-        rise_mode = RaisingMode.GO_TO_TOP;
-        if (only_half) {
-            timeout = time + 0.77;
-        } else {
-            timeout = time + 1.3;
-        }
+        intake_position = 1.0;
     }
 
     public void goDown(double time) {
-        goDown(time, 1.4);
+        goDown(time, 0);
     }
     public void goDown(double time, double delta) {
-        rise_mode = RaisingMode.GO_TO_BOTTOM;
-        timeout = time + delta;
+        intake_position = 0.0;
     }
 
     void loop(double time) {
-        if (rise_mode == RaisingMode.GO_TO_TOP || rise_mode == RaisingMode.GO_TO_BOTTOM) {
-            if (time > timeout) {
-                timeout = -1;
-                rise_mode = RaisingMode.DO_NOTHING;
-            }
+        if (intake_position < 0.3) {
+            intake_position = 0.3;
         }
-        switch (rise_mode) {
-            case GO_UP:
-            case GO_TO_TOP:
-                intake_main.setPosition(0);
-                intake_rev.setPosition(1);
-                break;
-
-            case GO_DOWN:
-            case GO_TO_BOTTOM:
-                intake_main.setPosition(1);
-                intake_rev.setPosition(0);
-                break;
-
-            case DO_NOTHING:
-            default:
-                intake_main.setPosition(0.5);
-                intake_rev.setPosition(0.5);
-                break;
+        if (intake_position > 0.8) {
+            intake_position = 0.8;
         }
+
+        intake_main.setPosition(intake_position);
+        intake_rev.setPosition(1.0 - intake_position);
 
         switch (suck_mode) {
             case SUCK:

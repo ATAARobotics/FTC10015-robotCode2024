@@ -19,7 +19,8 @@ public class ActionIntake extends ActionBase {
         half = up_half;
     }
 
-    public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack) {
+    public boolean update(double time, Drive drive, Intake intake, Arm arm, Telemetry telemetry, TelemetryPacket pack)
+    {
         if (started < 0.0) {
             started = time;
             if (go_up) {
@@ -28,10 +29,8 @@ public class ActionIntake extends ActionBase {
                 intake.goDown(time);
             }
         }
-        pack.put("action-intake", started);
-        pack.put("action-time", time);
-        pack.put("action-mode", intake.rise_mode);
-       return intake.rise_mode == Intake.RaisingMode.DO_NOTHING;
+        // might want to time it out?
+        return true;
     }
 
     public void draw_field(TelemetryPacket pack) {

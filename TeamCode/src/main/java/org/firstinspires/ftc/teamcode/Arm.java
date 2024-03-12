@@ -213,6 +213,8 @@ public class Arm {
         if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER) && state == Position.Intake){
             roller_state = Roller.In;
         }
+
+        // have to hold the button for 0.5 seconds
         if (game.wasJustPressed(GamepadKeys.Button.X)){
             if (knives == Climber.Sheathed){
                 knives = Climber.Stabby;

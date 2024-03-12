@@ -12,10 +12,7 @@ public class ActionInitialIntake extends ActionBase {
             started = time;
             intake.goDown(time, 2.0);
         }
-        pack.put("action-intake", started);
-        pack.put("action-time", time);
-        pack.put("action-mode", intake.rise_mode);
-        return intake.rise_mode == Intake.RaisingMode.DO_NOTHING;
+        return true;
     }
 
     public void draw_field(TelemetryPacket pack) {
