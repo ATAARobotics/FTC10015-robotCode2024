@@ -22,7 +22,7 @@ public class Intake {
     public enum IntakePlace {Intake, Resting, Stowed}
 
     public SuckMode suck_mode = SuckMode.NOTHING;
-    public double intake_position = 1.0; // XXX what are min / max positions?
+    public double intake_position = 0.4;
     public double last_intake = 0.0;
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
     //public IntakePlace last_intake = IntakePlace.Resting;
