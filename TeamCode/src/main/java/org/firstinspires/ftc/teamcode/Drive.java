@@ -150,7 +150,7 @@ public class Drive {
                 drivebase.setMaxSpeed(0.90);
                 headingControl.setPID(0.03, 0.00, 0.001);
             } else {
-                drivebase.setMaxSpeed(0.55);
+                drivebase.setMaxSpeed(0.50);
                 headingControl.setPID(0.05, 0.00, 0.002);
             }
 

@@ -96,7 +96,7 @@ public abstract class TeleOp extends OpMode   {
 
         drive.humanInputs(driver, time);
         drive.loop(time);
-        arm.humanInputs(operator);
+        arm.humanInputs(operator, time);
         arm.loop(time);
         // ideally put in PlaneLauncher or something, but for now it lives here
         // (if we press Y for more than 0.6 seconds, release the plane)
