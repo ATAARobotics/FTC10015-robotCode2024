@@ -107,7 +107,7 @@ public class Arm {
     public void purple() {
         state = Position.Purple;
         arm_control.setSetPoint(-470);
-        wristp = 0.1;
+        wristp = 0.2;
     }
 
     public void roller_out() {
