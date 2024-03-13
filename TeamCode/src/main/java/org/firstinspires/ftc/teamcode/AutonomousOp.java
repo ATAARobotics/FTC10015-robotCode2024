@@ -159,153 +159,9 @@ public abstract class AutonomousOp extends OpMode {
         //actions.add(new ActionArm("close"));
 
         if (getZone() == Zone.FAR && getAlliance() == Alliance.BLUE) {
-            if (target == 3) {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 3
-                actions.add(new ActionMove(-385, -(TILE + TILE)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                // "common" tile? 3 out -- just past the "scoring" tile
-                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
-            } else if (target == 2) {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 2
-                actions.add(new ActionMove((-165/2), -(TILE  + 690)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-150, -(TILE*2 + (165/2))));
-            } else {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 1
-                actions.add(new ActionMove(-165/2, -TILE));
-                actions.add(new ActionTurn(-90));
-                actions.add(new ActionMove(-160, -(TILE + 20)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(-250, -(TILE*2 + (165/2))));
-            }
-
-            // no matter what we did with the pixel above, we're in the same position and can go to the board
-
-            if (true) {
-                actions.add(new ActionTurn(90)); //turn to face the arm towards the backdrop
-                actions.add(new ActionMove(((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
-
-
-                // negative y is robot-forward
-                // measured
-                // position 1: 20, position 2: 28.5, position 3: 33
-                // 508, 724, 838
-                double board_position_front = (3 * TILE) + 150;
-                double horiz = -495;
-                // april tags on the backdrop are 3.5" apart / 90mm
-                if (target == 1) {
-                    //blue far backdrop one
-                    ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, -510));
-                    horiz = -495;
-                } else if (target == 2) {
-                    // blue far backdrop 2
-                    ///actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(board_position_front, -724));
-                    horiz = -724;
-                } else if (target == 3) {
-                    //blue far backrop 3
-                    horiz = -855;
-                    actions.add(new ActionMove(board_position_front, -855));
-                    ///actions.add(new ActionAprilLock(rear_cam, 3));
-                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
-                }
-                // "score the pixel" actions (and return arm to start)
-                actions.add(new ActionArm("low-scoring"));
-                actions.add(new ActionPause(0.1));
-                actions.add(new ActionArm("open"));
-                actions.add(new ActionPause(0.2));
-                actions.add(new ActionMove(board_position_front - 50, horiz));
-                actions.add(new ActionMove(board_position_front - 50, -900));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionPause(.2));
-                actions.add(new ActionArm("intake"));
-            }
+            farSideActions(actions, false);
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
-            if (target == 1) {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 1
-                actions.add(new ActionMove(385, -(TILE + TILE)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                // "common" tile? 3 out -- just past the "scoring" tile
-                actions.add(new ActionMove(150, -(TILE * 2 + (165 / 2))));
-            } else if (target == 2) {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 2
-                actions.add(new ActionMove((165 / 2), -(TILE + 700)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(150, -(TILE * 2 + (165 / 2))));
-            } else {
-                // blue-side initial bits of motion .. spit out purple pixel
-                // zone 3
-                actions.add(new ActionMove(165 / 2, -(TILE + 15)));
-                actions.add(new ActionTurn(90));
-                actions.add(new ActionMove(160, -(TILE + 30)));
-                actions.add(new ActionIntake(false));
-                actions.add(new ActionSuck(false));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionIntake(true, true));
-                actions.add(new ActionMove(250, -(TILE * 2 + (165 / 2))));
-            }
-
-            // no matter what we did with the pixel above, we're in the same position and can go to the board
-
-            if (true) {
-                actions.add(new ActionTurn(-90)); //turn to face the arm towards the backdrop
-                actions.add(new ActionMove(-((3 * TILE) + (165 / 2)), -((2 * TILE) + (165 / 2)))); // centered on second-last row
-
-
-                // negative y is robot-forward
-                // measured
-                // position 1: 34", position 2:28.75", position 3:19.5"
-                //866, 730, 495
-                double board_position_horiz = -866; // furthest from wall
-                double board_position_front = -((3 * TILE) + 150);
-                // april tags on the backdrop are 3.5" apart / 90mm
-                if (target == 3) {
-                    //blue far backdrop one
-                    ///actions.add(new ActionAprilLock(rear_cam, 1));
-                    actions.add(new ActionMove(board_position_front, -495));
-                } else if (target == 2) {
-                    // blue far backdrop 2
-                    ///actions.add(new ActionAprilLock(rear_cam, 2));
-                    actions.add(new ActionMove(board_position_front, -730));
-                } else if (target == 1) {
-                    //blue far backrop 3
-                    actions.add(new ActionMove(board_position_front, -866));
-                    ///actions.add(new ActionAprilLock(rear_cam, 3));
-                    //actions.add(new ActionMove(-((3 * TILE) + (165 / 2) + 193), (925)));
-                }
-                // "score the pixel" actions (and return arm to start)
-                actions.add(new ActionArm("low-scoring"));
-                actions.add(new ActionPause(0.1));
-                actions.add(new ActionArm("open"));
-                actions.add(new ActionPause(0.2));
-                actions.add(new ActionMove(board_position_front + 50, board_position_horiz));
-                actions.add(new ActionPause(0.5));
-                actions.add(new ActionMove(board_position_front + 50, board_position_horiz));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionPause(.2));
-                actions.add(new ActionArm("intake"));
-            }
+            farSideActions(actions, true);
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.RED) {
             nearSideActions(actions, true);
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
@@ -317,37 +173,6 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionNothing());
     }
 
-    protected void farActions(LinkedList<ActionBase> actions, boolean is_red) {
-        // negative y is robot-forward
-        // negative x is robot-left (towards board on blue side, away from board on red)
-        // "165/2" is "half the leftover space: to center our robot on the tile"
-
-        // we have a "common point" to get to before the april-locker takes over
-        ActionMove far_point = new ActionMove(150, -(TILE * 2 + (165 / 2)));
-        ActionMove common_point = new ActionMove(150, -(TILE * 2 + (165 / 2)));
-
-        if (target == 1) {
-            // this one is "under the truss"
-            actions.add(new ActionMove(385, -(TILE*2)));
-        } else if (target == 2) {
-            actions.add(new ActionMove((165/2), -(TILE  + 700)));
-        } else {
-            actions.add(new ActionMove(165/2, -(TILE + 15)));
-            actions.add(new ActionTurn(90));
-            actions.add(new ActionMove(160, -(TILE + 30)));
-        }
-
-        // the above moves got us to "spit out the purple pixel"
-        // location; then we do that and move to our common point
-        spitOutPurple(actions);
-        actions.add(new ActionTurn(-90));  // face the board
-        actions.add(common_point);
-
-        // lock onto the correct april target
-        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
-
-        addYellowScoring(actions, 2.0);
-    }
 
     protected void nearSideActions(LinkedList<ActionBase> actions, boolean is_red) {
         // negative y is robot-forward
@@ -422,6 +247,84 @@ public abstract class AutonomousOp extends OpMode {
             // don't risk hitting the board
             //actions.add(new ActionMove(mult * (2*TILE + 160), -((TILE*2) - 20)));
         }
+    }
+
+
+    protected void farSideActions(LinkedList<ActionBase> actions, boolean is_red) {
+        // negative y is robot-forward
+        // negative x is robot-left (towards board on blue side, away from board on red)
+        // "165/2" is "half the leftover space: to center our robot on the tile"
+
+        double mult = -1.0;
+        if (is_red) {
+            mult = 1.0;
+        }
+
+        // we have a "common point" to get to before the april-locker takes over
+        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE + 20));
+
+// common-point, post-purple
+//pos_x: 625.2020708055976
+//pos_y: -653.0994135694749
+        ActionMove post_purple = new ActionMove(mult * 625, -650);
+
+// lane
+//pos_x: 49.4612347381177
+//pos_y: -1289.9128108227403
+        ActionMove lane_south = new ActionMove(mult * 625, -(2*TILE + 70));
+        ActionMove lane_south_turn = new ActionMove(mult * 450, -(2*TILE + 70));
+        ActionMove lane_north = new ActionMove(mult * -(3*TILE - 100), -(2*TILE + 70));
+        ActionMove north_april = new ActionMove(mult * -(3*TILE - 100), -(TILE + 70));
+
+        // move away from wall a little for intake's sake
+        actions.add(new ActionMove(mult * 40, -100));
+
+        if (target == 2) {
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+            actions.add(new ActionMove(mult * 150, -590));
+        }
+
+        if ((!is_red && target == 1) || (is_red && target == 3)) {
+            // this one is "under the truss"
+            actions.add(new ActionMove(mult * 200, -(TILE-20)));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionTurn((-mult) * 90));
+            actions.add(new ActionArm("purple"));
+            // sometimes we had to fudge red vs blue side here?
+            actions.add(new ActionMove(mult * 150, -(TILE + 100)));
+        } else if ((!is_red && target == 3) || (is_red && target == 1)) {
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+            actions.add(new ActionMove(mult * 330, -330));
+        }
+
+        // the above moves got us to "spit out the purple pixel"
+        // location; then we do that and move to our common point
+        actions.add(new ActionArm("purple"));
+        actions.add(new ActionArm("spit-out", 1.0));
+        actions.add(new ActionArm("spit-stop", 0.1));
+        actions.add(new ActionArm("resting", 1.5));
+        actions.add(new ActionPause(0.1));
+        actions.add(new ActionArm("intake", .5));
+
+        actions.add(post_purple);
+
+        // stay out of "shared" lane
+        if (auto_pause > 0.0) {
+            actions.add(new ActionPause(auto_pause));
+        }
+
+        actions.add(lane_south);
+        actions.add(lane_south_turn);
+        actions.add(new ActionTurn(mult * -90));  // face the board
+        actions.add(lane_north);
+        actions.add(north_april);
+
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+        addYellowScoring(actions, 2.0);
+
+        // get to the board-front, etc.... 
     }
 
     protected void getWhitePixelRedClose(LinkedList<ActionBase> actions, boolean is_red) {

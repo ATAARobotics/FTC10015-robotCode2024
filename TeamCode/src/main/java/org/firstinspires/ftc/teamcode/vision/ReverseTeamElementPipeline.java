@@ -121,8 +121,6 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         int width = 50;
         int height = 55;
 
-
-
         // count how many pixels are "on" in each region of interest
 
         int left = 0;
