@@ -378,10 +378,10 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionTurn((-mult) * 90));
                 actions.add(new ActionArm("purple"));
                 // why we gotta fudge red vs blue??
-                if (is_red) {
-                    actions.add(new ActionMove(mult * 80, -(TILE + 100)));
+                if (true) {
+                    actions.add(new ActionMove(mult * 90, -(TILE + 90)));
                 } else {
-                    actions.add(new ActionMove(mult * 175, -(TILE + 100)));
+                    actions.add(new ActionMove(mult * 175, -(TILE + 90)));
                 }
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
@@ -422,8 +422,9 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * (2*TILE + 160), -10));
         } else {
             actions.add(new ActionArm("intake"));
-            actions.add(new ActionMove(mult * (2*TILE - 160), -(TILE*2)));
-            actions.add(new ActionMove(mult * (2*TILE + 160), -(TILE*2)));
+            actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) - 20)));
+            // don't risk hitting the board
+            //actions.add(new ActionMove(mult * (2*TILE + 160), -((TILE*2) - 20)));
         }
     }
 

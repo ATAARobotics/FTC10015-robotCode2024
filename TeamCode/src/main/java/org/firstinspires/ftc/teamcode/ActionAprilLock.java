@@ -39,6 +39,7 @@ public class ActionAprilLock extends ActionBase {
         drive.robotInputs(april.strafe, -april.fwd);
 
         pack.put("has-target", april.pipeline.has_result());
+        pack.put("at-april-target", april.locked());
         pack.put("last-result", (time - april.last_result));
         pack.put("stick-fwd", april.fwd);
         pack.put("stick-strafe", april.strafe);

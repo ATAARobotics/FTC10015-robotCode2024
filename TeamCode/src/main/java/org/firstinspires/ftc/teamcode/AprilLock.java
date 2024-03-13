@@ -49,8 +49,8 @@ public class AprilLock {
         ////april_y_i: 0.0  april_y_p: 0.008373477958327108
         //control_x = new PIDController(0.02, 0.15,0.0025);
         //control_y = new PIDController(0.02, 0.15, 0.0025);
-        control_x.setTolerance(1.5);
-        control_y.setTolerance(1.5);
+        control_x.setTolerance(2);
+        control_y.setTolerance(2);
         control_y.setSetPoint(0);
         control_x.setSetPoint(board_distance); // mm
     }
