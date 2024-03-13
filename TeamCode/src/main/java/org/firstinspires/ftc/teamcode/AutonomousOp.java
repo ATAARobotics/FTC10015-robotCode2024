@@ -286,36 +286,51 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         if ((!is_red && target == 1) || (is_red && target == 3)) {
+//pos_x: -288.17201092848455
+//pos_y: -659.5082625827981
             // this one is "under the truss"
-            actions.add(new ActionMove(mult * 200, -(TILE-20)));
             actions.add(new ActionArm("resting"));
+            actions.add(new ActionMove(mult * 290, -640));
             actions.add(new ActionTurn((-mult) * 90));
             actions.add(new ActionArm("purple"));
-            // sometimes we had to fudge red vs blue side here?
-            actions.add(new ActionMove(mult * 150, -(TILE + 100)));
+            actions.add(new ActionMove(mult * 110, -666));
+            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-stop", 0.1));
+            actions.add(new ActionMove(mult * 110, -626));
+            actions.add(new ActionMove(mult * 290, -640));
+            actions.add(new ActionArm("resting", 1.5));
+            actions.add(new ActionPause(0.1));
+            actions.add(new ActionArm("intake", .5));
+
+            if (auto_pause > 0.0) {
+                actions.add(new ActionPause(auto_pause));
+            }
         } else if ((!is_red && target == 3) || (is_red && target == 1)) {
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
             actions.add(new ActionMove(mult * 330, -330));
         }
 
-        // the above moves got us to "spit out the purple pixel"
-        // location; then we do that and move to our common point
-        actions.add(new ActionArm("purple"));
-        actions.add(new ActionArm("spit-out", 1.0));
-        actions.add(new ActionArm("spit-stop", 0.1));
-        actions.add(new ActionArm("resting", 1.5));
-        actions.add(new ActionPause(0.1));
-        actions.add(new ActionArm("intake", .5));
+        if (!((!is_red && target == 1) || (is_red && target == 3))) {
+            // the above moves got us to "spit out the purple pixel"
+            // location; then we do that and move to our common point
+            actions.add(new ActionArm("purple"));
+            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-stop", 0.1));
+            actions.add(new ActionArm("resting", 1.5));
+            actions.add(new ActionPause(0.1));
+            actions.add(new ActionArm("intake", .5));
 
-        actions.add(post_purple);
+            actions.add(post_purple);
 
-        // stay out of "shared" lane
-        if (auto_pause > 0.0) {
-            actions.add(new ActionPause(auto_pause));
+            // stay out of "shared" lane
+            if (auto_pause > 0.0) {
+                actions.add(new ActionPause(auto_pause));
+            }
+
+            actions.add(lane_south);
         }
 
-        actions.add(lane_south);
         actions.add(lane_south_turn);
         actions.add(new ActionTurn(mult * -90));  // face the board
         actions.add(lane_north);
@@ -323,8 +338,6 @@ public abstract class AutonomousOp extends OpMode {
 
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
         addYellowScoring(actions, 2.0);
-
-        // get to the board-front, etc.... 
     }
 
     protected void getWhitePixelRedClose(LinkedList<ActionBase> actions, boolean is_red) {
