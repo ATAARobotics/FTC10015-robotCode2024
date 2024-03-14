@@ -5,6 +5,6 @@ public class TeleOpBlueNoReset extends TeleOpBlue {
     @Override
     public void start() {
         plane_launched = false;
-        drive.start(-90.0);
+        drive.start(90.0);
     }
 }
