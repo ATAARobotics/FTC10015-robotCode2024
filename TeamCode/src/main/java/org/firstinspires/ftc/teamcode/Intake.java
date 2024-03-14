@@ -54,18 +54,6 @@ public class Intake {
             override = true;
         }
 
-        // forward/back suckage on intake
-        if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-            // we do not allow "suck" mode unless the arm is in "intake" position!
-            if (position == Arm.Position.Intake) {
-                suck_mode = SuckMode.SUCK;
-            }
-        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-            suck_mode = SuckMode.BLOW;
-        } else {
-            suck_mode = SuckMode.NOTHING;
-        }
-
         // holding left trigger means: intake in, and suckage
         // (> 0.5 means "is more than half down")
         if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
@@ -87,6 +75,16 @@ public class Intake {
                     intake_position = 0.75;
                 }
             }
+        }
+
+        // forward/back suckage on intake
+        if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+            // we do not allow "suck" mode unless the arm is in "intake" position!
+            if (position == Arm.Position.Intake) {
+                suck_mode = SuckMode.SUCK;
+            }
+        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+            suck_mode = SuckMode.BLOW;
         }
     }
 
