@@ -25,6 +25,8 @@ public class Intake {
     public double intake_position = 0.45;
     public double last_intake = 0.0;
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
+    public boolean override = false;
+    public boolean last_right_down = false;
     //public IntakePlace last_intake = IntakePlace.Resting;
 
     private double timeout = -1.0; // for up/down
@@ -40,25 +42,51 @@ public class Intake {
     // NOTES:
     // robot-left intake servo (launcher-side): all-left is up, all-right is down (port 3)
     // robot-right intake servo (launcher-side): all-right is up, all-left is down (port 2)
-    // 
+    //
 
     public void humanInputs(GamepadEx pad, Arm.Position position) {
-        if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+        // backup (and override!): left joystick puts intake up / down
+        if (pad.getLeftY() > 0.5) {
             intake_position += 0.05;
-        } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+            override = true;
+        } else if (pad.getLeftY() < 0.5) {
             intake_position -= 0.05;
+            override = true;
         }
 
         // forward/back suckage on intake
-        if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+        if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
             // we do not allow "suck" mode unless the arm is in "intake" position!
             if (position == Arm.Position.Intake) {
                 suck_mode = SuckMode.SUCK;
             }
-        } else if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
             suck_mode = SuckMode.BLOW;
         } else {
             suck_mode = SuckMode.NOTHING;
+        }
+
+        // holding left trigger means: intake in, and suckage
+        // (> 0.5 means "is more than half down")
+        if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            if (position == Arm.Position.Intake) {
+                suck_mode = SuckMode.SUCK;
+                intake_position = 1.0;
+                override = false;
+                last_right_down = false;
+            }
+        } else {
+            if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                suck_mode = SuckMode.NOTHING;
+                intake_position = 0.45;
+                override = false;
+                last_right_down = true;
+            } else {
+                if (!last_right_down) {
+                    suck_mode = SuckMode.NOTHING;
+                    intake_position = 0.75;
+                }
+            }
         }
     }
 

@@ -222,11 +222,14 @@ public class Arm {
          }
          **/
 
-        if (game.isDown(GamepadKeys.Button.LEFT_BUMPER) && state == Position.Intake) {
-            roller_state = Roller.In;
-        }
-        if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER) && state == Position.Intake) {
-            roller_state = Roller.In;
+        if (state == Position.Intake) {
+            if (game.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+                roller_state = Roller.Out;
+            }
+            if (game.isDown(GamepadKeys.Button.RIGHT_BUMPER)
+                || game.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                roller_state = Roller.In;
+            }
         }
 
         // can "un-climb" with just a quick press
