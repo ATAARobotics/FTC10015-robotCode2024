@@ -261,11 +261,9 @@ public class Arm {
         wrist.setPosition(wristp);
 
         // special-case the "final bit" down to be gentler
-        /*
-        if (move > 0.0 && arm_control.getSetPoint() > -90) {
-            move = 0.2;
+        if (move > 0.25 && arm_control.getSetPoint() > -90) {
+            move = 0.25;
         }
-        */
 
         // roller logic
         double roller_pos = 0.5;
