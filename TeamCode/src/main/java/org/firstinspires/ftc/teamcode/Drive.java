@@ -74,7 +74,11 @@ public class Drive {
     }
 
     public void start() {
-        headingControl.setSetPoint(0.0);
+        this.start(0.0);
+    }
+
+    public void start(double heading) {
+        headingControl.setSetPoint(heading);
     }
 
     public double getHeading() { return heading; }
