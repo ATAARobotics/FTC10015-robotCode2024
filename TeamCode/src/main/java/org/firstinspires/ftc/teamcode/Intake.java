@@ -72,7 +72,7 @@ public class Intake {
             } else {
                 if (!last_right_down) {
                     suck_mode = SuckMode.NOTHING;
-                    intake_position = 0.6;
+                    intake_position = 0.66;
                 }
             }
         }

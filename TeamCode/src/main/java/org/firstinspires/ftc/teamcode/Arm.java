@@ -260,6 +260,11 @@ public class Arm {
         if (move < -0.8) { move = -0.8; }
         wrist.setPosition(wristp);
 
+        // special-case the "final bit" down to be gentler
+        if (move < 0.0 && arm_control.getSetPoint() > -90) {
+            move = -0.2;
+        }
+
         // roller logic
         double roller_pos = 0.5;
         if (roller_state == Roller.In && !touch.isPressed() ) {
