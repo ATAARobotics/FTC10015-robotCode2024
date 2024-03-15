@@ -262,8 +262,8 @@ public class Arm {
 
         // soft-down
         //if (move > -0.5 && move < 0.0 && arm_main.getCurrentPosition() > -80) {
-        if (move > 0.1 && arm_main.getCurrentPosition() > -80) {
-            move = 0.1;
+        if (move > 0.25 && arm_main.getCurrentPosition() > -80) {
+            move = 0.25;
         }
 
         // roller logic

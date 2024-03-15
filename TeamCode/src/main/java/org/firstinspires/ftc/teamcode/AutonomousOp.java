@@ -198,12 +198,12 @@ public abstract class AutonomousOp extends OpMode {
 
             if ((is_red && target == 1) || (!is_red && target == 3)) {
                 // this one is "under the truss"
-                actions.add(new ActionMove(mult * 190, -(TILE-20)));
+                actions.add(new ActionMove(mult * 200, -(TILE-20)));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionTurn((-mult) * 90));
                 actions.add(new ActionArm("purple"));
                 // sometimes we had to fudge red vs blue side here?
-                actions.add(new ActionMove(mult * 150, -(TILE + 100)));
+                actions.add(new ActionMove(mult * 100, -(TILE + 100)));
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
                 //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
