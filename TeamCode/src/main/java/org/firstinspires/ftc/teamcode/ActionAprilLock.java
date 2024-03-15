@@ -22,7 +22,7 @@ public class ActionAprilLock extends ActionBase {
         cam = megacam;
         this.near = near;
         pipe = new AprilTagPipeline(target);
-        // TODO original code set the pipeline here; better to do it
+        // TODO previous code set the pipeline here; better to do it
         // when we actually start this action I think?
         april = new AprilLock(pipe, is_red);
     }

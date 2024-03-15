@@ -301,7 +301,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * 110, -666));
             actions.add(new ActionArm("spit-out", 1.0));
             actions.add(new ActionArm("spit-stop", 0.1));
-            actions.add(new ActionMove(mult * 110, -626));
+            actions.add(new ActionMove(mult * 90, -626));
             actions.add(new ActionMove(mult * 290, -640));
             actions.add(new ActionArm("resting", 1.5));
             actions.add(new ActionPause(0.1));

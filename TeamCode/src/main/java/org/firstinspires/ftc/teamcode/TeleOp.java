@@ -53,7 +53,7 @@ public abstract class TeleOp extends OpMode   {
         megacam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                megacam.startStreaming(640, 480, OpenCvCameraRotation.SENSOR_NATIVE);
+                megacam.startStreaming(800, 600, OpenCvCameraRotation.SENSOR_NATIVE);
                 megacam.setPipeline(pipeline);
             }
 
