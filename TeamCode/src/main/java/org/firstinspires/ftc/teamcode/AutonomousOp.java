@@ -203,7 +203,12 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionTurn((-mult) * 90));
                 actions.add(new ActionArm("purple"));
                 // sometimes we had to fudge red vs blue side here?
-                actions.add(new ActionMove(mult * 100, -(TILE + 100)));
+                if (is_red) {
+                    actions.add(new ActionMove(mult * 140, -(TILE + 100)));
+                } else {
+                    actions.add(new ActionMove(mult * 140, -(TILE + 140)));
+                    actions.add(new ActionMove(mult * 140, -(TILE + 120)));
+                }
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
                 //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
