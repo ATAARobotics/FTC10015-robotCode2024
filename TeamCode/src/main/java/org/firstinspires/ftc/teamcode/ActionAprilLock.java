@@ -16,9 +16,11 @@ public class ActionAprilLock extends ActionBase {
     OpenCvWebcam cam;
     AprilLock april;
     double started = -1;
+    boolean near;
 
-    ActionAprilLock(OpenCvWebcam megacam, int target, boolean is_red) {
+    ActionAprilLock(OpenCvWebcam megacam, int target, boolean is_red, boolean near) {
         cam = megacam;
+        this.near = near;
         pipe = new AprilTagPipeline(target);
         // TODO original code set the pipeline here; better to do it
         // when we actually start this action I think?
@@ -29,7 +31,11 @@ public class ActionAprilLock extends ActionBase {
         if (started < 0) {
             started = time;
             cam.setPipeline(pipe);
-            april.close_position();
+            if (near) {
+                april.close_position();
+            } else {
+                april.far_position();
+            }
         }
         if (time - started > 5.0) {
             drive.robotInputs(0, 0);

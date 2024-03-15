@@ -187,7 +187,7 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         // we have a "common point" to get to before the april-locker takes over
-        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE + 20));
+        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE));
 
         if (true) {
             if (target == 2) {
@@ -222,6 +222,11 @@ public abstract class AutonomousOp extends OpMode {
             if ((is_red && target == 1) || (!is_red && target == 3)) {
                 actions.add(new ActionMove(mult * 450, -(TILE + 60)));
             }
+            // same but for middle
+            if (target == 2) {
+                actions.add(new ActionMove(mult * (165 / 2), -560));
+            }
+
         }
 
         actions.add(new ActionTurn(mult * 90));  // face the board
@@ -233,14 +238,14 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(common_point);
 
         // lock onto the correct april target
-        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, false));
 
-        addYellowScoring(actions, 2.0);
+        addYellowScoring(actions, 2.0, true);
 
         if (park_close) {
             actions.add(new ActionArm("intake"));
             actions.add(new ActionMove(mult * (TILE + 160), -10));
-            actions.add(new ActionMove(mult * (2*TILE + 160), -10));
+            actions.add(new ActionMove(mult * (2*TILE), -10));
         } else {
             actions.add(new ActionArm("intake"));
             actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) - 20)));
@@ -266,7 +271,7 @@ public abstract class AutonomousOp extends OpMode {
 // common-point, post-purple
 //pos_x: 625.2020708055976
 //pos_y: -653.0994135694749
-        ActionMove post_purple = new ActionMove(mult * 625, -650);
+        ActionMove post_purple = new ActionMove(mult * 640, -550);
 
 // lane
 //pos_x: 49.4612347381177
@@ -308,7 +313,7 @@ public abstract class AutonomousOp extends OpMode {
         } else if ((!is_red && target == 3) || (is_red && target == 1)) {
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-            actions.add(new ActionMove(mult * 330, -330));
+            actions.add(new ActionMove(mult * 310, -330));
         }
 
         if (!((!is_red && target == 1) || (is_red && target == 3))) {
@@ -336,8 +341,8 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(lane_north);
         actions.add(north_april);
 
-        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED));
-        addYellowScoring(actions, 2.0);
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, true));
+        addYellowScoring(actions, 2.0, false);
     }
 
     protected void getWhitePixelRedClose(LinkedList<ActionBase> actions, boolean is_red) {
@@ -377,11 +382,15 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionArm("high-scoring", 1.0));
     }
 
-    protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long) {
+    protected void addYellowScoring(LinkedList<ActionBase> actions, double how_long, boolean near) {
         if (true) {
             // once we're locked, we score the pixel
             actions.add(new ActionArm("high-scoring"));
-            actions.add(new ActionArm("low-scoring"));
+            if (near ) {
+                actions.add(new ActionArm("low-scoring"));
+            } else {
+                actions.add(new ActionArm("medium-scoring"));
+            }
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("spit-out", how_long));
             actions.add(new ActionArm("spit-stop", 0.1));

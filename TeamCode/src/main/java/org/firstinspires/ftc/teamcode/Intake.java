@@ -90,6 +90,9 @@ public class Intake {
 
     public void goUp(double time, boolean only_half) {
         intake_position = 1.0;
+        if (only_half) {
+            intake_position = 0.35;
+        }
     }
 
     public void goDown(double time) {
