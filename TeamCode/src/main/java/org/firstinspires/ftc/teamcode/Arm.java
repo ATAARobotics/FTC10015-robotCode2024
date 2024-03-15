@@ -27,7 +27,7 @@ public class Arm {
     MotorEx arm_main;
     MotorEx arm_follower;
     MotorGroup arm;
-    PIDController arm_control;
+    public PIDController arm_control;
     MotorEx slide;
 
     ServoEx wrist;
@@ -256,13 +256,14 @@ public class Arm {
     public void loop(double time){
         double move = arm_control.calculate(arm_main.getCurrentPosition());
          //clamp max speed
-        if (move > 0.7) { move = 0.7; }
+        if (move > 0.8) { move = 0.8; }
         if (move < -0.8) { move = -0.8; }
         wrist.setPosition(wristp);
 
-        // special-case the "final bit" down to be gentler
-        if (move > 0.25 && arm_control.getSetPoint() > -90) {
-            move = 0.25;
+        // soft-down
+        //if (move > -0.5 && move < 0.0 && arm_main.getCurrentPosition() > -80) {
+        if (move > 0.1 && arm_main.getCurrentPosition() > -80) {
+            move = 0.1;
         }
 
         // roller logic

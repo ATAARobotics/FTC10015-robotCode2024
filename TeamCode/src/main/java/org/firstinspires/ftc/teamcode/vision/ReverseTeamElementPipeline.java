@@ -69,9 +69,9 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         if (red) {
             if (close) {
                 // close-side red
-                x0 = 87;
+                x0 = 77;
                 y0 = 360;
-                x1 = 425;
+                x1 = 415;
                 y1 = 355;
                 x2 = 0;
                 y2 = 0;
@@ -94,9 +94,9 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
                 y2 = 360;
             } else {
                 // XXX same as far-side blue!
-                x0 = 87;
+                x0 = 77;
                 y0 = 360;
-                x1 = 425;
+                x1 = 415;
                 y1 = 355;
                 x2 = 0;
                 y2 = 0;

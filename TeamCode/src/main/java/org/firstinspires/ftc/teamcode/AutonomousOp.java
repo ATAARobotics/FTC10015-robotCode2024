@@ -198,7 +198,7 @@ public abstract class AutonomousOp extends OpMode {
 
             if ((is_red && target == 1) || (!is_red && target == 3)) {
                 // this one is "under the truss"
-                actions.add(new ActionMove(mult * 200, -(TILE-20)));
+                actions.add(new ActionMove(mult * 190, -(TILE-20)));
                 actions.add(new ActionArm("resting"));
                 actions.add(new ActionTurn((-mult) * 90));
                 actions.add(new ActionArm("purple"));
@@ -441,6 +441,7 @@ public abstract class AutonomousOp extends OpMode {
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("delta", delta);
+        telemetry.addData("arm-position", arm.arm_control.getSetPoint());
         pack.put("x", drive.odo.position_x());
         pack.put("y", drive.odo.position_y());
         pack.put("delta", delta);
