@@ -11,11 +11,27 @@ public class ActionMove extends ActionBase {
     double target_y;
     double started = -1;
     boolean slow = false;
+    double timeout = 5.0;
     PIDController control_x;
     PIDController control_y;
 
 
     ActionMove(double x, double y) {
+        timeout = 5.0;
+        control_x = new PIDController(0.02, 0.15,0.0025);
+        control_y = new PIDController(0.02, 0.15, 0.0025);
+      //  control_x = new PIDController(0.005, 0.08,0.0025);
+      //  control_y = new PIDController(0.005, 0.08, 0.0025);
+        // from the april-tag locker .. also set a max-speed!
+        //control_x = new PIDController(0.01, 0.05, 0.0005);
+        //control_y = new PIDController(0.01, 0.05, 0.0005);
+        control_x.setTolerance(5);
+        control_y.setTolerance(5);
+        set_target(x, y);
+    }
+
+    ActionMove(double x, double y, double timeout) {
+        this.timeout = timeout;
         // thinking:
         // at 100mm away, start decreasing speed
         // error is "100" when we're 100mm away
@@ -80,7 +96,7 @@ public class ActionMove extends ActionBase {
 
     private boolean timed_out(double time) {
         if (started > 0) {
-            return (time - started) > 5.0;
+            return (time - started) > timeout;
         }
         return false;
     }

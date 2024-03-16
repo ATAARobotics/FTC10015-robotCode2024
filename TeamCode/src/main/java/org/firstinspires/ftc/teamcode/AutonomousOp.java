@@ -204,10 +204,11 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("purple"));
                 // sometimes we had to fudge red vs blue side here?
                 if (is_red) {
-                    actions.add(new ActionMove(mult * 140, -(TILE + 100)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
                 } else {
-                    actions.add(new ActionMove(mult * 140, -(TILE + 140)));
-                    actions.add(new ActionMove(mult * 140, -(TILE + 120)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
                 }
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
@@ -276,18 +277,18 @@ public abstract class AutonomousOp extends OpMode {
 // common-point, post-purple
 //pos_x: 625.2020708055976
 //pos_y: -653.0994135694749
-        ActionMove post_purple = new ActionMove(mult * 640, -550);
+        ActionMove post_purple = new ActionMove(mult * 615, -550, 2.0);
 
 // lane
 //pos_x: 49.4612347381177
 //pos_y: -1289.9128108227403
-        ActionMove lane_south = new ActionMove(mult * 625, -(2*TILE + 70));
-        ActionMove lane_south_turn = new ActionMove(mult * 450, -(2*TILE + 70));
+        ActionMove lane_south = new ActionMove(mult * 615, -(2*TILE + 70), 2.0);
+        ActionMove lane_south_turn = new ActionMove(mult * 450, -(2*TILE + 70), 2.0);
         ActionMove lane_north = new ActionMove(mult * -(3*TILE - 100), -(2*TILE + 70));
-        ActionMove north_april = new ActionMove(mult * -(3*TILE - 100), -(TILE + 70));
+        ActionMove north_april = new ActionMove(mult * -(3*TILE - 100), -(TILE + 50));
 
         // move away from wall a little for intake's sake
-        actions.add(new ActionMove(mult * 40, -100));
+        actions.add(new ActionMove(mult * 40, -100, 2.0));
 
         if (target == 2) {
             actions.add(new ActionArm("purple"));
@@ -300,14 +301,14 @@ public abstract class AutonomousOp extends OpMode {
 //pos_y: -659.5082625827981
             // this one is "under the truss"
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionMove(mult * 290, -640));
+            actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionTurn((-mult) * 90));
             actions.add(new ActionArm("purple"));
             actions.add(new ActionMove(mult * 110, -666));
             actions.add(new ActionArm("spit-out", 1.0));
             actions.add(new ActionArm("spit-stop", 0.1));
-            actions.add(new ActionMove(mult * 90, -626));
-            actions.add(new ActionMove(mult * 290, -640));
+            actions.add(new ActionMove(mult * 90, -626, 2.0));
+            actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionArm("resting", 1.5));
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("intake", .5));
@@ -318,18 +319,22 @@ public abstract class AutonomousOp extends OpMode {
         } else if ((!is_red && target == 3) || (is_red && target == 1)) {
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-            actions.add(new ActionMove(mult * 310, -330));
+            actions.add(new ActionMove(mult * 310, -360));
         }
 
         if (!((!is_red && target == 1) || (is_red && target == 3))) {
             // the above moves got us to "spit out the purple pixel"
             // location; then we do that and move to our common point
             actions.add(new ActionArm("purple"));
-            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-out", 0.95));
             actions.add(new ActionArm("spit-stop", 0.1));
             actions.add(new ActionArm("resting", 1.5));
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("intake", .5));
+
+            if ((!is_red && target == 3) || (is_red && target == 1)) {
+                actions.add(new ActionMove(mult * 615, -320, 1.0));
+            }
 
             actions.add(post_purple);
 
