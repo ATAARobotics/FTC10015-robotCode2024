@@ -277,15 +277,15 @@ public abstract class AutonomousOp extends OpMode {
 // common-point, post-purple
 //pos_x: 625.2020708055976
 //pos_y: -653.0994135694749
-        ActionMove post_purple = new ActionMove(mult * 615, -550, 2.0);
+        ActionMove post_purple = new ActionMove(mult * 605, -560, 2.0);
 
 // lane
 //pos_x: 49.4612347381177
 //pos_y: -1289.9128108227403
-        ActionMove lane_south = new ActionMove(mult * 615, -(2*TILE + 70), 2.0);
+        ActionMove lane_south = new ActionMove(mult * 605, -(2*TILE + 70), 2.0);
         ActionMove lane_south_turn = new ActionMove(mult * 450, -(2*TILE + 70), 2.0);
-        ActionMove lane_north = new ActionMove(mult * -(3*TILE - 100), -(2*TILE + 70));
-        ActionMove north_april = new ActionMove(mult * -(3*TILE - 100), -(TILE + 50));
+        ActionMove lane_north = new ActionMove(mult * -(3*TILE - 80), -(2*TILE + 70));
+        ActionMove north_april = new ActionMove(mult * -(3*TILE - 80), -(TILE + 65));
 
         // move away from wall a little for intake's sake
         actions.add(new ActionMove(mult * 40, -100, 2.0));
@@ -304,10 +304,10 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionTurn((-mult) * 90));
             actions.add(new ActionArm("purple"));
-            actions.add(new ActionMove(mult * 110, -666));
+            actions.add(new ActionMove(mult * 110, -686));
             actions.add(new ActionArm("spit-out", 1.0));
             actions.add(new ActionArm("spit-stop", 0.1));
-            actions.add(new ActionMove(mult * 90, -626, 2.0));
+            actions.add(new ActionMove(mult * 90, -686, 2.0));
             actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionArm("resting", 1.5));
             actions.add(new ActionPause(0.1));
@@ -349,7 +349,11 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(lane_south_turn);
         actions.add(new ActionTurn(mult * -90));  // face the board
         actions.add(lane_north);
-        actions.add(north_april);
+        if ((!is_red && target == 1) || (is_red && target == 3)) {
+            actions.add(new ActionMove(mult * -(3*TILE - 60), -(TILE + 20)));
+        } else {
+            actions.add(north_april);
+        }
 
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, true));
         addYellowScoring(actions, 2.0, false);
