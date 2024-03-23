@@ -54,10 +54,10 @@ public class Drive {
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        motor_fl = new Motor(hardwareMap, "FL_Drive");
-        motor_fr = new Motor(hardwareMap, "FR_Drive");
-        motor_bl = new Motor(hardwareMap, "BL_Drive");
-        motor_br = new Motor(hardwareMap, "BR_Drive");
+        motor_fl = new Motor(hardwareMap, "fl");
+        motor_fr = new Motor(hardwareMap, "fr");
+        motor_bl = new Motor(hardwareMap, "bl");
+        motor_br = new Motor(hardwareMap, "br");
 
         // 48mm wheel, 2000 ticks-per-rev
         //parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
