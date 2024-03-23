@@ -58,6 +58,10 @@ public class Drive {
         motor_fr = new Motor(hardwareMap, "fr");
         motor_bl = new Motor(hardwareMap, "bl");
         motor_br = new Motor(hardwareMap, "br");
+        motor_bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor_br.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor_fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        motor_fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         // 48mm wheel, 2000 ticks-per-rev
         //parallel_encoder = new Motor(hardwareMap, "par", 2000, 1.0);
