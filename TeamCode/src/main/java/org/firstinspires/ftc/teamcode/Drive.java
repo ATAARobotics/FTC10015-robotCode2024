@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -141,47 +142,24 @@ public class Drive {
             //april_locker.started = -1;
             // heading-lock from right joystick
             // (HAVE TO FIX for "backwards" autonomous start)
+            Vector2d stick = new Vector2d(driver.getLeftX(), driver.getLeftY());
+            if (stick.magnitude() > 0.5){
+                double heading = stick.angle();
+                double allowed[] = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0};
+                double smallest = 360;
+                double best = 0;
 
-            if (driver.getLeftX() < -0.5) {
-                if (driver.getLeftY() > 0.5){
-                    headingControl.setSetPoint(-135.0); // north west
+                for (int i=0; i < allowed.length; i++) {
+                    double err = heading - allowed[i];
+                    if (err < 0) {
+                        err = -err;
+                    }
+                    if (err < smallest){
+                        best = allowed[i];
+                        smallest = err;
+                    }
                 }
-               else if (driver.getLeftY() < -0.5){
-                    headingControl.setSetPoint(-45.0); // south west
-                }
-               else {
-                    headingControl.setSetPoint(-90.0); // west
-                }
-            } else if (driver.getLeftX() > 0.5) {
-                if (driver.getLeftY() > 0.5){
-                    headingControl.setSetPoint(135.0); // north east
-                }
-                else if (driver.getLeftY() < -0.5){
-                    headingControl.setSetPoint(45.0); // south east
-                }
-                else {
-                    headingControl.setSetPoint(90.0); // east
-                }
-            } else if (driver.getLeftY() < -0.5) {
-                if (driver.getLeftX() > 0.5){
-                    headingControl.setSetPoint(-45.0); // south west
-                }
-                else if (driver.getLeftX() < -0.5){
-                    headingControl.setSetPoint(45.0); // south east
-                }
-                else {
-                    headingControl.setSetPoint(0); // south
-                }
-            } else if (driver.getLeftY() > 0.5) {
-                if (driver.getLeftX() > 0.5){
-                    headingControl.setSetPoint(-135.0); // north west
-                }
-                else if (driver.getLeftX() < -0.5){
-                    headingControl.setSetPoint(135.0); // north east
-                }
-                else {
-                    headingControl.setSetPoint(180.0); // north
-                }
+                headingControl.setSetPoint(best - 180);
             }
 
             // turbo mode or not
