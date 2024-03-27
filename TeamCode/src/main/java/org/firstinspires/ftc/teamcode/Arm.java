@@ -125,7 +125,7 @@ public class Arm {
     }
 
     public void humanInputs(GamepadEx game, double time) {
-        intake.humanInputs(game, state);
+        intake.humanInputs(game, state,touch.isPressed());
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
 
             if (state == Position.Purple) {

@@ -27,6 +27,7 @@ public class Intake {
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
     public boolean override = false;
     public boolean last_right_down = false;
+
     //public IntakePlace last_intake = IntakePlace.Resting;
 
     private double timeout = -1.0; // for up/down
@@ -44,46 +45,37 @@ public class Intake {
     // robot-right intake servo (launcher-side): all-right is up, all-left is down (port 2)
     //
 
-    public void humanInputs(GamepadEx pad, Arm.Position position) {
-        // backup (and override!): left joystick puts intake up / down
-        if (pad.getLeftY() > 0.5) {
-            intake_position += 0.05;
-            override = true;
-        } else if (pad.getLeftY() < 0.5) {
-            intake_position -= 0.05;
-            override = true;
-        }
-
-        // holding left trigger means: intake in, and suckage
-        // (> 0.5 means "is more than half down")
-        if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-            if (position == Arm.Position.Intake) {
-                suck_mode = SuckMode.SUCK;
-                intake_position = 1.0;
-                override = false;
-                last_right_down = false;
+    public void humanInputs(GamepadEx pad, Arm.Position position, boolean touch_state) {
+        if (intake == IntakePlace.Intake){
+            //trigger is _not_ down
+            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
+                intake = IntakePlace.Resting;
             }
-        } else {
-            if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-                suck_mode = SuckMode.NOTHING;
-                intake_position = 0.45;
-                override = false;
-                last_right_down = true;
-            } else {
-                if (!last_right_down) {
-                    suck_mode = SuckMode.NOTHING;
-                    intake_position = 0.66;
+            if (touch_state == true || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
+                intake = IntakePlace.Stowed;
+            }
+        } else if (intake == IntakePlace.Stowed) {
+            // holding left trigger
+            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                intake = IntakePlace.Intake;
+                if (position == Arm.Position.Intake) {
+                    suck_mode = SuckMode.SUCK;
                 }
             }
         }
 
-        // debug controls for exact intake position
-        if (pad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            intake_position -= 0.05;
-            override = true;
-        } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            intake_position += 0.05;
-            override = true;
+        else{
+             //resting
+                // holding left trigger
+                if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                    intake = IntakePlace.Intake;
+                    if (position == Arm.Position.Intake) {
+                        suck_mode = SuckMode.SUCK;
+                    }
+                }
+               else if ( pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                    intake = IntakePlace.Stowed;
+                }
         }
 
         // forward/back suckage on intake
@@ -92,7 +84,7 @@ public class Intake {
             if (position == Arm.Position.Intake) {
                 suck_mode = SuckMode.SUCK;
             }
-        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER )&& intake != IntakePlace.Stowed) {
             suck_mode = SuckMode.BLOW;
         }
     }
@@ -112,6 +104,7 @@ public class Intake {
     }
 
     void loop(double time) {
+
         if (intake_position < 0.45) {
             intake_position = 0.45;
         }
@@ -119,15 +112,14 @@ public class Intake {
             intake_position = 1.0;
         }
 
-/**
-        if (intake_place == IntakePlace.Resting) {
-            intake_position = 0.5;
-        } else if (intake_place == IntakePlace.Intake) {
+
+        if (intake == IntakePlace.Resting) {
+            intake_position = 0.66;
+        } else if (intake == IntakePlace.Intake) {
             intake_position = 1.0;
         } else if (intake == IntakePlace.Stowed) {
-            intake_position = 0.0;
+            intake_position = 0.45;
         }
-**/
 
         if (intake_position != last_intake) {
             intake_main.setPosition(intake_position);
