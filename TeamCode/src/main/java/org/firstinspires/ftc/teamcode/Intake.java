@@ -50,9 +50,11 @@ public class Intake {
             //trigger is _not_ down
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
                 intake = IntakePlace.Resting;
+                suck_mode = SuckMode.NOTHING;
             }
             if (touch_state == true || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
                 intake = IntakePlace.Stowed;
+                suck_mode = SuckMode.NOTHING;
             }
         } else if (intake == IntakePlace.Stowed) {
             // holding left trigger
@@ -75,6 +77,7 @@ public class Intake {
                 }
                else if ( pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
                     intake = IntakePlace.Stowed;
+                    suck_mode = SuckMode.NOTHING;
                 }
         }
 
