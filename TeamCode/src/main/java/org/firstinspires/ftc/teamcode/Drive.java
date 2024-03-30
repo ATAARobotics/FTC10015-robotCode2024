@@ -152,7 +152,7 @@ public class Drive {
                else {
                     headingControl.setSetPoint(-90.0); // west
                 }
-            } else if (driver.getLeftX() > 0.5) {
+            } else if (driver.getLeftX() < -0.5) {
                 if (driver.getLeftY() > 0.5){
                     headingControl.setSetPoint(135.0); // north east
                 }
@@ -163,25 +163,9 @@ public class Drive {
                     headingControl.setSetPoint(90.0); // east
                 }
             } else if (driver.getLeftY() < -0.5) {
-                if (driver.getLeftX() > 0.5){
-                    headingControl.setSetPoint(-45.0); // south west
-                }
-                else if (driver.getLeftX() < -0.5){
-                    headingControl.setSetPoint(45.0); // south east
-                }
-                else {
-                    headingControl.setSetPoint(0); // south
-                }
+                headingControl.setSetPoint(0); // south
             } else if (driver.getLeftY() > 0.5) {
-                if (driver.getLeftX() > 0.5){
-                    headingControl.setSetPoint(-135.0); // north west
-                }
-                else if (driver.getLeftX() < -0.5){
-                    headingControl.setSetPoint(135.0); // north east
-                }
-                else {
-                    headingControl.setSetPoint(180.0); // north
-                }
+                headingControl.setSetPoint(180.0); // north
             }
 
             // turbo mode or not
