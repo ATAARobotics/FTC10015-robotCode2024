@@ -72,7 +72,7 @@ public class Intake {
             } else {
                 if (!last_right_down) {
                     suck_mode = SuckMode.NOTHING;
-                    intake_position = 0.66;
+                    intake_position = 0.55;
                 }
             }
         }
@@ -103,12 +103,14 @@ public class Intake {
     }
 
     void loop(double time) {
-        if (intake_position < 0.45) {
-            intake_position = 0.45;
+/*
+        if (intake_position < 0.0) {
+            intake_position = 0.0;
         }
         if (intake_position > 1.0) {
             intake_position = 1.0;
         }
+*/
 
 /**
         if (intake_place == IntakePlace.Resting) {

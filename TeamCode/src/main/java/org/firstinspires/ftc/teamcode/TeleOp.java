@@ -25,6 +25,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 // put all FTCLib imports here
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public abstract class TeleOp extends OpMode   {
 
     public GamepadEx driver = null;
     public GamepadEx operator = null;
+    public VoltageSensor battery;
 
     protected OpenCvWebcam megacam;
     protected AprilTagPipeline pipeline;
@@ -66,6 +68,7 @@ public abstract class TeleOp extends OpMode   {
         drive = new Drive(hardwareMap, pipeline, arm, getAlliance() == Alliance.RED);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
+        battery = hardwareMap.voltageSensor.get("Control Hub");
 
         plane_launcher = new SimpleServo(hardwareMap, "plane", 0, 180.0, AngleUnit.DEGREES);
 
@@ -131,7 +134,14 @@ public abstract class TeleOp extends OpMode   {
         pack.put("target_heading", drive.headingControl.getSetPoint());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         */
+        pack.put("battery", battery.getVoltage());
+        pack.put("front-left", drive.motor_fl.get());
+        pack.put("front-right", drive.motor_fr.get());
+        pack.put("back-left", drive.motor_bl.get());
+        pack.put("back-right", drive.motor_br.get());
         pack.put("wrist", arm.wristp);
+        pack.put("intake_main", arm.intake.intake_main.getPosition());
+        pack.put("intake_rev", arm.intake.intake_rev.getPosition());
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("pipeline-fps", megacam.getFps());
         pack.put("close_april", drive.april_locker.pipeline.closestAprilTag());
