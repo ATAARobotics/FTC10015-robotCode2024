@@ -131,7 +131,6 @@ public abstract class TeleOp extends OpMode   {
         pack.put("target_heading", drive.headingControl.getSetPoint());
         pack.put("intake_angle", arm.intake.intake_main.getAngle());
         */
-        pack.put("intake", arm.intake.intake_position);
         pack.put("wrist", arm.wristp);
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("pipeline-fps", megacam.getFps());

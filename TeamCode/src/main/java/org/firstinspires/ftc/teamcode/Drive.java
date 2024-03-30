@@ -143,25 +143,9 @@ public class Drive {
             // (HAVE TO FIX for "backwards" autonomous start)
 
             if (driver.getLeftX() < -0.5) {
-                if (driver.getLeftY() > 0.5){
-                    headingControl.setSetPoint(-135.0); // north west
-                }
-               else if (driver.getLeftY() < -0.5){
-                    headingControl.setSetPoint(-45.0); // south west
-                }
-               else {
-                    headingControl.setSetPoint(-90.0); // west
-                }
-            } else if (driver.getLeftX() < -0.5) {
-                if (driver.getLeftY() > 0.5){
-                    headingControl.setSetPoint(135.0); // north east
-                }
-                else if (driver.getLeftY() < -0.5){
-                    headingControl.setSetPoint(45.0); // south east
-                }
-                else {
-                    headingControl.setSetPoint(90.0); // east
-                }
+                headingControl.setSetPoint(-90.0); // west
+            } else if (driver.getLeftX() > 0.5) {
+                headingControl.setSetPoint(90.0); // east
             } else if (driver.getLeftY() < -0.5) {
                 headingControl.setSetPoint(0); // south
             } else if (driver.getLeftY() > 0.5) {

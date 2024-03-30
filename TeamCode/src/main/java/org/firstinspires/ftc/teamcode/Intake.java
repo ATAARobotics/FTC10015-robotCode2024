@@ -77,15 +77,6 @@ public class Intake {
             }
         }
 
-        // debug controls for exact intake position
-        if (pad.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-            intake_position -= 0.05;
-            override = true;
-        } else if (pad.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-            intake_position += 0.05;
-            override = true;
-        }
-
         // forward/back suckage on intake
         if (pad.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
             // we do not allow "suck" mode unless the arm is in "intake" position!

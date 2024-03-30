@@ -167,7 +167,6 @@ public class Arm {
         }
 
         // debug / placement for wrist etc
-/**
         if (game.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
             if (true) {
                 arm_control.setSetPoint(arm_control.getSetPoint() - 10);
@@ -187,7 +186,6 @@ public class Arm {
                 }
             }
         }
-**/
         /**
          * debugging control
          if (game.getLeftY() < -0.5 ){
