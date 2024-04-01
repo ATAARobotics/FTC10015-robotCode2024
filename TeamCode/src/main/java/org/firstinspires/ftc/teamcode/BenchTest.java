@@ -118,6 +118,8 @@ public class BenchTest extends OpMode   {
                 // only one trigger down
                 arm.intake.intake_position = 0.55;
             }
+        } else {
+            
         }
         arm.intake.suck_mode = Intake.SuckMode.NOTHING;
         arm.roller_state = Arm.Roller.Off;

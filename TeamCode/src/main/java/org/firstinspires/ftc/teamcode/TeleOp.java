@@ -139,9 +139,12 @@ public abstract class TeleOp extends OpMode   {
         pack.put("front-right", drive.motor_fr.get());
         pack.put("back-left", drive.motor_bl.get());
         pack.put("back-right", drive.motor_br.get());
+        pack.put("touch", arm.touch.isPressed());
         pack.put("wrist", arm.wristp);
         pack.put("intake_main", arm.intake.intake_main.getPosition());
         pack.put("intake_rev", arm.intake.intake_rev.getPosition());
+        pack.put("suck_mode", arm.intake.suck_mode);
+        pack.put("intake_place", arm.intake.intake);
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
         pack.put("pipeline-fps", megacam.getFps());
         pack.put("close_april", drive.april_locker.pipeline.closestAprilTag());

@@ -73,14 +73,14 @@ public class Arm {
 
     public void intake() {
         state = Position.Intake;
-        //claw.setPosition(1.0);
+        intake.arm_moving();
         arm_control.setSetPoint(0);
-        wristp = 1.0;//find out if 0 is left or right
-        //roller_state = Roller.In;
+        wristp = 1.0;
     }
 
     public void resting() {
         state = Position.Resting;
+        intake.arm_moving();
         arm_control.setSetPoint(-88);
         wristp = 0.7;
         roller_state = Roller.Off;

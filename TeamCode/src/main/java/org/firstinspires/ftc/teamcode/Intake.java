@@ -19,12 +19,14 @@ public class Intake {
     MotorEx suck;
 
     public enum SuckMode {SUCK, BLOW, NOTHING}
-    public enum IntakePlace {Intake, Resting, Stowed}
+    public enum IntakePlace {Intake, Resting, Stowed, High}
 
     public SuckMode suck_mode = SuckMode.NOTHING;
     public double intake_position = 0.45;
     public double last_intake = 0.0;
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
+    public boolean full_pizza = false; // when "touch" goes, we're full -- until we "run outwards" once
+
     public boolean override = false;
     public boolean last_right_down = false;
 
@@ -46,41 +48,65 @@ public class Intake {
     //
 
     public void humanInputs(GamepadEx pad, Arm.Position position, boolean touch_state) {
+        // we saw the touch sensor! our box must be full with two pixels
+        boolean just_triggered_full = false;
+        if (touch_state && !full_pizza) {
+            full_pizza = true;
+            just_triggered_full = true;
+        }
+
         if (intake == IntakePlace.Intake){
             //trigger is _not_ down
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
                 intake = IntakePlace.Resting;
                 suck_mode = SuckMode.NOTHING;
             }
-            if (touch_state == true || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
+            if (just_triggered_full || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
                 intake = IntakePlace.Stowed;
                 suck_mode = SuckMode.NOTHING;
             }
         } else if (intake == IntakePlace.Stowed) {
             // holding left trigger
+
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
                 intake = IntakePlace.Intake;
                 if (position == Arm.Position.Intake) {
-                    suck_mode = SuckMode.SUCK;
-                }
-            }
-        }
-
-        else{
-             //resting
-                // holding left trigger
-                if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-                    intake = IntakePlace.Intake;
-                    if (position == Arm.Position.Intake) {
+                    if (!full_pizza) {
                         suck_mode = SuckMode.SUCK;
                     } else {
                         suck_mode = SuckMode.NOTHING;
                     }
                 }
-               else if ( pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
-                    intake = IntakePlace.Stowed;
+            }
+        } else { // resting
+            // holding left trigger
+            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+                intake = IntakePlace.Intake;
+                if (position == Arm.Position.Intake) {
+                    if (!full_pizza) {
+                        suck_mode = SuckMode.SUCK;
+                    } else {
+                        suck_mode = SuckMode.NOTHING;
+                    }
+                } else {
                     suck_mode = SuckMode.NOTHING;
                 }
+            } else if (full_pizza || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                if (position == Arm.Position.Intake) {
+                    intake = IntakePlace.High;
+                } else {
+                    intake = IntakePlace.Stowed;
+                }
+                suck_mode = SuckMode.NOTHING;
+            }
+        }
+
+        // kind of janky -- we're MIRRORing the control that Arm uses
+        // here; would be better if it was done there?
+        if (pad.isDown(GamepadKeys.Button.B)) {
+            // we're running the out-take at least once, so we don't
+            // _KNOW_ we're full anymore
+            full_pizza = false;
         }
 
         // forward/back suckage on intake
@@ -89,7 +115,7 @@ public class Intake {
             if (position == Arm.Position.Intake) {
                 suck_mode = SuckMode.SUCK;
             }
-        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER )&& intake != IntakePlace.Stowed) {
+        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER )&& (intake == IntakePlace.Resting || intake == IntakePlace.Intake)) {
             suck_mode = SuckMode.BLOW;
         }
     }
@@ -108,6 +134,12 @@ public class Intake {
 //        intake_position = 0.0;
     }
 
+    public void arm_moving() {
+        if (intake == IntakePlace.High) {
+            intake = IntakePlace.Stowed;
+        }
+    }
+
     void loop(double time) {
 /*
         if (intake_position < 0.0) {
@@ -120,11 +152,13 @@ public class Intake {
 
 
         if (intake == IntakePlace.Resting) {
-            intake_position = 0.66;
+            intake_position = 0.5;
         } else if (intake == IntakePlace.Intake) {
             intake_position = 1.0;
         } else if (intake == IntakePlace.Stowed) {
-            intake_position = 0.45;
+            intake_position = 0.30;
+        } else if (intake == IntakePlace.High) {
+            intake_position = 0.22;
         }
 
         if (true){//intake_position != last_intake) {
