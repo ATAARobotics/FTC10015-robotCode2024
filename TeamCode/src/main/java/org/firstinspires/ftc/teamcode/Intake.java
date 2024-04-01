@@ -171,7 +171,7 @@ public class Intake {
 */
 
         if (blowing >= 0.0) {
-            if (time > blowing + 1.500) {
+            if (time > blowing + 0.500) {
                 intake = IntakePlace.High;
                 suck_mode = SuckMode.NOTHING;
                 blowing = -1.0;
@@ -181,7 +181,7 @@ public class Intake {
         }
 
         if (suck_pause >= 0.0) {
-            if (time > suck_pause + .666) {
+            if (time > suck_pause + .444) {
                 suck_mode = SuckMode.SUCK;
                 suck_pause = -1.0;
             }
