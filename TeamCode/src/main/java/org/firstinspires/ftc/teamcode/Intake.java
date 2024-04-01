@@ -28,6 +28,9 @@ public class Intake {
 
     private double timeout = -1.0; // for up/down
 
+    private double blowing = -1.0; // for 500ms of blow before auto-up
+    private double suck_pause = -1.0; // for delay before sucking when coming down
+
     public Intake(HardwareMap hm) {
         suck = new MotorEx(hm, "suck");
         intake_main = new SimpleServo(hm, "intake", 0, 360);
@@ -41,9 +44,17 @@ public class Intake {
     // robot-right intake servo (launcher-side): all-right is up, all-left is down (port 2)
     //
 
-    public void humanInputs(GamepadEx pad, Arm.Position position, boolean touch_state) {
+    public void turn_off_servos() {
+    }
+
+    public void turn_on_servos() {
+    }
+
+    public void humanInputs(GamepadEx pad, double time, Arm.Position position, boolean touch_state) {
         // we saw the touch sensor! our box must be full with two pixels
         boolean just_triggered_full = false;
+        boolean wanted_suck_blow = false;
+
         if (touch_state && !full_pizza) {
             full_pizza = true;
             just_triggered_full = true;
@@ -54,19 +65,26 @@ public class Intake {
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
                 intake = IntakePlace.Resting;
                 suck_mode = SuckMode.NOTHING;
+            } else {
+                if (!full_pizza && suck_pause < 0.0) {
+                    suck_mode = SuckMode.SUCK;
+                    wanted_suck_blow = true;
+                }
             }
-            if (just_triggered_full || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
-                intake = IntakePlace.Stowed;
-                suck_mode = SuckMode.NOTHING;
-            }
-        } else if (intake == IntakePlace.Stowed) {
-            // holding left trigger
 
+            if (just_triggered_full || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5){
+                blowing = time;
+                intake = IntakePlace.Resting;
+                suck_mode = SuckMode.BLOW;
+                wanted_suck_blow = true;
+            }
+        } else if (intake == IntakePlace.Stowed || intake == IntakePlace.High) {
+            // holding left trigger
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
                 intake = IntakePlace.Intake;
                 if (position == Arm.Position.Intake) {
                     if (!full_pizza) {
-                        suck_mode = SuckMode.SUCK;
+                        suck_pause = time;
                     } else {
                         suck_mode = SuckMode.NOTHING;
                     }
@@ -75,17 +93,16 @@ public class Intake {
         } else { // resting
             // holding left trigger
             if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
-                intake = IntakePlace.Intake;
-                if (position == Arm.Position.Intake) {
-                    if (!full_pizza) {
-                        suck_mode = SuckMode.SUCK;
-                    } else {
-                        suck_mode = SuckMode.NOTHING;
-                    }
-                } else {
-                    suck_mode = SuckMode.NOTHING;
+                if (blowing < 0.0) {
+                    intake = IntakePlace.Intake;
                 }
-            } else if (full_pizza || pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
+                if (!full_pizza) {
+                    if (position == Arm.Position.Intake) {
+                        suck_mode = SuckMode.SUCK;
+                        wanted_suck_blow = true;
+                    }
+                }
+            } else if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
                 if (position == Arm.Position.Intake) {
                     intake = IntakePlace.High;
                 } else {
@@ -109,8 +126,17 @@ public class Intake {
             if (position == Arm.Position.Intake) {
                 suck_mode = SuckMode.SUCK;
             }
-        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER )&& (intake == IntakePlace.Resting || intake == IntakePlace.Intake)) {
-            suck_mode = SuckMode.BLOW;
+        } else if (pad.isDown(GamepadKeys.Button.LEFT_BUMPER )) {
+            if (intake == IntakePlace.Resting || intake == IntakePlace.Intake) {
+                suck_mode = SuckMode.BLOW;
+            }
+        } else {
+            // want to turn off the suck/blow
+            // ... but only if we didn't "want" to do that for other
+            // reasons (like left trigger is down)
+            if (!wanted_suck_blow) {
+                suck_mode = SuckMode.NOTHING;
+            }
         }
     }
 
@@ -143,6 +169,23 @@ public class Intake {
             intake_position = 1.0;
         }
 */
+
+        if (blowing >= 0.0) {
+            if (time > blowing + 1.500) {
+                intake = IntakePlace.High;
+                suck_mode = SuckMode.NOTHING;
+                blowing = -1.0;
+            } else {
+                suck_mode = SuckMode.BLOW;
+            }
+        }
+
+        if (suck_pause >= 0.0) {
+            if (time > suck_pause + .666) {
+                suck_mode = SuckMode.SUCK;
+                suck_pause = -1.0;
+            }
+        }
 
 
         if (intake == IntakePlace.Resting) {
