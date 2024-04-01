@@ -23,14 +23,8 @@ public class Intake {
 
     public SuckMode suck_mode = SuckMode.NOTHING;
     public double intake_position = 0.45;
-    public double last_intake = 0.0;
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
     public boolean full_pizza = false; // when "touch" goes, we're full -- until we "run outwards" once
-
-    public boolean override = false;
-    public boolean last_right_down = false;
-
-    //public IntakePlace last_intake = IntakePlace.Resting;
 
     private double timeout = -1.0; // for up/down
 
@@ -161,11 +155,8 @@ public class Intake {
             intake_position = 0.22;
         }
 
-        if (true){//intake_position != last_intake) {
-            intake_main.setPosition(intake_position);
-            intake_rev.setPosition(1.0 - intake_position);
-            last_intake = intake_position;
-        }
+        intake_main.setPosition(intake_position);
+        intake_rev.setPosition(1.0 - intake_position);
 
         switch (suck_mode) {
             case SUCK:
