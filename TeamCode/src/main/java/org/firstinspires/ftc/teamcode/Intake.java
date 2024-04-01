@@ -58,15 +58,18 @@ public class Intake {
         // (> 0.5 means "is more than half down")
         if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
             if (position == Arm.Position.Intake) {
+                // XXX TODO FIXME delay before suck-mode if we're in "stowed"
                 suck_mode = SuckMode.SUCK;
                 intake_position = 1.0;
                 override = false;
                 last_right_down = false;
+            } else {
+                intake_position = 0.55;
             }
         } else {
             if (pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
                 suck_mode = SuckMode.NOTHING;
-                intake_position = 0.45;
+                intake_position = 0.25;
                 override = false;
                 last_right_down = true;
             } else {
@@ -99,7 +102,7 @@ public class Intake {
         goDown(time, 0);
     }
     public void goDown(double time, double delta) {
-        intake_position = 0.0;
+//        intake_position = 0.0;
     }
 
     void loop(double time) {
@@ -122,7 +125,7 @@ public class Intake {
         }
 **/
 
-        if (intake_position != last_intake) {
+        if (true){//intake_position != last_intake) {
             intake_main.setPosition(intake_position);
             intake_rev.setPosition(1.0 - intake_position);
             last_intake = intake_position;
