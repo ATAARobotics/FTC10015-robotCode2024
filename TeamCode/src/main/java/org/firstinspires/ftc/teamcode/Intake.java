@@ -73,6 +73,8 @@ public class Intake {
                     intake = IntakePlace.Intake;
                     if (position == Arm.Position.Intake) {
                         suck_mode = SuckMode.SUCK;
+                    } else {
+                        suck_mode = SuckMode.NOTHING;
                     }
                 }
                else if ( pad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5) {
@@ -103,17 +105,18 @@ public class Intake {
         goDown(time, 0);
     }
     public void goDown(double time, double delta) {
-        intake_position = 0.0;
+//        intake_position = 0.0;
     }
 
     void loop(double time) {
-
-        if (intake_position < 0.45) {
-            intake_position = 0.45;
+/*
+        if (intake_position < 0.0) {
+            intake_position = 0.0;
         }
         if (intake_position > 1.0) {
             intake_position = 1.0;
         }
+*/
 
 
         if (intake == IntakePlace.Resting) {
@@ -124,7 +127,7 @@ public class Intake {
             intake_position = 0.45;
         }
 
-        if (intake_position != last_intake) {
+        if (true){//intake_position != last_intake) {
             intake_main.setPosition(intake_position);
             intake_rev.setPosition(1.0 - intake_position);
             last_intake = intake_position;
