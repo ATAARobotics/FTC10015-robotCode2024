@@ -274,6 +274,11 @@ public abstract class AutonomousOp extends OpMode {
         // we have a "common point" to get to before the april-locker takes over
         ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE + 20));
 
+
+        // Houston pathing:
+        // "common point" is in tile directly ahead of starting location in shared lane
+        // -> lane_south_turn
+
 // common-point, post-purple
 //pos_x: 625.2020708055976
 //pos_y: -653.0994135694749
@@ -283,7 +288,7 @@ public abstract class AutonomousOp extends OpMode {
 //pos_x: 49.4612347381177
 //pos_y: -1289.9128108227403
         ActionMove lane_south = new ActionMove(mult * 605, -(2*TILE + 70), 2.0);
-        ActionMove lane_south_turn = new ActionMove(mult * 450, -(2*TILE + 70), 2.0);
+        ActionMove lane_south_turn = new ActionMove(mult * 100, -(2*TILE + 70), 2.0);
         ActionMove lane_north = new ActionMove(mult * -(3*TILE - 80), -(2*TILE + 70));
         ActionMove north_april = new ActionMove(mult * -(3*TILE - 80), -(TILE + 65));
 
@@ -322,6 +327,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * 310, -360));
         }
 
+        // "if not the under-truss one"
         if (!((!is_red && target == 1) || (is_red && target == 3))) {
             // the above moves got us to "spit out the purple pixel"
             // location; then we do that and move to our common point
@@ -332,18 +338,17 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionPause(0.1));
             actions.add(new ActionArm("intake", .5));
 
-            if ((!is_red && target == 3) || (is_red && target == 1)) {
-                actions.add(new ActionMove(mult * 615, -320, 1.0));
-            }
-
-            actions.add(post_purple);
-
             // stay out of "shared" lane
             if (auto_pause > 0.0) {
                 actions.add(new ActionPause(auto_pause));
             }
 
-            actions.add(lane_south);
+            if (target == 2) {
+                actions.add(new ActionMove(mult * 500, -550, 2.0));
+            } else {
+                actions.add(new ActionMove(mult * 0, -400, 2.0));
+                actions.add(new ActionMove(mult * 0, -(2*TILE + 70), 2.0));
+            }
         }
 
         actions.add(lane_south_turn);
@@ -465,13 +470,10 @@ public abstract class AutonomousOp extends OpMode {
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("delta", delta);
         telemetry.addData("arm-position", arm.arm_control.getSetPoint());
+
         pack.put("x", drive.odo.position_x());
         pack.put("y", drive.odo.position_y());
         pack.put("delta", delta);
-        //pack.put("last_x", drive.odo.x_last);
-        //pack.put("last_y", drive.odo.y_last);
-        //pack.put("par-encoder", drive.odo.par.encoder.getPosition());
-        //pack.put("perp-encoder", drive.odo.perp.encoder.getPosition());
         pack.put("target", target);
 
         // directions (in start position):
@@ -483,32 +485,6 @@ public abstract class AutonomousOp extends OpMode {
         // rotations:
         // +90 == turn left (??)
         // -90 == turn right
-
-        // seems to not work if "data" and "drawing" are in the same packet?
-        FtcDashboard.getInstance().sendTelemetryPacket(pack);
-        pack = new TelemetryPacket();
-
-        // actual robot is 407mm square
-        double INCHES_TO_MM = 0.03937008;
-
-        // origin to start position (XXX overridable method for this?)
-        pack.fieldOverlay().setTranslation(-1 * 24, 3 * 24);
-
-        // do all other drawing in millimeters
-        pack.fieldOverlay().setScale(INCHES_TO_MM, INCHES_TO_MM);
-        pack.fieldOverlay().setRotation(-Math.toRadians(90));
-        // center the drawing in the robot
-        //pack.fieldOverlay().setTranslation(-203, 203);
-        pack.fieldOverlay()
-                .setFill("green")
-                .fillCircle(0.0, 0.0, 2.0)
-                .setFill("red")
-                .fillRect(drive.odo.position_y(), drive.odo.position_x(), 407, 407);
-
-        if (current_action != null) {
-            current_action.draw_field(pack);
-        }
-        FtcDashboard.getInstance().sendTelemetryPacket(pack);
 
         drive.loop(time);
         arm.loop(time);
