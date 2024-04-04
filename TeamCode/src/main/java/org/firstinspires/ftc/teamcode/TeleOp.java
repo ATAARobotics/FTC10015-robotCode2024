@@ -129,16 +129,16 @@ public abstract class TeleOp extends OpMode   {
         //pack.put("arm_yaw", arm_imu.getAngularOrientation());
         pack.put("pos_y", drive.odo.position_y());
         pack.put("pos_x", drive.odo.position_x());
-        /*
-        pack.put("heading", drive.getHeading());
-        pack.put("target_heading", drive.headingControl.getSetPoint());
-        pack.put("intake_angle", arm.intake.intake_main.getAngle());
-        */
+
+
         pack.put("battery", battery.getVoltage());
         pack.put("front-left", drive.motor_fl.get());
         pack.put("front-right", drive.motor_fr.get());
         pack.put("back-left", drive.motor_bl.get());
         pack.put("back-right", drive.motor_br.get());
+        pack.put("heading", drive.getHeading());
+        pack.put("target_heading", drive.headingControl.getSetPoint());
+
         pack.put("touch", arm.touch.isPressed());
         pack.put("wrist", arm.wristp);
         pack.put("intake_main", arm.intake.intake_main.getPosition());

@@ -144,22 +144,27 @@ public class Drive {
             // (HAVE TO FIX for "backwards" autonomous start)
             Vector2d stick = new Vector2d(driver.getLeftX(), driver.getLeftY());
             if (stick.magnitude() > 0.5){
-                double heading = stick.angle();
+                // stick.angle() returns a thing in radians, from
+                // -pi/2 to pi/2 .. so -180 to 180 in degrees.
+                double heading = Math.toDegrees(stick.angle()) + 180.0;
                 double allowed[] = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0};
-                double smallest = 360;
+                double smallest = 3600;
                 double best = 0;
 
                 for (int i=0; i < allowed.length; i++) {
-                    double err = heading - allowed[i];
-                    if (err < 0) {
-                        err = -err;
-                    }
+                    double err = Math.abs(heading - allowed[i]);
                     if (err < smallest){
                         best = allowed[i];
                         smallest = err;
                     }
                 }
-                headingControl.setSetPoint(best - 180);
+                double sp = best - 90.0;
+                if (sp > 180.0) {
+                    sp -= 360.0;
+                } else if (sp < -180.0) {
+                    sp += 360.0;
+                }
+                headingControl.setSetPoint(sp);
             }
 
             // turbo mode or not

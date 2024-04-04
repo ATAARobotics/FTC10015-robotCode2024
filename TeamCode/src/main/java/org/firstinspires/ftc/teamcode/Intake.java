@@ -25,6 +25,7 @@ public class Intake {
     public double intake_position = 0.45;
     public IntakePlace intake = IntakePlace.Stowed; // we start in stowed
     public boolean full_pizza = false; // when "touch" goes, we're full -- until we "run outwards" once
+    public boolean left_was_down = false;
 
     private double timeout = -1.0; // for up/down
 
@@ -55,9 +56,19 @@ public class Intake {
         boolean just_triggered_full = false;
         boolean wanted_suck_blow = false;
 
+        // XXX FIXME TODO want a boolean to track:
+        // - we held left down
+        // - touch sensor triggered (so we're full)
+        // - don't do "normal left-trigger-down" stuff until we've _released_ it once
+
+        if (left_was_down && pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.5) {
+            left_was_down = false;
+        }
+
         if (touch_state && !full_pizza) {
             full_pizza = true;
             just_triggered_full = true;
+            left_was_down = true;
         }
 
         if (intake == IntakePlace.Intake){
@@ -80,7 +91,7 @@ public class Intake {
             }
         } else if (intake == IntakePlace.Stowed || intake == IntakePlace.High) {
             // holding left trigger
-            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            if (!left_was_down && pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
                 intake = IntakePlace.Intake;
                 if (position == Arm.Position.Intake) {
                     if (!full_pizza) {
@@ -92,7 +103,7 @@ public class Intake {
             }
         } else { // resting
             // holding left trigger
-            if (pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
+            if (!left_was_down && pad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5) {
                 if (blowing < 0.0) {
                     intake = IntakePlace.Intake;
                 }
