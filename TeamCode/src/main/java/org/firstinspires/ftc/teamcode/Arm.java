@@ -264,6 +264,9 @@ public class Arm {
 
         // soft-down
         //if (move > -0.5 && move < 0.0 && arm_main.getCurrentPosition() > -80) {
+        if (move > 0.5 && arm_main.getCurrentPosition() > -250) {
+            move = 0.50;
+        }
         if (move > 0.25 && arm_main.getCurrentPosition() > -80) {
             move = 0.25;
         }
