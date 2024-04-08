@@ -181,6 +181,10 @@ public abstract class AutonomousOp extends OpMode {
 
         actions.add(new ActionMove(0, -100));
 
+        if (auto_pause > 0.0) {
+            actions.add(new ActionPause(auto_pause));
+        }
+
         double mult = -1.0;
         if (!is_red) {
             mult = 1.0;
@@ -188,6 +192,7 @@ public abstract class AutonomousOp extends OpMode {
 
         // we have a "common point" to get to before the april-locker takes over
         ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE));
+
 
         if (true) {
             if (target == 2) {
@@ -236,10 +241,6 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         actions.add(new ActionTurn(mult * 90));  // face the board
-
-        if (auto_pause > 0.0) {
-            actions.add(new ActionPause(auto_pause));
-        }
 
         actions.add(common_point);
 
@@ -315,7 +316,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * 90, -686, 2.0));
             actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionArm("resting", 1.5));
-            actions.add(new ActionPause(0.1));
+            actions.add(new ActionPause(0.05));
             actions.add(new ActionArm("intake", .5));
 
             if (auto_pause > 0.0) {
@@ -335,7 +336,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionArm("spit-out", 0.95));
             actions.add(new ActionArm("spit-stop", 0.1));
             actions.add(new ActionArm("resting", 1.5));
-            actions.add(new ActionPause(0.1));
+            actions.add(new ActionPause(0.05));
             actions.add(new ActionArm("intake", .5));
 
             // stay out of "shared" lane
@@ -344,10 +345,12 @@ public abstract class AutonomousOp extends OpMode {
             }
 
             if (target == 2) {
+                // (test) XXX we drive "through" purple on middle still; need a "strait west" move
                 actions.add(new ActionMove(mult * 500, -550, 2.0));
+                actions.add(new ActionMove(mult * 500, -(2*TILE + 70), 2.0));
             } else {
-                actions.add(new ActionMove(mult * 0, -400, 2.0));
-                actions.add(new ActionMove(mult * 0, -(2*TILE + 70), 2.0));
+                actions.add(new ActionMove(mult * 42, -400, 2.0));
+                actions.add(new ActionMove(mult * 42, -(2*TILE + 70), 2.0));
             }
         }
 
@@ -397,7 +400,7 @@ public abstract class AutonomousOp extends OpMode {
     protected void pizzaDeliverPurple(LinkedList<ActionBase> actions) {
         actions.add(new ActionArm("purple"));
         actions.add(new ActionArm("spit-out", 1.0));
-        actions.add(new ActionArm("spit-stop", 0.1));
+        actions.add(new ActionArm("spit-stop", 0.05));
         actions.add(new ActionArm("high-scoring", 1.0));
     }
 
@@ -410,7 +413,7 @@ public abstract class AutonomousOp extends OpMode {
             } else {
                 actions.add(new ActionArm("medium-scoring"));
             }
-            actions.add(new ActionPause(0.1));
+            actions.add(new ActionPause(0.05));
             actions.add(new ActionArm("spit-out", how_long));
             actions.add(new ActionArm("spit-stop", 0.1));
             // we actually probably want an "ActionMoveBack(200mm)" or
@@ -471,10 +474,17 @@ public abstract class AutonomousOp extends OpMode {
         telemetry.addData("delta", delta);
         telemetry.addData("arm-position", arm.arm_control.getSetPoint());
 
-        pack.put("x", drive.odo.position_x());
-        pack.put("y", drive.odo.position_y());
+        pack.put("pos_x", drive.odo.position_x());
+        pack.put("pos_y", drive.odo.position_y());
         pack.put("delta", delta);
+        pack.put("heading", drive.getHeading());
         pack.put("target", target);
+        pack.put("wrist", arm.wristp);
+        pack.put("intake_main", arm.intake.intake_main.getPosition());
+        pack.put("intake_rev", arm.intake.intake_rev.getPosition());
+        pack.put("suck_mode", arm.intake.suck_mode);
+        pack.put("intake_place", arm.intake.intake);
+        pack.put("arm_pos", arm.arm_main.getCurrentPosition());
 
         // directions (in start position):
         // +x = robot-right
@@ -490,5 +500,6 @@ public abstract class AutonomousOp extends OpMode {
         arm.loop(time);
         intake.loop(time);
         telemetry.update();
+        FtcDashboard.getInstance().sendTelemetryPacket(pack);
     }
 }

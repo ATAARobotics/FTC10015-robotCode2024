@@ -119,7 +119,7 @@ public class BenchTest extends OpMode   {
                 arm.intake.intake_position = 0.55;
             }
         } else {
-            
+            arm.intake.intake_position = 0.55;
         }
         arm.intake.suck_mode = Intake.SuckMode.NOTHING;
         arm.roller_state = Arm.Roller.Off;
