@@ -69,8 +69,7 @@ public class Drive {
         //parallel_encoder.setDistancePerPulse((48.0 * Math.PI) / 2000.0);
         //parallel_encoder.resetEncoder();
 
-        // in "turbo" mode, 0.2 + 0.1 + 0.0 was oscilating a lot (but was good in non-turbo mode)
-        headingControl = new PIDController(0.08, 0.05, 0.0);
+        headingControl = new PIDController(0.05, 0.00, 0.002);
         // using ftc-lib for driving
         drivebase = new MecanumDrive(motor_fl, motor_fr, motor_bl, motor_br);
         drivebase.setMaxSpeed(0.6);
@@ -91,8 +90,8 @@ public class Drive {
     public void robotInputs(double d_strafe, double d_forward){
         strafe = d_strafe;
         forward = d_forward;
-        headingControl.setPID(0.03, 0.0, 0.001);
-        headingLock();
+        //headingControl.setPID(0.03, 0.0, 0.001);
+        //headingLock();
     }
 
     public void humanInputs(GamepadEx driver, double time){
@@ -193,7 +192,7 @@ public class Drive {
                 }
             }
         }
-        headingLock();
+        //headingLock();
     }
 
     // lock on to a particular April tag
@@ -225,6 +224,7 @@ public class Drive {
     public void loop(double time) {
         /// also called once per loop, can do autonomous updates etc here
 
+        headingLock();
         // tell ftclib its inputs
         drivebase.driveFieldCentric(strafe, forward, turn, heading);
 
