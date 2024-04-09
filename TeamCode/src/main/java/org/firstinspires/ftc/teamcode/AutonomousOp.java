@@ -277,7 +277,7 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         // we have a "common point" to get to before the april-locker takes over
-        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE));
+        ActionMove common_point = new ActionMove(mult * (TILE), -(TILE + 20));
 
         actions.add(new ActionTurn(mult * 90));  // face the board
 
@@ -286,64 +286,61 @@ public abstract class AutonomousOp extends OpMode {
         // lock onto the correct april target
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, false));
 
-        addYellowScoring(actions, 2.0, true);
+        addYellowScoring(actions, 1.1, true);
 
-        actions.add(new ActionMove(mult * 150, -300));
+        actions.add(new ActionMove(mult * 200, -300));
 
-        actions.add(new ActionTurn(mult * 0));  // face the way we started
+        // go do purple placement
+        if (target == 2) {
+            actions.add(new ActionTurn(mult * 0));  // face the way we started
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+            actions.add(new ActionMove(mult * (165 / 2), -575));
+        }
 
-        if (true) {
-            if (target == 2) {
-                actions.add(new ActionArm("purple"));
-                //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
-                actions.add(new ActionMove(mult * (165 / 2), -590));
+        if ((is_red && target == 1) || (!is_red && target == 3)) {
+            // this one is "under the truss"
+            actions.add(new ActionMove(mult * 200, -(TILE-20)));
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionTurn((-mult) * 90));
+            actions.add(new ActionArm("purple"));
+            // sometimes we had to fudge red vs blue side here?
+            if (is_red) {
+                actions.add(new ActionMove(mult * 110, -(TILE + 140)));
+                actions.add(new ActionMove(mult * 110, -(TILE + 120)));
+            } else {
+                actions.add(new ActionMove(mult * 110, -(TILE + 140)));
+                actions.add(new ActionMove(mult * 110, -(TILE + 120)));
             }
+        } else if ((is_red && target == 3) || (!is_red && target == 1)) {
+            actions.add(new ActionTurn(mult * 0));  // face the way we started
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+            actions.add(new ActionMove(mult * 330, -330));
+        }
 
-            if ((is_red && target == 1) || (!is_red && target == 3)) {
-                // this one is "under the truss"
-                actions.add(new ActionMove(mult * 200, -(TILE-20)));
-                actions.add(new ActionArm("resting"));
-                actions.add(new ActionTurn((-mult) * 90));
-                actions.add(new ActionArm("purple"));
-                // sometimes we had to fudge red vs blue side here?
-                if (is_red) {
-                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
-                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
-                } else {
-                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
-                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
-                }
-            } else if ((is_red && target == 3) || (!is_red && target == 1)) {
-                actions.add(new ActionArm("purple"));
-                //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-                actions.add(new ActionMove(mult * 330, -330));
-            }
+        // the above moves got us to "spit out the purple pixel"
+        // location; then we do that and move to our common point
+        pizzaDeliverPurple(actions);
 
-            // the above moves got us to "spit out the purple pixel"
-            // location; then we do that and move to our common point
-            pizzaDeliverPurple(actions);
-
-            // don't run over our purple pixel after we placed it
-            if ((is_red && target == 3) || (!is_red && target == 1)) {
-                actions.add(new ActionMove(mult * 450, -330));
-            }
-            // same, but for "under the truss" one
-            if ((is_red && target == 1) || (!is_red && target == 3)) {
-                actions.add(new ActionMove(mult * 450, -(TILE + 60)));
-            }
-            // same but for middle
-            if (target == 2) {
-                actions.add(new ActionMove(mult * (165 / 2), -560));
-            }
-
+        // don't run over our purple pixel after we placed it
+        if ((is_red && target == 3) || (!is_red && target == 1)) {
+            actions.add(new ActionMove(mult * 450, -330));
+        }
+        // same, but for "under the truss" one
+        if ((is_red && target == 1) || (!is_red && target == 3)) {
+            actions.add(new ActionMove(mult * 450, -(TILE + 60)));
+        }
+        // same but for middle
+        if (target == 2) {
+            actions.add(new ActionMove(mult * (165 / 2), -560));
         }
 
         actions.add(new ActionTurn(mult * 90));  // face the board
 
         if (park_close) {
             actions.add(new ActionArm("intake"));
-            actions.add(new ActionMove(mult * (TILE + 160), -10));
-            actions.add(new ActionMove(mult * (2*TILE), -10));
+            actions.add(new ActionMove(mult * (TILE + 180), 0));
         } else {
             actions.add(new ActionArm("intake"));
             actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) - 20)));
@@ -560,6 +557,11 @@ public abstract class AutonomousOp extends OpMode {
             }
         }
 
+        drive.loop(time);
+        arm.loop(time);
+        intake.loop(time);
+
+
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("delta", delta);
@@ -587,9 +589,6 @@ public abstract class AutonomousOp extends OpMode {
         // +90 == turn left (??)
         // -90 == turn right
 
-        drive.loop(time);
-        arm.loop(time);
-        intake.loop(time);
         telemetry.update();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
     }

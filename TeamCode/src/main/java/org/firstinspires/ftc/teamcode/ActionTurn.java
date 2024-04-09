@@ -30,6 +30,7 @@ public class ActionTurn extends ActionBase {
             return false;
         }
         if (drive.headingControl.atSetPoint() || (time - started) > 1.2) {
+            drive.robotInputs(0, 0);
             drive.odo.resume(drive.headingControl.getSetPoint());
             return true;
         }
