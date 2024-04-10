@@ -316,7 +316,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionTurn(mult * 0));  // face the way we started
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-            actions.add(new ActionMove(mult * 330, -330));
+            actions.add(new ActionMove(mult * 320, -340));
         }
 
         // the above moves got us to "spit out the purple pixel"
@@ -340,7 +340,7 @@ public abstract class AutonomousOp extends OpMode {
 
         if (park_close) {
             actions.add(new ActionArm("intake"));
-            actions.add(new ActionMove(mult * (TILE + 180), 0));
+            actions.add(new ActionMove(mult * (TILE + 320), 0));
         } else {
             actions.add(new ActionArm("intake"));
             actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) - 20)));
@@ -509,8 +509,6 @@ public abstract class AutonomousOp extends OpMode {
             // is currntly at
 
             actions.add(new ActionArm("resting"));
-            actions.add(new ActionPause(.05));
-            actions.add(new ActionArm("intake"));
         }
 
     }
