@@ -365,6 +365,7 @@ public abstract class AutonomousOp extends OpMode {
 
         if (park_close) {
             actions.add(new ActionArm("intake"));
+            actions.add(new ActionMove(mult * (300), 0));
             actions.add(new ActionMove(mult * (TILE + 320), 0));
         } else {
             actions.add(new ActionArm("intake"));
