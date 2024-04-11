@@ -52,6 +52,7 @@ public abstract class AutonomousOp extends OpMode {
     public static final double TILE = 610; // 24inches = 610mm
 
     boolean park_close = true;
+    boolean lane_close = false;
     double auto_pause = 0.0;
     GamepadEx gp;
 
@@ -131,9 +132,17 @@ public abstract class AutonomousOp extends OpMode {
         if (gp.wasJustPressed(GamepadKeys.Button.X)) {
             auto_pause -= 1.0;
         }
+        if (gp.wasJustPressed(GamepadKeys.Button.Y)) {
+            lane_close = !lane_close;
+        }
 
         telemetry.addData("result", pipeline.result);
         telemetry.addData("park close", park_close);
+        if (getZone() == Zone.FAR) {
+            telemetry.addData("lane close", lane_close);
+        } else {
+            telemetry.addData("purple first", lane_close);
+        }
         telemetry.addData("pause", auto_pause);
     }
 
@@ -159,13 +168,29 @@ public abstract class AutonomousOp extends OpMode {
         //actions.add(new ActionArm("close"));
 
         if (getZone() == Zone.FAR && getAlliance() == Alliance.BLUE) {
-            farSideActions(actions, false);
+            if (lane_close) {
+                farSideActions(actions, false);
+            } else {
+                farSideActionsCenterLane(actions, false);
+            }
         } else if (getZone() == Zone.FAR && getAlliance() == Alliance.RED) {
-            farSideActions(actions, true);
+            if (lane_close) {
+                farSideActions(actions, true);
+            } else {
+                farSideActionsCenterLane(actions, true);
+            }
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.RED) {
-            nearSideActions(actions, true);
+            if (lane_close) {
+                nearSideActionsPurpleFirst(actions, true);
+            } else {
+                nearSideActions(actions, true);
+            }
         } else if (getZone() == Zone.NEAR && getAlliance() == Alliance.BLUE) {
-            nearSideActions(actions, false);
+            if (lane_close) {
+                nearSideActionsPurpleFirst(actions, false);
+            } else {
+                nearSideActions(actions, false);
+            }
         }
 
         // always at the end we want to do this...
@@ -174,7 +199,7 @@ public abstract class AutonomousOp extends OpMode {
     }
 
 
-    protected void nearSideActionsOld(LinkedList<ActionBase> actions, boolean is_red) {
+    protected void nearSideActionsPurpleFirst(LinkedList<ActionBase> actions, boolean is_red) {
         // negative y is robot-forward
         // negative x is robot-left (towards board on blue side, away from board on red)
         // "165/2" is "half the leftover space: to center our robot on the tile"
@@ -349,8 +374,103 @@ public abstract class AutonomousOp extends OpMode {
         }
     }
 
-
     protected void farSideActions(LinkedList<ActionBase> actions, boolean is_red) {
+        // negative y is robot-forward
+        // negative x is robot-left (towards board on blue side, away from board on red)
+        // "165/2" is "half the leftover space: to center our robot on the tile"
+
+        double mult = -1.0;
+        if (is_red) {
+            mult = 1.0;
+        }
+
+        // we have a "common point" to get to before the april-locker takes over
+        ActionMove common_point = new ActionMove(mult * (TILE + 40), -(TILE + 20));
+
+
+        // Houston pathing:
+        // "common point" is in tile directly ahead of starting location in shared lane
+        // -> lane_south_turn
+
+// common-point, post-purple
+//pos_x: 625.2020708055976
+//pos_y: -653.0994135694749
+        ActionMove post_purple = new ActionMove(mult * 605, -560, 2.0);
+
+// lane
+//pos_x: 49.4612347381177
+//pos_y: -1289.9128108227403
+        ActionMove lane_south = new ActionMove(mult * 605, -50, 2.0);
+        ActionMove lane_south_turn = new ActionMove(mult * 100, -50, 2.0);
+        ActionMove lane_north = new ActionMove(mult * -(3*TILE - 80), -50);
+        ActionMove north_april = new ActionMove(mult * -(3*TILE - 80), -(TILE + 65));
+
+        // move away from wall a little for intake's sake
+        actions.add(new ActionMove(mult * 40, -100, 2.0));
+
+        if (target == 2) {
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
+            actions.add(new ActionMove(mult * 150, -590));
+        }
+
+        if ((!is_red && target == 1) || (is_red && target == 3)) {
+//pos_x: -288.17201092848455
+//pos_y: -659.5082625827981
+            // this one is "under the truss"
+            actions.add(new ActionArm("resting"));
+            actions.add(new ActionMove(mult * 290, -640, 2.0));
+            actions.add(new ActionTurn((-mult) * 90));
+            actions.add(new ActionArm("purple"));
+            actions.add(new ActionMove(mult * 110, -686));
+            actions.add(new ActionArm("spit-out", 1.0));
+            actions.add(new ActionArm("spit-stop", 0.1));
+            actions.add(new ActionMove(mult * 90, -686, 2.0));
+            actions.add(new ActionMove(mult * 290, -640, 2.0));
+            actions.add(new ActionArm("resting", 1.5));
+            actions.add(new ActionPause(0.05));
+            actions.add(new ActionArm("intake", .5));
+
+            if (auto_pause > 0.0) {
+                actions.add(new ActionPause(auto_pause));
+            }
+        } else if ((!is_red && target == 3) || (is_red && target == 1)) {
+            actions.add(new ActionArm("purple"));
+            //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
+            actions.add(new ActionMove(mult * 310, -360));
+        }
+
+        // "if not the under-truss one"
+        if (!((!is_red && target == 1) || (is_red && target == 3))) {
+            // the above moves got us to "spit out the purple pixel"
+            // location; then we do that and move to our common point
+            actions.add(new ActionArm("purple"));
+            actions.add(new ActionArm("spit-out", 0.95));
+            actions.add(new ActionArm("spit-stop", 0.1));
+            actions.add(new ActionArm("resting", 1.5));
+            actions.add(new ActionPause(0.05));
+            actions.add(new ActionArm("intake", .5));
+
+            // stay out of "shared" lane
+            if (auto_pause > 0.0) {
+                actions.add(new ActionPause(auto_pause));
+            }
+        }
+
+        actions.add(new ActionTurn(mult * -90));  // face the board
+        actions.add(lane_south_turn);
+        actions.add(lane_north);
+        if ((!is_red && target == 1) || (is_red && target == 3)) {
+            actions.add(new ActionMove(mult * -(3*TILE - 60), -(TILE + 20)));
+        } else {
+            actions.add(north_april);
+        }
+
+        actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, true));
+        addYellowScoring(actions, 2.0, false);
+    }
+
+    protected void farSideActionsCenterLane(LinkedList<ActionBase> actions, boolean is_red) {
         // negative y is robot-forward
         // negative x is robot-left (towards board on blue side, away from board on red)
         // "165/2" is "half the leftover space: to center our robot on the tile"
