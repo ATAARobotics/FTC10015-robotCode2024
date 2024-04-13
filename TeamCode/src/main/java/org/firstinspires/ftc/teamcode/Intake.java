@@ -9,6 +9,9 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
+
 
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +20,9 @@ public class Intake {
     ServoEx intake_main;
     ServoEx intake_rev;
     MotorEx suck;
+
+    ServoController _main_ctl;
+    ServoController _rev_ctl;
 
     public enum SuckMode {SUCK, BLOW, NOTHING}
     public enum IntakePlace {Intake, Resting, Stowed, High}
@@ -32,24 +38,39 @@ public class Intake {
     private double blowing = -1.0; // for 500ms of blow before auto-up
     private double suck_pause = -1.0; // for delay before sucking when coming down
 
+    private double _turning_off = -1.0; // delay before turning servos off
+
     public Intake(HardwareMap hm) {
         suck = new MotorEx(hm, "suck");
         intake_main = new SimpleServo(hm, "intake", 0, 360);
         intake_rev = new SimpleServo(hm, "intake_rev", 0, 360);
+        _main_ctl = hm.get(Servo.class, "intake").getController();
+        _rev_ctl = hm.get(Servo.class, "intake_rev").getController();
+
         //timer = new Timing.Timer(1706, TimeUnit.MILLISECONDS);
         // 1706 milliseconds is down
+    }
+
+    public void turn_off_servos() {
+        if (_main_ctl.getPwmStatus() != ServoController.PwmStatus.DISABLED) {
+            _turning_off = -1.0; // cancel any delayed-off
+            _main_ctl.pwmDisable();
+            _rev_ctl.pwmDisable();
+        }
+    }
+
+    public void turn_on_servos() {
+        _turning_off = -1.0; // cancel any delayed-off
+        if (_main_ctl.getPwmStatus() != ServoController.PwmStatus.ENABLED) {
+            _main_ctl.pwmEnable();
+            _rev_ctl.pwmEnable();
+        }
     }
 
     // NOTES:
     // robot-left intake servo (launcher-side): all-left is up, all-right is down (port 3)
     // robot-right intake servo (launcher-side): all-right is up, all-left is down (port 2)
     //
-
-    public void turn_off_servos() {
-    }
-
-    public void turn_on_servos() {
-    }
 
     public void humanInputs(GamepadEx pad, double time, Arm.Position position, boolean touch_state) {
         // we saw the touch sensor! our box must be full with two pixels
@@ -118,6 +139,7 @@ public class Intake {
                     intake = IntakePlace.High;
                 } else {
                     intake = IntakePlace.Stowed;
+                    _turning_off = time + 0.500;
                 }
                 suck_mode = SuckMode.NOTHING;
             }
@@ -198,7 +220,7 @@ public class Intake {
             }
         }
 
-
+        double old_intake_position = intake_position;
         if (intake == IntakePlace.Resting) {
             intake_position = 0.5;
         } else if (intake == IntakePlace.Intake) {
@@ -209,8 +231,20 @@ public class Intake {
             intake_position = 0.22;
         }
 
-        intake_main.setPosition(intake_position);
-        intake_rev.setPosition(1.0 - intake_position);
+        if (intake_position != old_intake_position) {
+            turn_on_servos();
+            intake_main.setPosition(intake_position);
+            intake_rev.setPosition(1.0 - intake_position);
+            if (intake == IntakePlace.Stowed || intake == IntakePlace.High) {
+                if (_turning_off < 0.0) {
+                    _turning_off = time + 0.500;
+                }
+            }
+        }
+
+        if (_turning_off > 0 && time > _turning_off) {
+            turn_off_servos();
+        }
 
         switch (suck_mode) {
             case SUCK:
