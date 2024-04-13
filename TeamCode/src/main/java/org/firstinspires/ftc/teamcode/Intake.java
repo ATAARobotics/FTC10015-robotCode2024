@@ -98,7 +98,7 @@ public class Intake {
                 intake = IntakePlace.Resting;
                 suck_mode = SuckMode.NOTHING;
             } else {
-                if (!full_pizza && suck_pause < 0.0) {
+                if (!full_pizza && suck_pause < 0.0 && position == Arm.Position.Intake) {
                     suck_mode = SuckMode.SUCK;
                     wanted_suck_blow = true;
                 }
