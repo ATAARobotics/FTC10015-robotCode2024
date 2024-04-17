@@ -30,7 +30,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
 
 
     public ReverseTeamElementPipeline() {
-        if (true) {
+        if (false) {
             // march 12, 2024:final values for close-side red start
             // RED side 920s webcam
             min = new Scalar(100, 100, 100);
@@ -42,7 +42,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             x2 = 0;
             y2 = 0;
         } else {
-            // march 12, 2024:values for far-side red start
+            // march 12, 2024:values for far-side (blue?) start
             // (which should be also for blue-side CLOSE start)
             // blue side, 920s camera
             min = new Scalar(10, 31, 69);
@@ -53,6 +53,12 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             y1 = 340;
             x2 = 645;
             y2 = 360;
+                x0 = 69;
+                y0 = 350;
+                x1 = 415;
+                y1 = 355;
+                x2 = 0;
+                y2 = 0;
         }
         processed = new Mat();
         annotated = new Mat();
@@ -69,8 +75,10 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         if (red) {
             if (close) {
                 // close-side red
-                x0 = 77;
-                y0 = 360;
+                x0 = 69;
+                y0 = 350;
+                //x0 = 77;
+                //y0 = 360;
                 x1 = 415;
                 y1 = 355;
                 x2 = 0;
@@ -94,8 +102,10 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
                 y2 = 360;
             } else {
                 // XXX same as far-side blue!
-                x0 = 77;
-                y0 = 360;
+                x0 = 69;
+                y0 = 350;
+                //x0 = 77;
+                //y0 = 360;
                 x1 = 415;
                 y1 = 355;
                 x2 = 0;
@@ -169,7 +179,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
             }
         }
 
-        if (true) {
+        if (false) {
             input.copyTo(annotated);
             Imgproc.putText(annotated, "L:" + (left / (50.0*55)), new Point(x0, y0), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
             Imgproc.putText(annotated, "M:" + (mid / (50.0*55)), new Point(x1, y1), Imgproc.FONT_HERSHEY_PLAIN, 1, red);
