@@ -146,7 +146,8 @@ public class Drive {
                 // stick.angle() returns a thing in radians, from
                 // -pi/2 to pi/2 .. so -180 to 180 in degrees.
                 double heading = Math.toDegrees(stick.angle()) + 180.0;
-                double allowed[] = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0};
+                //double allowed[] = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0};
+                double allowed[] = {0.0, 90.0, 180.0, 270.0};
                 double smallest = 3600;
                 double best = 0;
 

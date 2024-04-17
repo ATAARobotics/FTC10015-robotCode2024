@@ -167,7 +167,7 @@ public class ReverseTeamElementPipeline extends OpenCvPipeline {
         Scalar red = new Scalar(255, 0, 0);
         Scalar green = new Scalar(0, 255, 0);
         int biggest = Math.max(right, Math.max(left, mid));
-        if (biggest > 100) {
+        if (biggest > 200) {
             if (left == biggest) { result = Result.Left;  }
             if (mid == biggest) { result = Result.Middle; }
             if (right == biggest) { result = Result.Right; }
