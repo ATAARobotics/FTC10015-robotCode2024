@@ -206,9 +206,6 @@ public abstract class AutonomousOp extends OpMode {
 
         actions.add(new ActionMove(0, -100));
 
-        if (auto_pause > 0.0) {
-            actions.add(new ActionPause(auto_pause));
-        }
 
         double mult = -1.0;
         if (!is_red) {
@@ -266,6 +263,9 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         actions.add(new ActionTurn(mult * 90));  // face the board
+        if (auto_pause > 0.0) {
+            actions.add(new ActionPause(auto_pause));
+        }
 
         actions.add(common_point);
 
