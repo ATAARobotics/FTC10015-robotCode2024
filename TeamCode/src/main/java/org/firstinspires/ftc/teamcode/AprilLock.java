@@ -23,7 +23,9 @@ public class AprilLock {
     public boolean is_red = false;
 
     //public static final double CLOSE_DISTANCE = 210;
-    public static final double CLOSE_DISTANCE = 190;
+    //public static final double CLOSE_DISTANCE = 190;
+    ////mid-worlds tweak
+    public static final double CLOSE_DISTANCE = 178;
     public static final double FAR_DISTANCE = 220;
 
     // should depend on "scoring position low" vs normal
