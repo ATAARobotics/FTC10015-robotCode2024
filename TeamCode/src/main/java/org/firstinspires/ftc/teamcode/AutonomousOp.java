@@ -311,7 +311,7 @@ public abstract class AutonomousOp extends OpMode {
         // lock onto the correct april target
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, false));
 
-        addYellowScoring(actions, 1.1, true);
+        addYellowScoring(actions, 0.8, true);
 
         actions.add(new ActionMove(mult * 200, -300));
 
@@ -432,7 +432,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionPause(0.05));
             actions.add(new ActionArm("intake", .5));
 
-            if (auto_pause > 0.0) {
+            if (false && auto_pause > 0.0) {
                 actions.add(new ActionPause(auto_pause));
             }
         } else if ((!is_red && target == 3) || (is_red && target == 1)) {
@@ -453,7 +453,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionArm("intake", .5));
 
             // stay out of "shared" lane
-            if (auto_pause > 0.0) {
+            if (false && auto_pause > 0.0) {
                 actions.add(new ActionPause(auto_pause));
             }
         }
@@ -461,6 +461,10 @@ public abstract class AutonomousOp extends OpMode {
         actions.add(new ActionTurn(mult * -90));  // face the board
         actions.add(lane_south_turn);
         actions.add(lane_north);
+
+        if (auto_pause > 0.0) {
+            actions.add(new ActionPause(auto_pause));
+        }
         if ((!is_red && target == 1) || (is_red && target == 3)) {
             actions.add(new ActionMove(mult * -(3*TILE - 60), -(TILE + 20)));
         } else {
