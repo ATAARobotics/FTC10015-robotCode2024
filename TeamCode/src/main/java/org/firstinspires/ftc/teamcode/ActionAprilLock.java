@@ -37,7 +37,7 @@ public class ActionAprilLock extends ActionBase {
                 april.far_position();
             }
         }
-        if (time - started > 3.5) {
+        if (time - started > 4.0) {
             drive.robotInputs(0, 0);
             return true;
         }

@@ -231,11 +231,11 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionArm("purple"));
                 // sometimes we had to fudge red vs blue side here?
                 if (is_red) {
-                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
-                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 140), 1.5));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 120), 1.5));
                 } else {
-                    actions.add(new ActionMove(mult * 110, -(TILE + 140)));
-                    actions.add(new ActionMove(mult * 110, -(TILE + 120)));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 140), 1.5));
+                    actions.add(new ActionMove(mult * 110, -(TILE + 120), 1.5));
                 }
             } else if ((is_red && target == 3) || (!is_red && target == 1)) {
                 actions.add(new ActionArm("purple"));
@@ -275,12 +275,12 @@ public abstract class AutonomousOp extends OpMode {
         addYellowScoring(actions, 2.0, true);
 
         if (park_close) {
-            actions.add(new ActionArm("intake"));
             actions.add(new ActionMove(mult * (TILE + 160), -10));
             actions.add(new ActionMove(mult * (2*TILE), -10));
-        } else {
             actions.add(new ActionArm("intake"));
-            actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) - 20)));
+        } else {
+            actions.add(new ActionMove(mult * (2*TILE - 160), -((TILE*2) + 40 )));
+            actions.add(new ActionArm("intake"));
             // don't risk hitting the board
             //actions.add(new ActionMove(mult * (2*TILE + 160), -((TILE*2) - 20)));
         }
