@@ -64,7 +64,7 @@ public abstract class TeleOp extends OpMode   {
             }
         });
 
-        arm = new Arm(hardwareMap);
+        arm = new Arm(hardwareMap, false);
         drive = new Drive(hardwareMap, pipeline, arm, getAlliance() == Alliance.RED);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);

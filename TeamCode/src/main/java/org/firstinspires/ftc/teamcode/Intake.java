@@ -39,19 +39,25 @@ public class Intake {
     private double suck_pause = -1.0; // for delay before sucking when coming down
 
     private double _turning_off = -1.0; // delay before turning servos off
+    private boolean remain_powered = false;
 
-    public Intake(HardwareMap hm) {
+    public Intake(HardwareMap hm, boolean remain_powered) {
         suck = new MotorEx(hm, "suck");
         intake_main = new SimpleServo(hm, "intake", 0, 360);
         intake_rev = new SimpleServo(hm, "intake_rev", 0, 360);
         _main_ctl = hm.get(Servo.class, "intake").getController();
         _rev_ctl = hm.get(Servo.class, "intake_rev").getController();
+        remain_powered = remain_powered;
 
         //timer = new Timing.Timer(1706, TimeUnit.MILLISECONDS);
         // 1706 milliseconds is down
     }
 
     public void turn_off_servos() {
+        if (remain_powered) {
+            return;
+        }
+
         if (_main_ctl.getPwmStatus() != ServoController.PwmStatus.DISABLED) {
             _turning_off = -1.0; // cancel any delayed-off
             _main_ctl.pwmDisable();
@@ -174,9 +180,10 @@ public class Intake {
     }
 
     public void goUp(double time, boolean only_half) {
-        intake_position = 1.0;
+        turn_on_servos();
+        intake = IntakePlace.Stowed;
         if (only_half) {
-            intake_position = 0.35;
+            intake = IntakePlace.Resting;
         }
     }
 
@@ -184,7 +191,6 @@ public class Intake {
         goDown(time, 0);
     }
     public void goDown(double time, double delta) {
-//        intake_position = 0.0;
     }
 
     public void arm_moving() {

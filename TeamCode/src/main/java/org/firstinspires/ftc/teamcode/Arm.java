@@ -47,7 +47,7 @@ public class Arm {
     Roller roller_state = Roller.Off;
     double manual_power = 0.0;
 
-    public Arm(HardwareMap hm) {
+    public Arm(HardwareMap hm, boolean remain_powered) {
         knives = Climber.Sheathed;
         state = Position.Intake;
         arm_main = new MotorEx(hm, "arm_main");
@@ -60,7 +60,7 @@ public class Arm {
         wrist = new SimpleServo(hm, "wrist", 0, 360);
         roller = new SimpleServo(hm, "roller", 0, 360);
         touch = hm.get(RevTouchSensor.class, "touch");
-        intake = new Intake(hm);
+        intake = new Intake(hm, remain_powered);
         climb_countdown_start = -1;
         intake();
     }

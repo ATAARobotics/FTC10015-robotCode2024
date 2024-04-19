@@ -115,9 +115,9 @@ public abstract class AutonomousOp extends OpMode {
             }
         });
 
-        arm = new Arm(hardwareMap);
+        arm = new Arm(hardwareMap, true);
         drive = new Drive(hardwareMap, null, arm, getAlliance() == Alliance.RED);
-        intake = new Intake(hardwareMap);
+//        intake = new Intake(hardwareMap);
     }
 
     @Override
@@ -205,6 +205,7 @@ public abstract class AutonomousOp extends OpMode {
         // "165/2" is "half the leftover space: to center our robot on the tile"
 
         actions.add(new ActionMove(0, -100));
+        actions.add(new ActionIntake(true, false));
 
 
         double mult = -1.0;
@@ -644,7 +645,6 @@ public abstract class AutonomousOp extends OpMode {
         last_loop = time;
         TelemetryPacket pack = new TelemetryPacket();
 
-
         if (special_action != null) {
             boolean res = special_action.update(time, drive, intake, arm, telemetry, pack);
             if (res) {
@@ -669,7 +669,7 @@ public abstract class AutonomousOp extends OpMode {
         }
 
         if (current_action != null) {
-            boolean rtn = current_action.update(time, drive, intake, arm, telemetry, pack);
+            boolean rtn = current_action.update(time, drive, arm.intake, arm, telemetry, pack);
             if (rtn) {
                 current_action = null;
             }
@@ -682,14 +682,14 @@ public abstract class AutonomousOp extends OpMode {
 
         drive.loop(time);
         arm.loop(time);
-        intake.loop(time);
-
+//        intake.loop(time);
 
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("delta", delta);
         telemetry.addData("arm-position", arm.arm_control.getSetPoint());
 
+/*
         pack.put("pos_x", drive.odo.position_x());
         pack.put("pos_y", drive.odo.position_y());
         pack.put("delta", delta);
@@ -701,6 +701,7 @@ public abstract class AutonomousOp extends OpMode {
         pack.put("suck_mode", arm.intake.suck_mode);
         pack.put("intake_place", arm.intake.intake);
         pack.put("arm_pos", arm.arm_main.getCurrentPosition());
+*/
 
         // directions (in start position):
         // +x = robot-right

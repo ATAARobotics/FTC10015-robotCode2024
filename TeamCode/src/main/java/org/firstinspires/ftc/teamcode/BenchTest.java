@@ -44,7 +44,7 @@ public class BenchTest extends OpMode   {
 
     @Override
     public void init() {
-        arm = new Arm(hardwareMap);
+        arm = new Arm(hardwareMap, false);
         drive = new Drive(hardwareMap, null, arm, true);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
