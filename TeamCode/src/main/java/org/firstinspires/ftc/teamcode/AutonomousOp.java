@@ -474,6 +474,7 @@ public abstract class AutonomousOp extends OpMode {
 
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, true));
         addYellowScoring(actions, 2.0, false);
+        actions.add(new ActionMove(mult * -(3*TILE - 40), -40));
     }
 
     protected void farSideActionsCenterLane(LinkedList<ActionBase> actions, boolean is_red) {
@@ -509,11 +510,12 @@ public abstract class AutonomousOp extends OpMode {
 
         // move away from wall a little for intake's sake
         actions.add(new ActionMove(mult * 40, -100, 2.0));
+        actions.add(new ActionIntake(true, false));
 
         if (target == 2) {
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * (165 / 2), -(TILE + 710)));
-            actions.add(new ActionMove(mult * 150, -590));
+            actions.add(new ActionMove(mult * 180, -590));
         }
 
         if ((!is_red && target == 1) || (is_red && target == 3)) {
@@ -524,7 +526,7 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionMove(mult * 290, -640, 2.0));
             actions.add(new ActionTurn((-mult) * 90));
             actions.add(new ActionArm("purple"));
-            actions.add(new ActionMove(mult * 110, -686));
+            actions.add(new ActionMove(mult * 110, -650));
             actions.add(new ActionArm("spit-out", 1.0));
             actions.add(new ActionArm("spit-stop", 0.1));
             actions.add(new ActionMove(mult * 90, -686, 2.0));
@@ -539,7 +541,7 @@ public abstract class AutonomousOp extends OpMode {
         } else if ((!is_red && target == 3) || (is_red && target == 1)) {
             actions.add(new ActionArm("purple"));
             //actions.add(new ActionMove(mult * 385, -(TILE + TILE)));
-            actions.add(new ActionMove(mult * 310, -360));
+            actions.add(new ActionMove(mult * 310, -340));
         }
 
         // "if not the under-truss one"
@@ -553,12 +555,14 @@ public abstract class AutonomousOp extends OpMode {
             actions.add(new ActionPause(0.05));
             actions.add(new ActionArm("intake", .5));
 
+            actions.add(new ActionMove(mult * 40, -100, 2.0));
+
             // stay out of "shared" lane
             if (auto_pause > 0.0) {
                 actions.add(new ActionPause(auto_pause));
             }
 
-            if (target == 2) {
+           /* if (target == 2) {
                 // (test) XXX we drive "through" purple on middle still; need a "strait west" move
                 actions.add(new ActionMove(mult * 500, -550, 2.0));
                 actions.add(new ActionMove(mult * 500, -(2*TILE + 70), 2.0));
@@ -566,8 +570,10 @@ public abstract class AutonomousOp extends OpMode {
                 actions.add(new ActionMove(mult * 42, -400, 2.0));
                 actions.add(new ActionMove(mult * 42, -(2*TILE + 70), 2.0));
             }
-        }
 
+            */
+        }
+/*
         actions.add(lane_south_turn);
         actions.add(new ActionTurn(mult * -90));  // face the board
         actions.add(lane_north);
@@ -579,7 +585,9 @@ public abstract class AutonomousOp extends OpMode {
 
         actions.add(new ActionAprilLock(megacam, target, getAlliance() == Alliance.RED, true));
         addYellowScoring(actions, 2.0, false);
+    */
     }
+
 
     protected void getWhitePixelRedClose(LinkedList<ActionBase> actions, boolean is_red) {
         // this works for "red, close-side"
