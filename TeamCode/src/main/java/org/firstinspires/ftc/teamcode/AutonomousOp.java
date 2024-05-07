@@ -25,6 +25,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 import java.util.LinkedList;
 import java.util.List;
 
+//
+// note: this class is NOT annotated as an Autonomous Op-Mode on
+// purpose: there are four "concrete" OpModes (AutoRedNear,
+// AutoRedFar, AutoBlueNear, AutoBlueFar) that override the "zone" and
+// "alliance" functions so that there is just a single set of
+// autonomous code (but it may "know" which position the robot started
+// in).
+//
+
 public abstract class AutonomousOp extends OpMode {
 
     private Drive drive;
@@ -35,7 +44,6 @@ public abstract class AutonomousOp extends OpMode {
     // where we think the team element is
     private LinkedList<ActionBase> actions;
     private ActionBase current_action;
-    private ActionBase special_action;
 
     //OpenCvPipeline pipeline;
     ReverseTeamElementPipeline pipeline;
@@ -153,7 +161,6 @@ public abstract class AutonomousOp extends OpMode {
         drive.imu.resetYaw();
         intake_is_up = true;
         last_loop = time;
-        special_action = null;//new ActionInitialIntake();
 
         // jan 30 2024, changed how we reset after seeing "that one weird arm thing" again; this seems to work
         arm.reset();
@@ -653,27 +660,20 @@ public abstract class AutonomousOp extends OpMode {
         last_loop = time;
         TelemetryPacket pack = new TelemetryPacket();
 
-        if (special_action != null) {
-            boolean res = special_action.update(time, drive, intake, arm, telemetry, pack);
-            if (res) {
-                special_action = null;
-            }
-        } else {
-            if (pipeline.result != ReverseTeamElementPipeline.Result.Unknown) {
+        if (pipeline.result != ReverseTeamElementPipeline.Result.Unknown) {
+            target = 3;
+            if (pipeline.result == ReverseTeamElementPipeline.Result.Left) {
+                target = 1;
+            } else if (pipeline.result == ReverseTeamElementPipeline.Result.Middle) {
+                target = 2;
+            } else if (pipeline.result == ReverseTeamElementPipeline.Result.Right) {
                 target = 3;
-                if (pipeline.result == ReverseTeamElementPipeline.Result.Left) {
-                    target = 1;
-                } else if (pipeline.result == ReverseTeamElementPipeline.Result.Middle) {
-                    target = 2;
-                } else if (pipeline.result == ReverseTeamElementPipeline.Result.Right) {
-                    target = 3;
-                }
-                if (actions.size() == 0) {
-                    createActions();
-                }
-                //fixme front_cam.stopStreaming();
-                telemetry.addData("detected-target", target);
             }
+            if (actions.size() == 0) {
+                createActions();
+            }
+            //fixme front_cam.stopStreaming();
+            telemetry.addData("detected-target", target);
         }
 
         if (current_action != null) {
