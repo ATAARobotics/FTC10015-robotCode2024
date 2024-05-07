@@ -123,9 +123,9 @@ public abstract class AutonomousOp extends OpMode {
             }
         });
 
+        // the Arm owns the Intake now
         arm = new Arm(hardwareMap, true);
         drive = new Drive(hardwareMap, null, arm, getAlliance() == Alliance.RED);
-//        intake = new Intake(hardwareMap);
     }
 
     @Override
@@ -690,36 +690,12 @@ public abstract class AutonomousOp extends OpMode {
 
         drive.loop(time);
         arm.loop(time);
-//        intake.loop(time);
+        // intake's "loop" is run by the Arm above
 
         telemetry.addData("x", drive.odo.position_x());
         telemetry.addData("y", drive.odo.position_y());
         telemetry.addData("delta", delta);
         telemetry.addData("arm-position", arm.arm_control.getSetPoint());
-
-/*
-        pack.put("pos_x", drive.odo.position_x());
-        pack.put("pos_y", drive.odo.position_y());
-        pack.put("delta", delta);
-        pack.put("heading", drive.getHeading());
-        pack.put("target", target);
-        pack.put("wrist", arm.wristp);
-        pack.put("intake_main", arm.intake.intake_main.getPosition());
-        pack.put("intake_rev", arm.intake.intake_rev.getPosition());
-        pack.put("suck_mode", arm.intake.suck_mode);
-        pack.put("intake_place", arm.intake.intake);
-        pack.put("arm_pos", arm.arm_main.getCurrentPosition());
-*/
-
-        // directions (in start position):
-        // +x = robot-right
-        // -x = robot-left
-        // +y = robot forward
-        // -y = robot backwards
-
-        // rotations:
-        // +90 == turn left (??)
-        // -90 == turn right
 
         telemetry.update();
         FtcDashboard.getInstance().sendTelemetryPacket(pack);
