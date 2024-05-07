@@ -20,3 +20,26 @@ Building and Running
 - In "device manager" in Android Studio, you should find a "REV Robotics Control Hub v1.0" device in the "Physical" section
    - Recommend: delete all other virtual and physical devices if you don't do other Java work
 - Should be able to push a build to the robot (press the green "play" button)
+
+
+General Philosophy and Structure
+--------------------------------
+
+We follow a more "event-based" style of thinking with this code.
+
+We attempt to share as much code as possible between Autonomous and TeleOp modes.
+
+Logical subsystems of the robot exist as a Java class (but not _everything_ on the robot needs to have a class).
+
+We make use of the following libraries and tools:
+
+- FTCLib: https://ftclib.org/
+- FTC-Dashboard: https://acmerobotics.github.io/ftc-dashboard/
+- EasyOpenCV: https://github.com/OpenFTC/EasyOpenCV/
+- EasyOpenCV-Sim: https://deltacv.gitbook.io/eocv-sim
+- blkbx: https://github.com/meejah/blckbx
+
+
+Overview of the Code
+--------------------
+
